@@ -7,7 +7,7 @@ import java.awt.event.KeyListener;
 
 public class InputHandler  implements KeyListener {
     //TODO GETTER
-    public Direction directionPressed;
+    public boolean upPressed, rightPressed, leftPressed;
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -17,27 +17,30 @@ public class InputHandler  implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         switch (key) {
-            case (KeyEvent.VK_RIGHT):
-            case (KeyEvent.VK_D): {
-                directionPressed = Direction.RIGHT;
-                break;
+            case (KeyEvent.VK_RIGHT), (KeyEvent.VK_D) -> {
+                if(!upPressed){
+                    rightPressed = true;
+                }
             }
-            case (KeyEvent.VK_LEFT):
-            case (KeyEvent.VK_A): {
-                directionPressed = Direction.LEFT;
-                break;
+            case (KeyEvent.VK_LEFT), (KeyEvent.VK_A) ->{
+                if(!upPressed){
+                    leftPressed = true;
+                }
             }
-//            case (KeyEvent.VK_UP):
-//            case (KeyEvent.VK_W): {
-//                directionPressed = Direction.UP;
-//                break;
-//            }
+            case (KeyEvent.VK_UP), (KeyEvent.VK_W) -> {
+                if(!upPressed){
+                    upPressed = true;
+                }
+            }
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-        directionPressed = null;
+        switch (key) {
+            case (KeyEvent.VK_RIGHT), (KeyEvent.VK_D) -> rightPressed = false;
+            case (KeyEvent.VK_LEFT), (KeyEvent.VK_A) -> leftPressed = false;
+        }
     }
 }

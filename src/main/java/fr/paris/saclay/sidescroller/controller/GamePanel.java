@@ -3,25 +3,23 @@ package fr.paris.saclay.sidescroller.controller;
 import fr.paris.saclay.sidescroller.abstraction.Player;
 import fr.paris.saclay.sidescroller.utils.InputHandler;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class GamePanel extends JPanel implements Runnable{
-    final int originalWidthEntityTileSize = 14;
-    final int originalHeightEntityTileSize = 19;
 
     final int originalSquareTileSize = 16;
 
-    final int scale = 3;
+    final int scale = 4;
     //TODO SCALING BASED ON DEVICE
     public int widthTileSize = originalSquareTileSize *scale;
     public int heightTileSize = originalSquareTileSize *scale;
-    public int widthEntityTileSize = originalWidthEntityTileSize *scale;
-    public int heightEntityTileSize = originalHeightEntityTileSize *scale;
     final int maxScreenCols = 16;
     final int maxScreenRows = 12;
-    final int screenWidth = widthTileSize *maxScreenCols;
-    final int screenHeight = heightTileSize *maxScreenRows;
+    public final int screenWidth = widthTileSize *maxScreenCols;
+    public final int screenHeight = heightTileSize *maxScreenRows;
     Thread gameThread;
     InputHandler inputHandler = new InputHandler();
     Player player = new Player(this, inputHandler);
@@ -55,12 +53,25 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
     public void update(){
+        System.out.println(player.direction);
         player.update();
     }
 
     public void paintComponent(Graphics graphics){
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
+        try {
+            int i=0;
+            while(i<screenWidth){
+                for (int j = 0; j < 2; j++) {
+                    graphics2D.drawImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("grass.png")), i, screenHeight - heightTileSize-1, widthTileSize, heightTileSize, null);
+                }
+                i +=widthTileSize;
+            }
+            graphics2D.drawImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("grasslands.png")), 0, 0, screenWidth*scale, screenHeight - heightTileSize, null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         player.draw(graphics2D);
         graphics2D.dispose();
     }
