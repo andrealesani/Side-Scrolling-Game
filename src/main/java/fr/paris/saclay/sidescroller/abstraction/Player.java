@@ -5,8 +5,13 @@ import fr.paris.saclay.sidescroller.utils.InputHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Player extends Entity{
     GamePanel gamePanel;
@@ -28,22 +33,18 @@ public class Player extends Entity{
 
     public void setPlayerImage(){
         try {
-            upLeftSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump.png"));
-            upLeftSprite2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_2.png"));
-            upLeftSprite3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_3.png"));
-            upLeftSprite4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_4.png"));
-            upLeftSprite5 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_5.png"));
-            upLeftSprite6 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left.png"));
-            upRightSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_right_jump.png"));
-            upRightSprite2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_right_jump_2.png"));
-            upRightSprite3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_right_jump_3.png"));
-            upRightSprite4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_right_jump_4.png"));
-            upRightSprite5 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_right_jump_5.png"));
-            upRightSprite6 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_right.png"));
-            leftSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left.png"));
-            leftSprite2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_2.png"));
-            rightSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_right.png"));
-            rightSprite2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_right_2.png"));
+            List<BufferedImage> upLeftSprites = Arrays.asList(
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_2.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_3.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_4.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_5.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left.png")));
+            animationMap.put(Direction.UP_LEFT,upLeftSprites);
+            List<BufferedImage> leftSprites = Arrays.asList(
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_2.png")));
+            animationMap.put(Direction.LEFT,leftSprites);
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -73,10 +74,10 @@ public class Player extends Entity{
                             xPosition -=speed;
                         }
                         if(spriteNumber == 1 || spriteNumber == 2){
-                            yPosition -= speed;
+                            yPosition -= speed*2;
                         }
                         else if(spriteNumber == 4 || spriteNumber == 5){
-                            yPosition += speed;
+                            yPosition += speed*2;
                         }
                     }
                     case UP_RIGHT -> {
@@ -84,10 +85,10 @@ public class Player extends Entity{
                             xPosition +=speed;
                         }
                         if(spriteNumber == 1 || spriteNumber == 2){
-                            yPosition -= speed;
+                            yPosition -= speed*2;
                         }
                         else if(spriteNumber == 4 || spriteNumber == 5){
-                            yPosition += speed;
+                            yPosition += speed*2;
                         }
                     }
                 }
@@ -98,7 +99,7 @@ public class Player extends Entity{
                     else spriteNumber ++;
                     spriteCounter = 0;
             }
-            else if(spriteCounter>5 && isJumping){
+            else if(spriteCounter>5){
                     if(spriteNumber==6) {
                         spriteNumber=1;
                         isJumping = false;
@@ -110,52 +111,24 @@ public class Player extends Entity{
             }
         }
     public void draw(Graphics2D graphics2D){
-        BufferedImage image = null;
-        System.out.println(spriteNumber);
-        switch (direction){
-            case UP_LEFT ->{
-                if (spriteNumber == 1) {
-                    image = upLeftSprite;
-                } else if (spriteNumber == 2) {
-                    image = upLeftSprite2;
-                } else if (spriteNumber == 3) {
-                    image = upLeftSprite3;
-                } else if (spriteNumber == 4) {
-                    image = upLeftSprite4;
-                } else if (spriteNumber == 5) {
-                    image = upLeftSprite5;
-                } else if(spriteNumber == 6) {
-                    image = upLeftSprite6;
-                    isJumping = false;
+//        System.out.println(spriteNumber);
+        AffineTransform transformX = AffineTransform.getScaleInstance(-1, 1);
+        if(spriteNumber!=0) {
+            switch (direction) {
+                case LEFT, UP_LEFT -> {
+                    if (direction == Direction.UP_LEFT && spriteNumber == 6) {
+                        isJumping = false;
+                    }
+                    image = animationMap.get(direction).get(spriteNumber - 1);
                 }
-            }
-            case UP_RIGHT ->{
-                if (spriteNumber == 1) {
-                    image = upRightSprite;
-                } else if (spriteNumber == 2) {
-                    image = upRightSprite2;
-                } else if (spriteNumber == 3) {
-                    image = upRightSprite3;
-                } else if (spriteNumber == 4) {
-                    image = upRightSprite4;
-                } else if (spriteNumber == 5) {
-                    image = upRightSprite5;
-                } else  {
-                    image = upRightSprite6;
-                }
-            }
-            case RIGHT -> {
-                if (spriteNumber == 1) {
-                    image = rightSprite;
-                } else if (spriteNumber == 2) {
-                    image = rightSprite2;
-                }
-            }
-            case LEFT -> {
-                if (spriteNumber == 1) {
-                    image = leftSprite;
-                } else if (spriteNumber == 2) {
-                    image = leftSprite2;
+                case RIGHT, UP_RIGHT -> {
+                    if (direction == Direction.UP_RIGHT && spriteNumber == 6) {
+                        isJumping = false;
+                    }
+                    Direction utilDirection = direction == Direction.RIGHT ? Direction.LEFT : Direction.UP_LEFT;
+                    transformX.translate(-animationMap.get(utilDirection).get(spriteNumber - 1).getWidth(null), 0);
+                    AffineTransformOp op = new AffineTransformOp(transformX, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                    image = op.filter(animationMap.get(utilDirection).get(spriteNumber - 1), null);
                 }
             }
         }
