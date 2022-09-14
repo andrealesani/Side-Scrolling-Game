@@ -1,87 +1,107 @@
 package fr.paris.saclay.sidescroller.controller;
 
-import fr.paris.saclay.sidescroller.abstraction.Player;
+import fr.paris.saclay.sidescroller.abstraction.*;
 import fr.paris.saclay.sidescroller.utils.InputHandler;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GamePanel extends JPanel implements Runnable{
+public class GamePanel extends JPanel implements Runnable {
 
-    final int originalSquareTileSize = 16;
-
-    final int scale = 4;
+    public final int ORIGINAL_SQUARE_TILE = 16;
+    public final int MAX_SCREEN_COL = 16;
+    public final int MAX_SCREEN_ROWS = 12;
+    public final int SCALE = 4;
     //TODO SCALING BASED ON DEVICE
-    public int widthTileSize = originalSquareTileSize *scale;
-    public int heightTileSize = originalSquareTileSize *scale;
-    final int maxScreenCols = 16;
-    final int maxScreenRows = 12;
-    public final int screenWidth = widthTileSize *maxScreenCols;
-    public final int screenHeight = heightTileSize *maxScreenRows;
-    Thread gameThread;
-    InputHandler inputHandler = new InputHandler();
-    Player player = new Player(this, inputHandler);
-    public GamePanel(){
-        setPreferredSize(new Dimension(screenWidth, screenHeight));
+    public final int WIDTH_TILE_SIZE = ORIGINAL_SQUARE_TILE * SCALE;
+    public final int HEIGHT_TILE_SIZE = ORIGINAL_SQUARE_TILE * SCALE;
+
+    public final int SCREEN_WIDTH = WIDTH_TILE_SIZE * MAX_SCREEN_COL;
+    public final int SCREEN_HEIGHT = HEIGHT_TILE_SIZE * MAX_SCREEN_ROWS;
+    private Thread gameThread;
+    private InputHandler inputHandler;
+    private final List<Drawable> drawables;
+    private final Drawable player;
+    private final Drawable background;
+    private final Drawable terrain;
+
+    public GamePanel() {
+        setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
         setFocusable(true);
+
+        inputHandler = new InputHandler();
         addKeyListener(inputHandler);
+
+        drawables = new ArrayList<>();
+        background = new Background(this, inputHandler);
+        drawables.add(background);
+        player = new Player(this, inputHandler);
+        drawables.add(player);
+        terrain = new Terrain(this, inputHandler);
+        drawables.add(terrain);
     }
 
-    public void startGame(){
+    public void startGame() {
         gameThread = new Thread(this);
         gameThread.start();
     }
+
     @Override
     public void run() {
-        double drawInterval = 1000000000/60;
+        double drawInterval = 1000000000.0 / 60.0;
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0;
         int drawCount = 0;
-        while (gameThread !=null){
+        while (gameThread != null) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
             timer += (currentTime - lastTime);
             lastTime = currentTime;
-            if(delta>=1){
+            if (delta >= 1) {
                 update();
                 repaint();
                 drawCount++;
                 delta--;
             }
-            if(timer>1000000000){
+            if (timer > 1000000000) {
 //                System.out.println("FPS: " + drawCount);
                 drawCount = 0;
                 timer = 0;
             }
         }
     }
-    public void update(){
+
+    public void update() {
 //        System.out.println(player.direction);
-        player.update();
+        for (Drawable drawable : drawables)
+            drawable.update();
     }
 
-    public void paintComponent(Graphics graphics){
+    public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
-        try {
-            int i=0;
-            while(i<screenWidth){
-                for (int j = 0; j < 2; j++) {
-                    graphics2D.drawImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("grass.png")), i, screenHeight - heightTileSize-1, widthTileSize, heightTileSize, null);
-                }
-                i +=widthTileSize;
-            }
-            graphics2D.drawImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("grasslands.png")), 0, 0, screenWidth*scale, screenHeight - heightTileSize, null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        player.draw(graphics2D);
+
+        for (Drawable drawable : drawables)
+            drawable.draw(graphics2D);
+
         graphics2D.dispose();
+    }
+
+    public int getPlayerPositionX() {
+        return player.xPosition;
+    }
+
+    public int getPlayerPositionY() {
+        return player.yPosition;
+    }
+
+    public int getPlayerSpeed() {
+        return player.speed;
     }
 }
