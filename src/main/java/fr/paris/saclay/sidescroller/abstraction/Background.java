@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 
+import static fr.paris.saclay.sidescroller.utils.Constants.*;
+
 public class Background extends Drawable {
 
     Image backgroundImage;
@@ -32,7 +34,7 @@ public class Background extends Drawable {
         if ((inputHandler.rightPressed || inputHandler.upPressed || inputHandler.leftPressed)) {
             if (inputHandler.rightPressed) {
                 direction = Direction.RIGHT;
-                if (gamePanel.getPlayerPositionX() >= gamePanel.SCREEN_WIDTH / 2 - gamePanel.WIDTH_TILE_SIZE / 2) {
+                if (gamePanel.getPlayerPositionX() >= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition -= speed;
                 }
             } else if (inputHandler.leftPressed) {
@@ -64,12 +66,12 @@ public class Background extends Drawable {
     @Override
     public void draw(Graphics2D graphics2D) {
 
-        int pixelsOffset = -gamePanel.SCREEN_WIDTH * gamePanel.SCALE * (numOfBackgrounds - 1);
+        int pixelsOffset = -SCREEN_WIDTH * SCALE * (numOfBackgrounds - 1);
         int i;
 
-        graphics2D.drawImage(backgroundImage, xPosition, yPosition, gamePanel.SCREEN_WIDTH * gamePanel.SCALE, gamePanel.SCREEN_HEIGHT - gamePanel.HEIGHT_TILE_SIZE, null);
+        graphics2D.drawImage(backgroundImage, xPosition, yPosition, SCREEN_WIDTH * SCALE, SCREEN_HEIGHT - HEIGHT_TILE_SIZE, null);
         for (i = 0; i < numOfBackgrounds - 1; i++) {
-            graphics2D.drawImage(backgroundImage, xPosition + gamePanel.SCREEN_WIDTH * gamePanel.SCALE * (i + 1), yPosition, gamePanel.SCREEN_WIDTH * gamePanel.SCALE, gamePanel.SCREEN_HEIGHT - gamePanel.HEIGHT_TILE_SIZE, null);
+            graphics2D.drawImage(backgroundImage, xPosition + SCREEN_WIDTH * SCALE * (i + 1), yPosition, SCREEN_WIDTH * SCALE, SCREEN_HEIGHT - HEIGHT_TILE_SIZE, null);
         }
 
         if (xPosition < pixelsOffset) {

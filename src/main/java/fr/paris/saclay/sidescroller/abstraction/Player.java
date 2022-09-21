@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static fr.paris.saclay.sidescroller.utils.Constants.*;
+
 public class Player extends Entity {
     GamePanel gamePanel;
     InputHandler inputHandler;
@@ -25,7 +27,7 @@ public class Player extends Entity {
 
     public void setPlayerDefaultPosition() {
         xPosition = 100;
-        yPosition = gamePanel.SCREEN_HEIGHT - gamePanel.HEIGHT_TILE_SIZE * 2;
+        yPosition = SCREEN_HEIGHT - HEIGHT_TILE_SIZE * 2;
         speed = 6;
         direction = Direction.RIGHT;
     }
@@ -54,7 +56,7 @@ public class Player extends Entity {
         if ((inputHandler.rightPressed || inputHandler.upPressed || inputHandler.leftPressed)) {
             if (inputHandler.rightPressed) {
                 direction = Direction.RIGHT;
-                if (xPosition <= gamePanel.SCREEN_WIDTH / 2 - gamePanel.WIDTH_TILE_SIZE / 2) {
+                if (xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition += speed;
                 }
             } else if (inputHandler.leftPressed) {
@@ -70,7 +72,7 @@ public class Player extends Entity {
                         spriteNumber = 0;
                     }
                     case UP_LEFT, UP_RIGHT -> {
-                        if (direction == Direction.UP_RIGHT && xPosition <= gamePanel.SCREEN_WIDTH / 2 - gamePanel.WIDTH_TILE_SIZE / 2) {
+                        if (direction == Direction.UP_RIGHT && xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                             xPosition += speed / 3;
                         } else if (direction == Direction.UP_LEFT && xPosition >= 5) {
                             xPosition -= speed / 3;
@@ -133,6 +135,6 @@ public class Player extends Entity {
         System.out.println(isJumping);
         System.out.println(direction);*/
 
-        graphics2D.drawImage(image, xPosition, yPosition, gamePanel.WIDTH_TILE_SIZE, gamePanel.HEIGHT_TILE_SIZE, null);
+        graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
     }
 }

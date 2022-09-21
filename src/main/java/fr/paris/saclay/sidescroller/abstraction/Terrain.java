@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 
+import static fr.paris.saclay.sidescroller.utils.Constants.*;
+
 public class Terrain extends Drawable {
     Image terrain;
     int numOfTiles;
@@ -18,7 +20,7 @@ public class Terrain extends Drawable {
         this.inputHandler = inputHandler;
         direction = Direction.RIGHT;
         speed = 0;
-        numOfTiles = gamePanel.SCREEN_WIDTH / gamePanel.WIDTH_TILE_SIZE;
+        numOfTiles = SCREEN_WIDTH / WIDTH_TILE_SIZE;
         try {
             terrain = ImageIO.read(getClass().getClassLoader().getResourceAsStream("grass.png"));
         } catch (IOException e) {
@@ -32,7 +34,7 @@ public class Terrain extends Drawable {
         if ((inputHandler.rightPressed || inputHandler.upPressed || inputHandler.leftPressed)) {
             if (inputHandler.rightPressed) {
                 direction = Direction.RIGHT;
-                if (gamePanel.getPlayerPositionX() >= gamePanel.SCREEN_WIDTH / 2 - gamePanel.WIDTH_TILE_SIZE / 2) {
+                if (gamePanel.getPlayerPositionX() >= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition -= speed;
                 }
             } else if (inputHandler.leftPressed) {
@@ -64,11 +66,11 @@ public class Terrain extends Drawable {
     @Override
     public void draw(Graphics2D graphics2D) {
         //System.out.println(numOfTiles);
-        int pixelsOffset = -gamePanel.WIDTH_TILE_SIZE * (numOfTiles - gamePanel.SCREEN_WIDTH / gamePanel.WIDTH_TILE_SIZE - 2);
+        int pixelsOffset = -WIDTH_TILE_SIZE * (numOfTiles - SCREEN_WIDTH / WIDTH_TILE_SIZE - 2);
         int i;
 
         for (i = 0; i < numOfTiles; i++) {
-            graphics2D.drawImage(terrain, xPosition + i * gamePanel.WIDTH_TILE_SIZE, gamePanel.SCREEN_HEIGHT - gamePanel.HEIGHT_TILE_SIZE, gamePanel.WIDTH_TILE_SIZE, gamePanel.HEIGHT_TILE_SIZE, null);
+            graphics2D.drawImage(terrain, xPosition + i * WIDTH_TILE_SIZE, SCREEN_HEIGHT - HEIGHT_TILE_SIZE, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
         }
 
         if (xPosition < pixelsOffset) {

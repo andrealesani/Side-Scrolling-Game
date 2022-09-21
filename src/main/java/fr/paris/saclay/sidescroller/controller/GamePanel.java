@@ -9,17 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable {
-
-    public final int ORIGINAL_SQUARE_TILE = 16;
-    public final int MAX_SCREEN_COL = 16;
-    public final int MAX_SCREEN_ROWS = 12;
-    public final int SCALE = 4;
-    //TODO SCALING BASED ON DEVICE
-    public final int WIDTH_TILE_SIZE = ORIGINAL_SQUARE_TILE * SCALE;
-    public final int HEIGHT_TILE_SIZE = ORIGINAL_SQUARE_TILE * SCALE;
-
-    public final int SCREEN_WIDTH = WIDTH_TILE_SIZE * MAX_SCREEN_COL;
-    public final int SCREEN_HEIGHT = HEIGHT_TILE_SIZE * MAX_SCREEN_ROWS;
     private Thread gameThread;
     private InputHandler inputHandler;
     private final List<Drawable> drawables;
@@ -28,7 +17,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final Drawable terrain;
 
     public GamePanel() {
-        setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
+        //setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
         setFocusable(true);
@@ -43,6 +32,8 @@ public class GamePanel extends JPanel implements Runnable {
         drawables.add(player);
         terrain = new Terrain(this, inputHandler);
         drawables.add(terrain);
+
+        setVisible(true);
     }
 
     public void startGame() {
