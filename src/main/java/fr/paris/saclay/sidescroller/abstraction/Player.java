@@ -21,6 +21,7 @@ public class Player extends Entity {
     public Player(GamePanel gamePanel, InputHandler inputHandler) {
         this.gamePanel = gamePanel;
         this.inputHandler = inputHandler;
+        hitboxSize = WIDTH_TILE_SIZE / 2;
         setPlayerDefaultPosition();
         setPlayerImage();
     }
@@ -35,17 +36,17 @@ public class Player extends Entity {
     public void setPlayerImage() {
         try {
             List<BufferedImage> upLeftSprites = Arrays.asList(
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_2.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_3.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_4.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_5.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_2.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump.png"))
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_2.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_3.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_4.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_5.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_2.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump.png"))
             );
             animationMap.put(Direction.UP_LEFT, upLeftSprites);
             List<BufferedImage> leftSprites = Arrays.asList(
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_2.png")));
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_2.png")));
             animationMap.put(Direction.LEFT, leftSprites);
         } catch (IOException e) {
             e.printStackTrace();
@@ -107,6 +108,8 @@ public class Player extends Entity {
                 }
             }
         }
+
+        updateHitbox();
     }
 
     public void draw(Graphics2D graphics2D) {
@@ -136,5 +139,7 @@ public class Player extends Entity {
         System.out.println(direction);*/
 
         graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
+        graphics2D.setColor(new Color(255, 0, 0, 127));
+        graphics2D.fill(hitBox);
     }
 }

@@ -11,10 +11,12 @@ import java.util.List;
 public class GamePanel extends JPanel implements Runnable {
     private Thread gameThread;
     private InputHandler inputHandler;
+    private final Player player;
+    private final List<Entity> entities;
     private final List<Drawable> drawables;
-    private final Drawable player;
     private final Drawable background;
     private final Drawable terrain;
+    private final CollisionDetector collisionDetector;
 
     public GamePanel() {
         //setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -25,13 +27,21 @@ public class GamePanel extends JPanel implements Runnable {
         inputHandler = new InputHandler();
         addKeyListener(inputHandler);
 
-        drawables = new ArrayList<>();
+        collisionDetector = new CollisionDetector(this);
+
         background = new Background(this, inputHandler);
-        drawables.add(background);
-        player = new Player(this, inputHandler);
-        drawables.add(player);
         terrain = new Terrain(this, inputHandler);
+
+        player = new Player(this, inputHandler);
+
+        entities = new ArrayList<>();
+        drawables = new ArrayList<>();
+
+        entities.add(player);
+
+        drawables.add(background);
         drawables.add(terrain);
+        drawables.addAll(entities);
 
         setVisible(true);
     }
@@ -72,6 +82,9 @@ public class GamePanel extends JPanel implements Runnable {
 //        System.out.println(player.direction);
         for (Drawable drawable : drawables)
             drawable.update();
+
+        if (isColliding())
+            System.out.println("BONK!!");
     }
 
     public void paintComponent(Graphics graphics) {
@@ -94,5 +107,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int getPlayerSpeed() {
         return player.speed;
+    }
+
+    public boolean isColliding() {
+        for (Entity entity : entities)
+            if (!entity.equals(player) && collisionDetector.checkCollision(player, entity)) {
+                return true;
+            }
+
+        return false;
     }
 }

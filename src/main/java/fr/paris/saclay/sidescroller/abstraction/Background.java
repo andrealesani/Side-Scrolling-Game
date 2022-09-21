@@ -22,7 +22,7 @@ public class Background extends Drawable {
         direction = Direction.RIGHT;
         speed = 0;
         try {
-            backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("grasslands.png"));
+            backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/grasslands.png"));
         } catch (IOException e) {
             throw new RuntimeException("Couldn't find background image", e);
         }

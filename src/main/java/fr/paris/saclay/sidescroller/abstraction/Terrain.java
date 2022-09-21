@@ -22,7 +22,7 @@ public class Terrain extends Drawable {
         speed = 0;
         numOfTiles = SCREEN_WIDTH / WIDTH_TILE_SIZE;
         try {
-            terrain = ImageIO.read(getClass().getClassLoader().getResourceAsStream("grass.png"));
+            terrain = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/grass.png"));
         } catch (IOException e) {
             throw new RuntimeException("Couldn't find background image", e);
         }
