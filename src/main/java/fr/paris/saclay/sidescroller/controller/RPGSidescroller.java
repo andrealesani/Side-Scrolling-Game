@@ -8,17 +8,22 @@ import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
 
 public class RPGSidescroller extends JFrame {
 
+    private GamePanel gamePanel;
+
+    private GameMenu gameMenu;
+
     public RPGSidescroller() {
         super("RPG Sidescroller");
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        CardLayout cardLayout = new CardLayout();
-        setLayout(cardLayout);
-        GamePanel gamePanel = new GamePanel();
-        GameMenu gameMenu = new GameMenu(gamePanel, this, cardLayout);
-        add(gamePanel, "Game Panel");
-        add(gameMenu, "Game Menu");
-        cardLayout.show(this.getContentPane(), "Game Menu");
+//        CardLayout cardLayout = new CardLayout();
+//        getLayeredPane().setLayout(cardLayout);
+        gamePanel = new GamePanel(this);
+        gameMenu = new GameMenu(this);
+        add(gamePanel);
+        setGlassPane(gameMenu);
+        getGlassPane().setVisible(true);
+//        cardLayout.show(this.getLayeredPane(), "Game Panel");
 
         setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT+25)); // +25 is needed because JFrame takes into account the title bar
 
@@ -26,5 +31,13 @@ public class RPGSidescroller extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
+
+    public GameMenu getGameMenu() {
+        return gameMenu;
     }
 }
