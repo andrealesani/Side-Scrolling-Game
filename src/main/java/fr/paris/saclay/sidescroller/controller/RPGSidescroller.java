@@ -16,18 +16,12 @@ public class RPGSidescroller extends JFrame {
         super("RPG Sidescroller");
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        CardLayout cardLayout = new CardLayout();
-//        getLayeredPane().setLayout(cardLayout);
         gamePanel = new GamePanel(this);
         gameMenu = new GameMenu(this);
         add(gamePanel);
         setGlassPane(gameMenu);
         getGlassPane().setVisible(true);
-//        cardLayout.show(this.getLayeredPane(), "Game Panel");
-
         setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT+25)); // +25 is needed because JFrame takes into account the title bar
-
-
         pack();
         setLocationRelativeTo(null);
         setVisible(true);

@@ -3,15 +3,11 @@ package fr.paris.saclay.sidescroller.abstraction;
 import fr.paris.saclay.sidescroller.controller.MenuButton;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class GameMenuModel {
-    private final List<ChangeListener> changeListeners = new ArrayList<>();
 
     private boolean isPauseMenu = false;
     
@@ -27,10 +23,6 @@ public class GameMenuModel {
     
     private Timer timer;
 
-    public void addChangeListener(ChangeListener changeListener){
-        changeListeners.add(changeListener);
-
-    }
     public Dimension getPreferredSize() {
         return new Dimension(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
     }

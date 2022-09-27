@@ -22,9 +22,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public boolean upPressed, rightPressed, leftPressed;
 
-    RPGSidescroller parentContainer;
+    private final RPGSidescroller parentContainer;
 
-    private GraphicsEnvironment environment;
     private Thread gameThread;
     private List<Drawable> drawables;
     private Drawable player;
@@ -38,16 +37,12 @@ public class GamePanel extends JPanel implements Runnable {
         setDoubleBuffered(true);
         setFocusable(true);
         this.parentContainer = parent;
-        environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         try {
-            GraphicsEnvironment ge =
-                    GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(
-                    getClass().getClassLoader().getResource("fonts/Monocraft.otf").toURI())));
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(getClass().getClassLoader().getResource("fonts/Monocraft.otf").toURI())));
         } catch (IOException | FontFormatException | URISyntaxException e) {
             e.printStackTrace();
         }
-        // TODO DELETE INPUTHANDLER
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "walk_right");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), "walk_right");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "walk_right_released");
@@ -98,11 +93,9 @@ public class GamePanel extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0;
-        int drawCount = 0;
         try {
             mediaPlayer = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-                    getClass().getClassLoader().getResourceAsStream("soundtrack/megalovania.wav"));
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(getClass().getClassLoader().getResourceAsStream("soundtrack/megalovania.wav"));
             mediaPlayer.open(inputStream);
             mediaPlayer.start();
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
@@ -118,12 +111,9 @@ public class GamePanel extends JPanel implements Runnable {
                 if (delta >= 1) {
                     update();
                     repaint();
-                    drawCount++;
                     delta--;
                 }
                 if (timer > 1000000000) {
-//                System.out.println("FPS: " + drawCount);
-                    drawCount = 0;
                     timer = 0;
                 }
             } else {
@@ -137,7 +127,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-//        System.out.println(player.direction);
         for (Drawable drawable : drawables)
             drawable.update();
     }
@@ -154,10 +143,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int getPlayerPositionX() {
         return player.xPosition;
-    }
-
-    public int getPlayerPositionY() {
-        return player.yPosition;
     }
 
     public int getPlayerSpeed() {

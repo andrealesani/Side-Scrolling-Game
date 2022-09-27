@@ -17,7 +17,7 @@ public class GameMenu extends JPanel implements ActionListener {
     private final GameMenuUI ui;
     private final GameMenuModel model;
 
-    private JPanel menuPanel;
+    private final JPanel menuPanel;
 
     public GameMenu(RPGSidescroller frame) {
         ui = new GameMenuUI();
@@ -78,9 +78,10 @@ public class GameMenu extends JPanel implements ActionListener {
             @Override
             public void mousePressed(MouseEvent e) {
                 frame.getGamePanel().stop();
-                setNormalGridConstraints();
                 setPauseMenu(false);
+                setNormalGridConstraints();
                 repaint();
+                revalidate();
             }
         });
 
@@ -106,7 +107,6 @@ public class GameMenu extends JPanel implements ActionListener {
         constraints.gridy = 0;
         constraints.gridheight = 3;
         menuPanel.add(model.getCredits(), constraints);
-        System.out.println(model.getCredits());
         constraints.gridheight = 1;
         constraints.gridx = 0;
         constraints.gridy = 1;
@@ -171,7 +171,4 @@ public class GameMenu extends JPanel implements ActionListener {
         return model;
     }
 
-    public JPanel getMenuPanel() {
-        return menuPanel;
-    }
 }
