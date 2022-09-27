@@ -16,11 +16,9 @@ import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Player extends Entity {
     GamePanel gamePanel;
-    InputHandler inputHandler;
 
-    public Player(GamePanel gamePanel, InputHandler inputHandler) {
+    public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
-        this.inputHandler = inputHandler;
         setPlayerDefaultPosition();
         setPlayerImage();
     }
@@ -35,17 +33,17 @@ public class Player extends Entity {
     public void setPlayerImage() {
         try {
             List<BufferedImage> upLeftSprites = Arrays.asList(
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_2.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_3.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_4.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_5.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump_2.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_jump.png"))
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_2.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_3.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_4.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_5.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_2.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump.png"))
             );
             animationMap.put(Direction.UP_LEFT, upLeftSprites);
             List<BufferedImage> leftSprites = Arrays.asList(
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("pink_alien_left_2.png")));
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left.png")),
+                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_2.png")));
             animationMap.put(Direction.LEFT, leftSprites);
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,13 +51,13 @@ public class Player extends Entity {
     }
 
     public void update() {
-        if ((inputHandler.rightPressed || inputHandler.upPressed || inputHandler.leftPressed)) {
-            if (inputHandler.rightPressed) {
+        if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed)) {
+            if (gamePanel.rightPressed) {
                 direction = Direction.RIGHT;
                 if (xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition += speed;
                 }
-            } else if (inputHandler.leftPressed) {
+            } else if (gamePanel.leftPressed) {
                 direction = Direction.LEFT;
                 if (xPosition >= 5) {
                     xPosition -= speed;
@@ -96,7 +94,7 @@ public class Player extends Entity {
                 } else if (spriteNumber == 6 && isJumping) {
                     spriteNumber = 1;
                     isJumping = false;
-                    inputHandler.upPressed = false;
+                    gamePanel.upPressed = false;
                     spriteCounter = 10;
                     if (direction == Direction.UP_LEFT) {
                         direction = Direction.LEFT;
