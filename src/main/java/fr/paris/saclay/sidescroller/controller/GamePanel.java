@@ -5,12 +5,23 @@ import fr.paris.saclay.sidescroller.utils.InputHandler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable {
+
+    public boolean upPressed, rightPressed, leftPressed;
+
+
+    private GraphicsEnvironment environment;
     private Thread gameThread;
-    private InputHandler inputHandler;
     private final List<Drawable> drawables;
     private final Drawable player;
     private final Drawable background;
@@ -21,16 +32,37 @@ public class GamePanel extends JPanel implements Runnable {
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
         setFocusable(true);
-
-        inputHandler = new InputHandler();
-        addKeyListener(inputHandler);
-
+        environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            GraphicsEnvironment ge =
+                    GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(
+                    getClass().getClassLoader().getResource("fonts/Monocraft.otf").toURI())));
+        } catch (IOException | FontFormatException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+        // TODO DELETE INPUTHANDLER
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "walk_right");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0,false), "walk_right");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "walk_right_released");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0,true), "walk_right_released");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0,false), "walk_left");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0,false), "walk_left");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0,true), "walk_left_released");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0,true), "walk_left_released");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0,false), "jump");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0,false), "jump");
+        getActionMap().put("walk_right", walkRight());
+        getActionMap().put("walk_right_released", walkRightReleased());
+        getActionMap().put("walk_left", walkLeft());
+        getActionMap().put("walk_left_released", walkLeftReleased());
+        getActionMap().put("jump", jump());
         drawables = new ArrayList<>();
-        background = new Background(this, inputHandler);
+        background = new Background(this);
         drawables.add(background);
-        player = new Player(this, inputHandler);
+        player = new Player(this);
         drawables.add(player);
-        terrain = new Terrain(this, inputHandler);
+        terrain = new Terrain(this);
         drawables.add(terrain);
 
         setVisible(true);
@@ -94,5 +126,51 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int getPlayerSpeed() {
         return player.speed;
+    }
+
+    private Action walkRight(){
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if(!upPressed){
+                    rightPressed = true;
+                }
+            }
+        };
+    }
+
+    private Action walkRightReleased(){
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                    rightPressed = false;
+            }
+        };
+    }
+
+    private Action walkLeftReleased(){
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                leftPressed = false;
+            }
+        };
+    }
+
+    private Action walkLeft(){
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if(!upPressed){
+                    leftPressed = true;
+                }
+            }
+        };
+    }
+
+    private Action jump(){
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if(!upPressed){
+                    upPressed = true;
+                }
+            }
+        };
     }
 }

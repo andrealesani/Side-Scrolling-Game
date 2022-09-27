@@ -13,16 +13,14 @@ public class Background extends Drawable {
 
     Image backgroundImage;
     GamePanel gamePanel;
-    InputHandler inputHandler;
     int numOfBackgrounds = 1;
 
-    public Background(GamePanel gamePanel, InputHandler inputHandler) {
+    public Background(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
-        this.inputHandler = inputHandler;
         direction = Direction.RIGHT;
         speed = 0;
         try {
-            backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("grasslands.png"));
+            backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/grasslands.png"));
         } catch (IOException e) {
             throw new RuntimeException("Couldn't find background image", e);
         }
@@ -31,13 +29,13 @@ public class Background extends Drawable {
     @Override
     public void update() {
         speed = gamePanel.getPlayerSpeed() / 2;
-        if ((inputHandler.rightPressed || inputHandler.upPressed || inputHandler.leftPressed)) {
-            if (inputHandler.rightPressed) {
+        if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed)) {
+            if (gamePanel.rightPressed) {
                 direction = Direction.RIGHT;
                 if (gamePanel.getPlayerPositionX() >= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition -= speed;
                 }
-            } else if (inputHandler.leftPressed) {
+            } else if (gamePanel.leftPressed) {
                 direction = Direction.LEFT;
                 if (gamePanel.getPlayerPositionX() <= 5) {
                     xPosition += speed;
