@@ -80,7 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void startGame() {
         gameThread = new Thread(this);
         entities = new ArrayList<>();
-        entities.add(new Bat(this));
+        //entities.add(new Bat(this));
         drawables = new ArrayList<>();
         background = new Background(this);
         drawables.add(background);

@@ -43,24 +43,8 @@ public class Background extends Drawable {
                 }
             } else {
                 switch (direction) {
-                    case LEFT -> {
-                        direction = UP_LEFT;
-                    }
-                    case RIGHT -> {
-                        direction = UP_RIGHT;
-                    }
-                    case UP_LEFT -> {
-                        if (gamePanel.getPlayerPositionX() <= 5 && xPosition != 0) {
-                            xPosition += speed / 2;
-                            gamePanel.notifyCameraMoved(UP_LEFT);
-                        }
-                    }
-                    case UP_RIGHT -> {
-                        if (gamePanel.getPlayerPositionX() >= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
-                            xPosition -= speed / 2;
-                            gamePanel.notifyCameraMoved(UP_RIGHT);
-                        }
-                    }
+                    case LEFT -> direction = UP_LEFT;
+                    case RIGHT -> direction = UP_RIGHT;
                 }
             }
             if (xPosition > 0)

@@ -71,11 +71,6 @@ public class Player extends Entity {
                         spriteNumber = 0;
                     }
                     case UP_LEFT, UP_RIGHT -> {
-                        if (direction == Direction.UP_RIGHT && xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
-                            xPosition += speed / 3;
-                        } else if (direction == Direction.UP_LEFT && xPosition >= 5) {
-                            xPosition -= speed / 3;
-                        }
                         if (spriteNumber == 1 || spriteNumber == 2) {
                             yPosition -= speed * 1.5;
                         } else if (spriteNumber == 4 || spriteNumber == 5) {
