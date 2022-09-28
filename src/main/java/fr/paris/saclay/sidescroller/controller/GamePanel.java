@@ -2,6 +2,11 @@ package fr.paris.saclay.sidescroller.controller;
 
 import fr.paris.saclay.sidescroller.abstraction.*;
 import fr.paris.saclay.sidescroller.utils.InputHandler;
+import fr.paris.saclay.sidescroller.abstraction.*;
+import fr.paris.saclay.sidescroller.abstraction.entities.Bat;
+import fr.paris.saclay.sidescroller.abstraction.entities.Entity;
+import fr.paris.saclay.sidescroller.abstraction.entities.Player;
+import fr.paris.saclay.sidescroller.utils.InputHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,13 +15,14 @@ import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable {
     private Thread gameThread;
-    private InputHandler inputHandler;
+    private final InputHandler inputHandler;
     private final Player player;
     private final List<Entity> entities;
     private final List<Drawable> drawables;
     private final Drawable background;
     private final Drawable terrain;
     private final CollisionDetector collisionDetector;
+    private Direction cameraHasMoved;
 
     public GamePanel() {
         //setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -37,10 +43,11 @@ public class GamePanel extends JPanel implements Runnable {
         entities = new ArrayList<>();
         drawables = new ArrayList<>();
 
-        entities.add(player);
+        entities.add(new Bat(this));
 
         drawables.add(background);
         drawables.add(terrain);
+        drawables.add(player);
         drawables.addAll(entities);
 
         setVisible(true);
@@ -79,12 +86,19 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-//        System.out.println(player.direction);
-        for (Drawable drawable : drawables)
+
+        for (var drawable : drawables)
             drawable.update();
+
+        if (cameraHasMoved != null) {
+            for (var entity : entities)
+                entity.updatePositionToCamera();
+        }
 
         if (isColliding())
             System.out.println("BONK!!");
+
+        cameraHasMoved = null;
     }
 
     public void paintComponent(Graphics graphics) {
@@ -109,6 +123,10 @@ public class GamePanel extends JPanel implements Runnable {
         return player.speed;
     }
 
+    public Direction getPlayerDirection() {
+        return player.direction;
+    }
+
     public boolean isColliding() {
         for (Entity entity : entities)
             if (!entity.equals(player) && collisionDetector.checkCollision(player, entity)) {
@@ -116,5 +134,9 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
         return false;
+    }
+
+    public void notifyCameraMoved(Direction direction) {
+        this.cameraHasMoved = direction;
     }
 }

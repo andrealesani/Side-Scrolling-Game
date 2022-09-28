@@ -1,5 +1,6 @@
-package fr.paris.saclay.sidescroller.abstraction;
+package fr.paris.saclay.sidescroller.abstraction.entities;
 
+import fr.paris.saclay.sidescroller.abstraction.Direction;
 import fr.paris.saclay.sidescroller.controller.GamePanel;
 import fr.paris.saclay.sidescroller.utils.InputHandler;
 
@@ -15,11 +16,10 @@ import java.util.List;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Player extends Entity {
-    GamePanel gamePanel;
-    InputHandler inputHandler;
+    private final InputHandler inputHandler;
 
     public Player(GamePanel gamePanel, InputHandler inputHandler) {
-        this.gamePanel = gamePanel;
+        super(gamePanel);
         this.inputHandler = inputHandler;
         hitboxSize = WIDTH_TILE_SIZE / 2;
         setPlayerDefaultPosition();
@@ -53,6 +53,7 @@ public class Player extends Entity {
         }
     }
 
+    @Override
     public void update() {
         if ((inputHandler.rightPressed || inputHandler.upPressed || inputHandler.leftPressed)) {
             if (inputHandler.rightPressed) {
@@ -109,7 +110,7 @@ public class Player extends Entity {
             }
         }
 
-        updateHitbox();
+        updateHitboxPosition();
     }
 
     public void draw(Graphics2D graphics2D) {

@@ -7,19 +7,20 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 
+import static fr.paris.saclay.sidescroller.abstraction.Direction.*;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Background extends Drawable {
 
     Image backgroundImage;
-    GamePanel gamePanel;
+
     InputHandler inputHandler;
     int numOfBackgrounds = 1;
 
     public Background(GamePanel gamePanel, InputHandler inputHandler) {
-        this.gamePanel = gamePanel;
+        super(gamePanel);
         this.inputHandler = inputHandler;
-        direction = Direction.RIGHT;
+        direction = RIGHT;
         speed = 0;
         try {
             backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/grasslands.png"));
@@ -33,28 +34,35 @@ public class Background extends Drawable {
         speed = gamePanel.getPlayerSpeed() / 2;
         if ((inputHandler.rightPressed || inputHandler.upPressed || inputHandler.leftPressed)) {
             if (inputHandler.rightPressed) {
-                direction = Direction.RIGHT;
+                direction = RIGHT;
                 if (gamePanel.getPlayerPositionX() >= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition -= speed;
+                    gamePanel.notifyCameraMoved(RIGHT);
                 }
             } else if (inputHandler.leftPressed) {
-                direction = Direction.LEFT;
-                if (gamePanel.getPlayerPositionX() <= 5) {
+                direction = LEFT;
+                if (gamePanel.getPlayerPositionX() <= 5 && xPosition != 0) {
                     xPosition += speed;
+                    gamePanel.notifyCameraMoved(LEFT);
                 }
             } else {
                 switch (direction) {
                     case LEFT -> {
-                        direction = Direction.UP_LEFT;
+                        direction = UP_LEFT;
                     }
                     case RIGHT -> {
-                        direction = Direction.UP_RIGHT;
+                        direction = UP_RIGHT;
                     }
                     case UP_LEFT -> {
                         xPosition += speed / 2;
+                        if (xPosition > 1) { // Please don't ask why 1 instead of 0
+                            gamePanel.notifyCameraMoved(UP_LEFT);
+                            System.out.println("Position is: " + xPosition);
+                        }
                     }
                     case UP_RIGHT -> {
                         xPosition -= speed / 2;
+                        gamePanel.notifyCameraMoved(UP_RIGHT);
                     }
                 }
             }

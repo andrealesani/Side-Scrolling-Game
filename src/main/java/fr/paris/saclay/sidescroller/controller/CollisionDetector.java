@@ -1,8 +1,7 @@
 package fr.paris.saclay.sidescroller.controller;
 
-import fr.paris.saclay.sidescroller.abstraction.Direction;
-import fr.paris.saclay.sidescroller.abstraction.Entity;
-import fr.paris.saclay.sidescroller.abstraction.Player;
+import fr.paris.saclay.sidescroller.abstraction.entities.Entity;
+import fr.paris.saclay.sidescroller.abstraction.entities.Player;
 
 public class CollisionDetector {
     GamePanel gamePanel;

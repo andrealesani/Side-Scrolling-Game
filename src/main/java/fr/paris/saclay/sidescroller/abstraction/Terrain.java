@@ -12,11 +12,10 @@ import static fr.paris.saclay.sidescroller.utils.Constants.*;
 public class Terrain extends Drawable {
     Image terrain;
     int numOfTiles;
-    GamePanel gamePanel;
     InputHandler inputHandler;
 
     public Terrain(GamePanel gamePanel, InputHandler inputHandler) {
-        this.gamePanel = gamePanel;
+        super(gamePanel);
         this.inputHandler = inputHandler;
         direction = Direction.RIGHT;
         speed = 0;
