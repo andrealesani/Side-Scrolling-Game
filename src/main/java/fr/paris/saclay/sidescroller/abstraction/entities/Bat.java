@@ -49,7 +49,6 @@ public class Bat extends Entity {
                 spriteNumber = 1;
             spriteCounter = 0;
         }
-        System.out.println("spriteCounter: " + spriteCounter + " spriteNumber: " + spriteNumber);
 
         updateHitboxPosition();
     }

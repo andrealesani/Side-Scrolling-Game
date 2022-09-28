@@ -2,7 +2,6 @@ package fr.paris.saclay.sidescroller.abstraction.entities;
 
 import fr.paris.saclay.sidescroller.abstraction.Direction;
 import fr.paris.saclay.sidescroller.controller.GamePanel;
-import fr.paris.saclay.sidescroller.utils.InputHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,11 +15,9 @@ import java.util.List;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Player extends Entity {
-    private final InputHandler inputHandler;
 
-    public Player(GamePanel gamePanel, InputHandler inputHandler) {
+    public Player(GamePanel gamePanel) {
         super(gamePanel);
-        this.inputHandler = inputHandler;
         hitboxSize = WIDTH_TILE_SIZE / 2;
         setPlayerDefaultPosition();
         setPlayerImage();
@@ -55,13 +52,13 @@ public class Player extends Entity {
 
     @Override
     public void update() {
-        if ((inputHandler.rightPressed || inputHandler.upPressed || inputHandler.leftPressed)) {
-            if (inputHandler.rightPressed) {
+        if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed)) {
+            if (gamePanel.rightPressed) {
                 direction = Direction.RIGHT;
                 if (xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition += speed;
                 }
-            } else if (inputHandler.leftPressed) {
+            } else if (gamePanel.leftPressed) {
                 direction = Direction.LEFT;
                 if (xPosition >= 5) {
                     xPosition -= speed;
@@ -98,7 +95,7 @@ public class Player extends Entity {
                 } else if (spriteNumber == 6 && isJumping) {
                     spriteNumber = 1;
                     isJumping = false;
-                    inputHandler.upPressed = false;
+                    gamePanel.upPressed = false;
                     spriteCounter = 10;
                     if (direction == Direction.UP_LEFT) {
                         direction = Direction.LEFT;

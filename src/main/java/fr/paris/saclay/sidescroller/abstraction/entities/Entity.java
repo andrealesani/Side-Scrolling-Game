@@ -44,6 +44,7 @@ public abstract class Entity extends Drawable {
 
     public Entity(GamePanel gamePanel) {
         super(gamePanel);
+        updateHitboxPosition(); // gamePanel is drawn before thread starting
     }
 
     /**

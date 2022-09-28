@@ -6,9 +6,21 @@ import java.awt.*;
 
 public abstract class Drawable {
     protected final GamePanel gamePanel;
+    /**
+     * Drawable's position on the X axis (relative to window)
+     */
     public int xPosition;
+    /**
+     * Drawable's position on the Y axis (relative to window)
+     */
     public int yPosition;
+    /**
+     * Drawable's movement speed
+     */
     public int speed;
+    /**
+     * Drawable's facing direction
+     */
     public Direction direction;
 
     public Drawable(GamePanel gamePanel) {
@@ -17,6 +29,7 @@ public abstract class Drawable {
 
     // TODO don't hardcode jumping speed
     public void updatePositionToCamera() {
+        System.out.println("xPosition: " + xPosition + " player speed: " + gamePanel.getPlayerSpeed());
         switch (gamePanel.getPlayerDirection()) {
             case LEFT -> xPosition += gamePanel.getPlayerSpeed();
             case UP_LEFT -> xPosition += gamePanel.getPlayerSpeed() / 2;
