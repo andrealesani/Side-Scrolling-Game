@@ -1,23 +1,22 @@
 package fr.paris.saclay.sidescroller.abstraction;
 
 import fr.paris.saclay.sidescroller.controller.GamePanel;
-import fr.paris.saclay.sidescroller.utils.InputHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 
+import static fr.paris.saclay.sidescroller.abstraction.Direction.*;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Background extends Drawable {
 
     Image backgroundImage;
-    GamePanel gamePanel;
     int numOfBackgrounds = 1;
 
     public Background(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
-        direction = Direction.RIGHT;
+        super(gamePanel);
+        direction = RIGHT;
         speed = 0;
         try {
             backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/grasslands.png"));
@@ -28,32 +27,24 @@ public class Background extends Drawable {
 
     @Override
     public void update() {
-        speed = gamePanel.getPlayerSpeed() / 2;
+        speed = gamePanel.getPlayerSpeed();
         if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed)) {
             if (gamePanel.rightPressed) {
-                direction = Direction.RIGHT;
+                direction = RIGHT;
                 if (gamePanel.getPlayerPositionX() >= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition -= speed;
+                    gamePanel.notifyCameraMoved();
                 }
             } else if (gamePanel.leftPressed) {
-                direction = Direction.LEFT;
-                if (gamePanel.getPlayerPositionX() <= 5) {
+                direction = LEFT;
+                if (gamePanel.getPlayerPositionX() <= 5 && xPosition != 0) {
                     xPosition += speed;
+                    gamePanel.notifyCameraMoved();
                 }
             } else {
                 switch (direction) {
-                    case LEFT -> {
-                        direction = Direction.UP_LEFT;
-                    }
-                    case RIGHT -> {
-                        direction = Direction.UP_RIGHT;
-                    }
-                    case UP_LEFT -> {
-                        xPosition += speed / 2;
-                    }
-                    case UP_RIGHT -> {
-                        xPosition -= speed / 2;
-                    }
+                    case LEFT -> direction = UP_LEFT;
+                    case RIGHT -> direction = UP_RIGHT;
                 }
             }
             if (xPosition > 0)

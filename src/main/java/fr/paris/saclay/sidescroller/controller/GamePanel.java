@@ -1,9 +1,12 @@
 package fr.paris.saclay.sidescroller.controller;
 
-import fr.paris.saclay.sidescroller.abstraction.Background;
-import fr.paris.saclay.sidescroller.abstraction.Drawable;
-import fr.paris.saclay.sidescroller.abstraction.Player;
-import fr.paris.saclay.sidescroller.abstraction.Terrain;
+import fr.paris.saclay.sidescroller.abstraction.*;
+import fr.paris.saclay.sidescroller.utils.InputHandler;
+import fr.paris.saclay.sidescroller.abstraction.*;
+import fr.paris.saclay.sidescroller.abstraction.entities.Bat;
+import fr.paris.saclay.sidescroller.abstraction.entities.Entity;
+import fr.paris.saclay.sidescroller.abstraction.entities.Player;
+import fr.paris.saclay.sidescroller.utils.InputHandler;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -16,6 +19,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_HEIGHT;
+import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
+
 public class GamePanel extends JPanel implements Runnable {
 
     private boolean isRunning = true;
@@ -25,10 +31,16 @@ public class GamePanel extends JPanel implements Runnable {
     private final RPGSidescroller parentContainer;
 
     private Thread gameThread;
-    private List<Drawable> drawables;
-    private Drawable player;
+    private Player player;
+    private List<Entity> entities = new ArrayList<>();
+    ;
+    private List<Drawable> drawables = new ArrayList<>();
+    ;
     private Drawable background;
     private Drawable terrain;
+    private final CollisionDetector collisionDetector;
+    private boolean cameraHasMoved;
+    private boolean gameOver = false;
 
     private Clip mediaPlayer;
 
@@ -43,6 +55,15 @@ public class GamePanel extends JPanel implements Runnable {
         } catch (IOException | FontFormatException | URISyntaxException e) {
             e.printStackTrace();
         }
+
+        collisionDetector = new CollisionDetector(this);
+
+        setKeyBindings();
+
+        setVisible(true);
+    }
+
+    private void setKeyBindings() {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "walk_right");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), "walk_right");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "walk_right_released");
@@ -60,26 +81,23 @@ public class GamePanel extends JPanel implements Runnable {
         getActionMap().put("walk_left_released", walkLeftReleased());
         getActionMap().put("jump", jump());
         getActionMap().put("menu", showMenu());
-        drawables = new ArrayList<>();
-        background = new Background(this);
-        drawables.add(background);
-        player = new Player(this);
-        drawables.add(player);
-        terrain = new Terrain(this);
-        drawables.add(terrain);
-
-        setVisible(true);
     }
 
     public void startGame() {
         gameThread = new Thread(this);
+        entities = new ArrayList<>();
+        entities.add(new Bat(this, 0));
+        entities.add(new Bat(this, 500));
+        entities.add(new Bat(this, 600));
         drawables = new ArrayList<>();
         background = new Background(this);
         drawables.add(background);
-        player = new Player(this);
-        drawables.add(player);
         terrain = new Terrain(this);
         drawables.add(terrain);
+        player = new Player(this);
+        drawables.add(player);
+        drawables.addAll(entities);
+        gameOver = false;
         setFocusable(true);
         transferFocus();
         parentContainer.getGlassPane().setVisible(false);
@@ -127,8 +145,26 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        for (Drawable drawable : drawables)
+        if (gameOver)
+            return;
+
+        for (var drawable : drawables)
             drawable.update();
+
+        if (cameraHasMoved) {
+            for (var entity : entities)
+                entity.updatePositionToCamera();
+            terrain.updatePositionToCamera();
+        }
+
+        if (isColliding()) {
+            player.tookDamage(1);
+
+            if (!player.isInvincible())
+                player.setInvincible(30); // TODO not hardcode here the invincibility time
+        }
+
+        cameraHasMoved = false;
     }
 
     public void paintComponent(Graphics graphics) {
@@ -137,6 +173,14 @@ public class GamePanel extends JPanel implements Runnable {
 
         for (Drawable drawable : drawables)
             drawable.draw(graphics2D);
+
+        if (gameOver) {
+            graphics2D.setFont(new Font("Monocraft", Font.BOLD, 72));
+            // TODO dynamically center the text
+            graphics2D.drawString("GAME OVER", SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100);
+            graphics2D.setFont(new Font("Monocraft", Font.PLAIN, 24));
+            graphics2D.drawString("Press ESC to open menu and start again", SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2);
+        }
 
         graphics2D.dispose();
     }
@@ -195,7 +239,7 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
-    private Action showMenu() {
+    public Action showMenu() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 GameMenu menu = parentContainer.getGameMenu();
@@ -219,5 +263,34 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void stop() {
         gameThread.stop();
+    }
+
+    public Direction getPlayerDirection() {
+        return player.direction;
+    }
+
+    /**
+     * Checks if the player is colliding with any entities in the scene.
+     *
+     * @return true if the player is colliding with at least one other entity in the scene
+     */
+    public boolean isColliding() {
+        for (Entity entity : entities)
+            if (!entity.equals(player) && collisionDetector.checkCollision(player, entity)) {
+                return true;
+            }
+
+        return false;
+    }
+
+    /**
+     * Sets up a flag that forces the terrain and all the entities update their position relatively to the player.
+     */
+    public void notifyCameraMoved() {
+        this.cameraHasMoved = true;
+    }
+
+    public void setGameOver() {
+        gameOver = true;
     }
 }
