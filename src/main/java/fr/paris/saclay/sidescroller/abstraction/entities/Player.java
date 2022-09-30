@@ -21,7 +21,7 @@ public class Player extends Entity {
     public Player(GamePanel gamePanel) {
         super(gamePanel);
         hitboxSize = WIDTH_TILE_SIZE / 2;
-        lifePoints = 6;
+        lifePoints = PLAYER_MAX_HP;
         invincible = false;
         invincibilityTimer = 0;
         setPlayerDefaultPosition();
