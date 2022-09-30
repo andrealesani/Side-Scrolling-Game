@@ -33,13 +33,13 @@ public class Background extends Drawable {
                 direction = RIGHT;
                 if (gamePanel.getPlayerPositionX() >= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition -= speed;
-                    gamePanel.notifyCameraMoved(RIGHT);
+                    gamePanel.notifyCameraMoved();
                 }
             } else if (gamePanel.leftPressed) {
                 direction = LEFT;
                 if (gamePanel.getPlayerPositionX() <= 5 && xPosition != 0) {
                     xPosition += speed;
-                    gamePanel.notifyCameraMoved(LEFT);
+                    gamePanel.notifyCameraMoved();
                 }
             } else {
                 switch (direction) {

@@ -38,7 +38,7 @@ public abstract class Drawable {
     /**
      * This method is called by the GamePanel every time a new frame has to be generated.
      * Each Drawable object is responsible for calculating its position, state and aspect
-     * (sprite animations, change) for every new frame.
+     * (such as sprite animations) for every new frame.
      */
     public abstract void update();
 

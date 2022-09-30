@@ -9,9 +9,14 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.List;
 
+import static fr.paris.saclay.sidescroller.abstraction.Direction.*;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public abstract class Entity extends Drawable {
+    /**
+     * The number of the life points that the entity currently has.
+     */
+    protected int lifePoints;
     /**
      * Links the Direction the entity is facing to the list of images that represent the entity in that direction.
      */
@@ -53,5 +58,22 @@ public abstract class Entity extends Drawable {
     // TODO don't hardcode hitbox position
     public void updateHitboxPosition() {
         hitBox = new Rectangle(xPosition + WIDTH_TILE_SIZE / 4, yPosition + HEIGHT_TILE_SIZE / 4, hitboxSize, hitboxSize);
+    }
+
+    /**
+     * This method makes the entity chase the player on the X axis until its hitbox collides with the one of the player.
+     */
+    public void chasePlayer() {
+        if (gamePanel.getPlayerPositionX() > xPosition + hitboxSize - 1) {
+            xPosition += speed;
+            direction = RIGHT;
+        } else if (gamePanel.getPlayerPositionX() < xPosition - hitboxSize - 1) {
+            xPosition -= speed;
+            direction = LEFT;
+        }
+    }
+
+    public int getLifePoints() {
+        return lifePoints;
     }
 }

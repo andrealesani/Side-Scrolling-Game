@@ -15,10 +15,15 @@ import java.util.List;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Player extends Entity {
+    private boolean invincible;
+    private int invincibilityTimer;
 
     public Player(GamePanel gamePanel) {
         super(gamePanel);
         hitboxSize = WIDTH_TILE_SIZE / 2;
+        lifePoints = 6;
+        invincible = false;
+        invincibilityTimer = 0;
         setPlayerDefaultPosition();
         setPlayerImage();
     }
@@ -47,6 +52,29 @@ public class Player extends Entity {
             animationMap.put(Direction.LEFT, leftSprites);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sets the player invincible for the specified amount of frames.
+     *
+     * @param invincibilityTimer the number of frames during which the player is invincible.
+     */
+    public void setInvincible(int invincibilityTimer) {
+        this.invincible = true;
+        this.invincibilityTimer = invincibilityTimer;
+    }
+
+    public boolean isInvincible() {
+        return invincible;
+    }
+
+    public void tookDamage(int lifePoints) {
+        if (!isInvincible())
+            this.lifePoints -= lifePoints;
+
+        if (this.lifePoints == 0) {
+            gamePanel.setGameOver();
         }
     }
 
@@ -102,6 +130,11 @@ public class Player extends Entity {
             }
         }
 
+        if (invincibilityTimer == 0)
+            invincible = false;
+        else
+            invincibilityTimer--;
+
         updateHitboxPosition();
     }
 
@@ -127,12 +160,12 @@ public class Player extends Entity {
                 }
             }
         }
-       /* System.out.println(spriteNumber);
-        System.out.println(isJumping);
-        System.out.println(direction);*/
 
         graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
-        graphics2D.setColor(new Color(255, 0, 0, 127));
+        if (isInvincible())
+            graphics2D.setColor(new Color(255, 0, 0, 127));
+        else
+            graphics2D.setColor(new Color(0, 0, 255, 127));
         graphics2D.fill(hitBox);
     }
 }

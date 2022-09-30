@@ -1,6 +1,5 @@
 package fr.paris.saclay.sidescroller.abstraction.entities;
 
-import fr.paris.saclay.sidescroller.abstraction.Direction;
 import fr.paris.saclay.sidescroller.controller.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -11,17 +10,24 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static fr.paris.saclay.sidescroller.abstraction.Direction.LEFT;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Bat extends Entity {
+    /**
+     * Used to determine the vertical movement. It is initialized randomly so that if there
+     * are more than one bat in the scene their pattern won't be synchronous.
+     */
+    private int flyFrameCounter = (int) (Math.random() * 60);
 
-    public Bat(GamePanel gamePanel) {
+    public Bat(GamePanel gamePanel, int xPosition) {
         super(gamePanel);
 
-        xPosition = 400;
+        this.xPosition = xPosition;
         yPosition = SCREEN_HEIGHT - HEIGHT_TILE_SIZE * 2;
-        speed = 0;
-        direction = Direction.LEFT;
+        speed = 2;
+        lifePoints = 1;
+        direction = LEFT;
         hitboxSize = WIDTH_TILE_SIZE / 2;
 
         setBatImage();
@@ -33,7 +39,7 @@ public class Bat extends Entity {
                     ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/enemies/bat/wings_1.png")),
                     ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/enemies/bat/wings_2.png"))
             );
-            animationMap.put(Direction.LEFT, leftSprites);
+            animationMap.put(LEFT, leftSprites);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,7 +47,24 @@ public class Bat extends Entity {
 
     @Override
     public void update() {
+
+        // PATHFINDING ALGORITHM
+        chasePlayer();
+
+        // VERTICAL MOVEMENT
+        if (flyFrameCounter < 60) {
+            yPosition--;
+            flyFrameCounter++;
+        }
+        else if (flyFrameCounter < 120 && yPosition < SCREEN_HEIGHT - HEIGHT_TILE_SIZE * 2) {
+            yPosition++;
+            flyFrameCounter++;
+        } else
+            flyFrameCounter = 0;
+
+        // SPRITE ANIMATION
         spriteCounter++;
+
         if (spriteCounter > 9) {
             if (spriteNumber == 1)
                 spriteNumber = 2;
@@ -62,16 +85,16 @@ public class Bat extends Entity {
                     image = animationMap.get(direction).get(spriteNumber - 1);
                 }
                 case RIGHT, UP_RIGHT -> {
-                    // TODO
-                    /*Direction utilDirection = direction == Direction.RIGHT ? Direction.LEFT : Direction.UP_LEFT;
-                    transformX.translate(-animationMap.get(utilDirection).get(spriteNumber - 1).getWidth(null), 0);
+                    transformX.translate(-animationMap.get(LEFT).get(spriteNumber - 1).getWidth(null), 0);
                     AffineTransformOp op = new AffineTransformOp(transformX, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                    image = op.filter(animationMap.get(utilDirection).get(spriteNumber - 1), null);*/
+                    image = op.filter(animationMap.get(LEFT).get(spriteNumber - 1), null);
                 }
             }
         }
 
         graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
+
+        graphics2D.setColor(new Color(0, 0, 255, 127));
         graphics2D.fill(hitBox);
     }
 }
