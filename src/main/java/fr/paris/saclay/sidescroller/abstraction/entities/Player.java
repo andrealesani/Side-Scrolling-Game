@@ -1,7 +1,7 @@
-package fr.paris.saclay.sidescroller.abstraction;
+package fr.paris.saclay.sidescroller.abstraction.entities;
 
+import fr.paris.saclay.sidescroller.abstraction.Direction;
 import fr.paris.saclay.sidescroller.controller.GamePanel;
-import fr.paris.saclay.sidescroller.utils.InputHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,10 +15,15 @@ import java.util.List;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Player extends Entity {
-    GamePanel gamePanel;
+    private boolean invincible;
+    private int invincibilityTimer;
 
     public Player(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
+        super(gamePanel);
+        hitboxSize = WIDTH_TILE_SIZE / 2;
+        lifePoints = 6;
+        invincible = false;
+        invincibilityTimer = 0;
         setPlayerDefaultPosition();
         setPlayerImage();
     }
@@ -50,6 +55,30 @@ public class Player extends Entity {
         }
     }
 
+    /**
+     * Sets the player invincible for the specified amount of frames.
+     *
+     * @param invincibilityTimer the number of frames during which the player is invincible.
+     */
+    public void setInvincible(int invincibilityTimer) {
+        this.invincible = true;
+        this.invincibilityTimer = invincibilityTimer;
+    }
+
+    public boolean isInvincible() {
+        return invincible;
+    }
+
+    public void tookDamage(int lifePoints) {
+        if (!isInvincible())
+            this.lifePoints -= lifePoints;
+
+        if (this.lifePoints == 0) {
+            gamePanel.setGameOver();
+        }
+    }
+
+    @Override
     public void update() {
         if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed)) {
             if (gamePanel.rightPressed) {
@@ -70,11 +99,6 @@ public class Player extends Entity {
                         spriteNumber = 0;
                     }
                     case UP_LEFT, UP_RIGHT -> {
-                        if (direction == Direction.UP_RIGHT && xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
-                            xPosition += speed / 3;
-                        } else if (direction == Direction.UP_LEFT && xPosition >= 5) {
-                            xPosition -= speed / 3;
-                        }
                         if (spriteNumber == 1 || spriteNumber == 2) {
                             yPosition -= speed * 1.5;
                         } else if (spriteNumber == 4 || spriteNumber == 5) {
@@ -105,6 +129,13 @@ public class Player extends Entity {
                 }
             }
         }
+
+        if (invincibilityTimer == 0)
+            invincible = false;
+        else
+            invincibilityTimer--;
+
+        updateHitboxPosition();
     }
 
     public void draw(Graphics2D graphics2D) {
@@ -129,10 +160,12 @@ public class Player extends Entity {
                 }
             }
         }
-       /* System.out.println(spriteNumber);
-        System.out.println(isJumping);
-        System.out.println(direction);*/
 
         graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
+        if (isInvincible())
+            graphics2D.setColor(new Color(255, 0, 0, 127));
+        else
+            graphics2D.setColor(new Color(0, 0, 255, 127));
+        graphics2D.fill(hitBox);
     }
 }

@@ -12,10 +12,9 @@ import static fr.paris.saclay.sidescroller.utils.Constants.*;
 public class Terrain extends Drawable {
     Image terrain;
     int numOfTiles;
-    GamePanel gamePanel;
 
     public Terrain(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
+        super(gamePanel);
         direction = Direction.RIGHT;
         speed = 0;
         numOfTiles = SCREEN_WIDTH / WIDTH_TILE_SIZE;
@@ -28,37 +27,7 @@ public class Terrain extends Drawable {
 
     @Override
     public void update() {
-        speed = gamePanel.getPlayerSpeed();
-        if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed)) {
-            if (gamePanel.rightPressed) {
-                direction = Direction.RIGHT;
-                if (gamePanel.getPlayerPositionX() >= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
-                    xPosition -= speed;
-                }
-            } else if (gamePanel.leftPressed) {
-                direction = Direction.LEFT;
-                if (gamePanel.getPlayerPositionX() <= 5) {
-                    xPosition += speed;
-                }
-            } else {
-                switch (direction) {
-                    case LEFT -> {
-                        direction = Direction.UP_LEFT;
-                    }
-                    case RIGHT -> {
-                        direction = Direction.UP_RIGHT;
-                    }
-                    case UP_LEFT -> {
-                        xPosition += speed / 2;
-                    }
-                    case UP_RIGHT -> {
-                        xPosition -= speed / 2;
-                    }
-                }
-            }
-            if (xPosition > 0)
-                xPosition = 0;
-        }
+
     }
 
     @Override
