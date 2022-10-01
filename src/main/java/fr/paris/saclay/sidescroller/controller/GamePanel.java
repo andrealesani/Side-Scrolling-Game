@@ -50,11 +50,11 @@ public class GamePanel extends JPanel implements Runnable {
         this.parentContainer = parent;
         try {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(getClass().getClassLoader().getResource("fonts/Monocraft.otf").toURI())));
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("fonts/Monocraft.otf")));
             fullHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/player/health/full_heart.png"));
             halfHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/player/health/half_heart.png"));
             emptyHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/player/health/empty_heart.png"));
-        } catch (IOException | FontFormatException | URISyntaxException e) {
+        } catch (IOException | FontFormatException e) {
             e.printStackTrace();
         }
 

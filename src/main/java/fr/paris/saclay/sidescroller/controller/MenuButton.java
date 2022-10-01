@@ -23,7 +23,7 @@ public class MenuButton extends JButton {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setForeground(Color.decode(PRIMARY_COLOR));
+        setForeground(Color.white);
         setFont(new Font("Monocraft", Font.PLAIN, 24));
         setBorder(new EmptyBorder(0,0,0,0));
         setText(label);
@@ -32,11 +32,13 @@ public class MenuButton extends JButton {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
+                setForeground(Color.decode(PRIMARY_COLOR));
                 setIcon(new ImageIcon(image));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
+                setForeground(Color.white);
                 setIcon(new ImageIcon(GrayFilter.createDisabledImage(image)));
             }
         });

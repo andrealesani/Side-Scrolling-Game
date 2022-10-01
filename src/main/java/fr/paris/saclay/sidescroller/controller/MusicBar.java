@@ -3,6 +3,7 @@ package fr.paris.saclay.sidescroller.controller;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.PRIMARY_COLOR;
@@ -32,7 +33,7 @@ public class MusicBar extends JPanel {
     public void play() {
         try {
             String song = player.getModel().getSoundtrack().get(player.getModel().getCurrentSong());
-            currentSong = AudioSystem.getAudioInputStream(getClass().getClassLoader().getResourceAsStream(pathname + song));
+            currentSong = AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(pathname + song)));
             player.getCurrentSongLabel().setText(song.split(".wav")[0]);
             mediaPlayer.close();
             mediaPlayer.open(currentSong);

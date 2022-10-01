@@ -112,8 +112,10 @@ public class MusicPlayer extends JPanel {
     }
 
     private void resume() {
-        musicBar.getMediaPlayer().setMicrosecondPosition(model.getCurrentSongTimestamp());
-        musicBar.getMediaPlayer().start();
+        if(!musicBar.getMediaPlayer().isRunning()){
+            musicBar.getMediaPlayer().setMicrosecondPosition(model.getCurrentSongTimestamp());
+            musicBar.getMediaPlayer().start();
+        }
     }
 
     @Override
