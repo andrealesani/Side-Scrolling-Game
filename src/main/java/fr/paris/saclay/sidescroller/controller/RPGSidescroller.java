@@ -2,6 +2,7 @@ package fr.paris.saclay.sidescroller.controller;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_HEIGHT;
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
@@ -16,6 +17,7 @@ public class RPGSidescroller extends JFrame {
 
     public RPGSidescroller() {
         super("RPG Sidescroller");
+        registerFont();
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameMenu = new GameMenu(this);
@@ -29,6 +31,15 @@ public class RPGSidescroller extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private void registerFont() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("fonts/Monocraft.otf")));
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private JLayeredPane createLayeredPane() {
