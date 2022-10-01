@@ -8,19 +8,22 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
+import static fr.paris.saclay.sidescroller.utils.Constants.PRIMARY_COLOR;
+import static fr.paris.saclay.sidescroller.utils.Constants.SECONDARY_COLOR;
+
 public class MenuButton extends JButton {
 
     private Image image;
     public MenuButton(String filename, String label, GameMenu menu) {
         setPreferredSize(new Dimension(menu.getPreferredSize().width/3, menu.getPreferredSize().height/5));
         try {
-            image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/" + filename + ".png"));
+            image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/menu/" + filename + ".png"));
             image = image.getScaledInstance(menu.getPreferredSize().width/3, menu.getPreferredSize().height/5, Image.SCALE_SMOOTH);
             setIcon(new ImageIcon(GrayFilter.createDisabledImage(image)));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setForeground(Color.white);
+        setForeground(Color.decode(PRIMARY_COLOR));
         setFont(new Font("Monocraft", Font.PLAIN, 24));
         setBorder(new EmptyBorder(0,0,0,0));
         setText(label);

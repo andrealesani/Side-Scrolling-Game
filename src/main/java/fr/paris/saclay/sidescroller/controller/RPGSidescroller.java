@@ -12,13 +12,17 @@ public class RPGSidescroller extends JFrame {
 
     private GameMenu gameMenu;
 
+    private MusicPlayer musicPlayer;
+
     public RPGSidescroller() {
         super("RPG Sidescroller");
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gamePanel = new GamePanel(this);
         gameMenu = new GameMenu(this);
-        add(gamePanel);
+        musicPlayer = new MusicPlayer();
+        gamePanel = new GamePanel(this);
+        JLayeredPane layeredPane = createLayeredPane();
+        setLayeredPane(layeredPane);
         setGlassPane(gameMenu);
         getGlassPane().setVisible(true);
         setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT+25)); // +25 is needed because JFrame takes into account the title bar
@@ -27,11 +31,25 @@ public class RPGSidescroller extends JFrame {
         setVisible(true);
     }
 
+    private JLayeredPane createLayeredPane() {
+        JLayeredPane layeredPane = new JLayeredPane();
+        musicPlayer.setBounds(SCREEN_WIDTH-SCREEN_WIDTH/4, 10, 200, 100);
+        layeredPane.add(musicPlayer, JLayeredPane.POPUP_LAYER);
+        gamePanel.setBounds(0,0,SCREEN_WIDTH, SCREEN_HEIGHT);
+        layeredPane.add(gamePanel, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.setVisible(true);
+        return layeredPane;
+    }
+
     public GamePanel getGamePanel() {
         return gamePanel;
     }
 
     public GameMenu getGameMenu() {
         return gameMenu;
+    }
+
+    public MusicPlayer getMusicPlayer() {
+        return musicPlayer;
     }
 }
