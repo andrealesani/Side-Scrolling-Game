@@ -27,16 +27,16 @@ public class Player extends Entity {
         invincibilityTimer = 0;
         setPlayerDefaultPosition();
         setSprites(Arrays.asList(
-                "images/pink_alien_left.png",
-                "images/pink_alien_left_2.png"
+                "images/player/avatars/pink/alien_left.png",
+                "images/player/avatars/pink/alien_left_2.png"
         ));
         setJumpSprites(Arrays.asList(
-                "images/pink_alien_left_jump_2.png",
-                "images/pink_alien_left_jump_3.png",
-                "images/pink_alien_left_jump_4.png",
-                "images/pink_alien_left_jump_5.png",
-                "images/pink_alien_left_jump_2.png",
-                "images/pink_alien_left_jump.png"
+                "images/player/avatars/pink/alien_left_jump_2.png",
+                "images/player/avatars/pink/alien_left_jump_3.png",
+                "images/player/avatars/pink/alien_left_jump_4.png",
+                "images/player/avatars/pink/alien_left_jump_5.png",
+                "images/player/avatars/pink/alien_left_jump_2.png",
+                "images/player/avatars/pink/alien_left_jump.png"
         ));
     }
 

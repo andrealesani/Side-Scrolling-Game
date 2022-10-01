@@ -7,7 +7,6 @@ import fr.paris.saclay.sidescroller.abstraction.entities.Ghost;
 import fr.paris.saclay.sidescroller.abstraction.entities.Player;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -41,26 +40,25 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean cameraHasMoved;
     private boolean gameOver = false;
 
-    private Clip mediaPlayer;
     BufferedImage fullHeartImage, halfHeartImage, emptyHeartImage;
+    private MusicPlayer mediaPlayer;
 
     public GamePanel(RPGSidescroller parent) {
-        setBackground(Color.BLACK);
+        mediaPlayer = parent.getMusicPlayer();
         setDoubleBuffered(true);
         setFocusable(true);
         this.parentContainer = parent;
         try {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(getClass().getClassLoader().getResource("fonts/Monocraft.otf").toURI())));
-            fullHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/full_heart.png"));
-            halfHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/half_heart.png"));
-            emptyHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/empty_heart.png"));
+            fullHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/player/health/full_heart.png"));
+            halfHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/player/health/half_heart.png"));
+            emptyHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/player/health/empty_heart.png"));
         } catch (IOException | FontFormatException | URISyntaxException e) {
             e.printStackTrace();
         }
 
         collisionDetector = new CollisionDetector(this);
-
         setKeyBindings();
 
         setVisible(true);
@@ -104,6 +102,7 @@ public class GamePanel extends JPanel implements Runnable {
         transferFocus();
         parentContainer.getGlassPane().setVisible(false);
         gameThread.start();
+        parentContainer.getMusicPlayer().getMusicBar().play();
     }
 
     @Override
@@ -113,14 +112,6 @@ public class GamePanel extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0;
-        try {
-            mediaPlayer = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(getClass().getClassLoader().getResourceAsStream("soundtrack/megalovania.wav"));
-            mediaPlayer.open(inputStream);
-            mediaPlayer.start();
-        } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
-            e.printStackTrace();
-        }
 
         while (gameThread != null) {
             if (isRunning) {
@@ -131,6 +122,7 @@ public class GamePanel extends JPanel implements Runnable {
                 if (delta >= 1) {
                     update();
                     repaint();
+                    parentContainer.getMusicPlayer().repaint();
                     delta--;
                 }
                 if (timer > 1000000000) {
@@ -147,8 +139,11 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        if (gameOver)
+        if (gameOver){
+            parentContainer.getMusicPlayer().close();
             return;
+        }
+
 
         for (var drawable : drawables)
             drawable.update();
@@ -187,6 +182,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void drawGameOver(Graphics2D graphics2D) {
+        graphics2D.setColor(Color.decode(PRIMARY_COLOR));
         graphics2D.setFont(new Font("Monocraft", Font.BOLD, 72));
         // TODO dynamically center the text
         graphics2D.drawString("GAME OVER", SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100);
@@ -271,9 +267,14 @@ public class GamePanel extends JPanel implements Runnable {
     public Action showMenu() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                GameMenu menu = parentContainer.getGameMenu();
-                menu.setPauseMenu(true);
-                menu.setPausedGridConstraints();
+                if(gameOver){
+                    parentContainer.getGameMenu().quitToMenu(parentContainer);
+                }
+                else {
+                    GameMenu menu = parentContainer.getGameMenu();
+                    menu.setPauseMenu(true);
+                    menu.setPausedGridConstraints();
+                }
                 parentContainer.getGlassPane().setVisible(true);
                 isRunning = false;
                 mediaPlayer.stop();

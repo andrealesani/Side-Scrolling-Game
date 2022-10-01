@@ -12,7 +12,7 @@ import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
 
 public class GameMenuUI {
 
-    private String currentImage = "images/book_1.png";
+    private String currentImage = "images/menu/book_1.png";
 
     private int currentAnimation = 1;
 
@@ -24,7 +24,7 @@ public class GameMenuUI {
         if (!menu.getModel().isPauseMenu()) {
             menu.setOpaque(false);
             try {
-                graphics2D.drawImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/menu_background.png")),
+                graphics2D.drawImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/menu/menu_background.png")),
                         0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, menu);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -64,7 +64,7 @@ public class GameMenuUI {
 
     public void updateImage() {
         currentAnimation++;
-        this.currentImage = "images/book_" + currentAnimation + ".png";
+        this.currentImage = "images/menu/book_" + currentAnimation + ".png";
     }
 
     public int getCurrentAnimation() {

@@ -10,8 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_HEIGHT;
-import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
+import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class GameMenu extends JPanel implements ActionListener {
     private final GameMenuUI ui;
@@ -40,12 +39,12 @@ public class GameMenu extends JPanel implements ActionListener {
 
     private void initializeMenu(RPGSidescroller frame) {
         model.setTimer(new Timer(200, this));
-        model.setPlayButton(new MenuButton("menu_button_alt", "Play", this));
-        model.setQuitButton(new MenuButton("menu_button_alt", "Quit", this));
-        model.setResumeButton(new MenuButton("menu_button_alt", "Resume", this));
-        model.setQuitToMenuButton(new MenuButton("menu_button_alt", "Menu", this));
+        model.setPlayButton(new MenuButton("menu_button", "Play", this));
+        model.setQuitButton(new MenuButton("menu_button", "Quit", this));
+        model.setResumeButton(new MenuButton("menu_button", "Resume", this));
+        model.setQuitToMenuButton(new MenuButton("menu_button", "Menu", this));
         model.setCredits(new JLabel("<html><body style=\"text-align: center\">Credits<br><br>Sonny<br>&<br>Andrea</body></html>"));
-        model.getCredits().setForeground(Color.black);
+        model.getCredits().setForeground(Color.decode(PRIMARY_COLOR));
         model.getCredits().setFont(new Font("Monocraft", Font.PLAIN, 28));
         model.getPlayButton().setVisible(false);
         model.getQuitButton().setVisible(false);
@@ -77,11 +76,7 @@ public class GameMenu extends JPanel implements ActionListener {
         model.getQuitToMenuButton().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                frame.getGamePanel().stop();
-                setPauseMenu(false);
-                setNormalGridConstraints();
-                repaint();
-                revalidate();
+                quitToMenu(frame);
             }
         });
 
@@ -91,6 +86,14 @@ public class GameMenu extends JPanel implements ActionListener {
                 System.exit(0);
             }
         });
+    }
+
+    public void quitToMenu(RPGSidescroller frame) {
+        frame.getGamePanel().stop();
+        setPauseMenu(false);
+        setNormalGridConstraints();
+        repaint();
+        revalidate();
     }
 
     public void setNormalGridConstraints() {
