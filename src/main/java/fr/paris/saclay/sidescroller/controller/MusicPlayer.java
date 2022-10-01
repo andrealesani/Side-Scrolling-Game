@@ -8,14 +8,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.PRIMARY_COLOR;
-import static fr.paris.saclay.sidescroller.utils.Constants.SECONDARY_COLOR;
 
 public class MusicPlayer extends JPanel {
     private MusicBar musicBar;
 
-    private MusicPlayerModel model;
+    private final MusicPlayerModel model;
 
-    private JLabel currentSongLabel = new JLabel("");
+    private final JLabel currentSongLabel = new JLabel("");
 
     public MusicPlayer() {
         model = new MusicPlayerModel();
@@ -101,9 +100,7 @@ public class MusicPlayer extends JPanel {
 
     private void previous() {
         if (musicBar.getMediaPlayer().getMicrosecondPosition() / 1000000 <= 2) {
-            if ((model.getCurrentSong() - 1) < 0) {
-                model.setCurrentSong(0);
-            } else model.setCurrentSong(model.getCurrentSong() - 1);
+            model.setCurrentSong(Math.max((model.getCurrentSong() - 1), 0));
         } else {
             model.setCurrentSong(model.getCurrentSong());
         }

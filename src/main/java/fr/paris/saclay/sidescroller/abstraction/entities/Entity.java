@@ -25,7 +25,7 @@ public abstract class Entity extends Drawable {
     /**
      * Links the Direction the entity is facing to the list of images that represent the entity in that direction.
      */
-    protected HashMap<Direction, List<BufferedImage>> animationMap = new HashMap<>();
+    protected final HashMap<Direction, List<BufferedImage>> animationMap = new HashMap<>();
     /**
      * Identifies the number of frames that have to be rendered before changing a sprite (during an animation).
      */
@@ -145,9 +145,7 @@ public abstract class Entity extends Drawable {
         AffineTransform transformX = AffineTransform.getScaleInstance(-1, 1);
         if (spriteNumber != 0) {
             switch (direction) {
-                case LEFT, UP_LEFT -> {
-                    image = animationMap.get(direction).get(spriteNumber - 1);
-                }
+                case LEFT, UP_LEFT -> image = animationMap.get(direction).get(spriteNumber - 1);
                 case RIGHT, UP_RIGHT -> {
                     transformX.translate(-animationMap.get(LEFT).get(spriteNumber - 1).getWidth(null), 0);
                     AffineTransformOp op = new AffineTransformOp(transformX, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);

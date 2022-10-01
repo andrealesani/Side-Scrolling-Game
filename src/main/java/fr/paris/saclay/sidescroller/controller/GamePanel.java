@@ -12,9 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,14 +24,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public boolean upPressed, rightPressed, leftPressed;
 
-    private final RPGSidescroller parentContainer;
+    private final RPGSideScroller parentContainer;
 
     private Thread gameThread;
     private Player player;
     private List<Entity> entities = new ArrayList<>();
-    ;
+
     private List<Drawable> drawables = new ArrayList<>();
-    ;
+
     private Drawable background;
     private Drawable terrain;
     private final CollisionDetector collisionDetector;
@@ -41,9 +39,9 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean gameOver = false;
 
     BufferedImage fullHeartImage, halfHeartImage, emptyHeartImage;
-    private MusicPlayer mediaPlayer;
+    private final MusicPlayer mediaPlayer;
 
-    public GamePanel(RPGSidescroller parent) {
+    public GamePanel(RPGSideScroller parent) {
         mediaPlayer = parent.getMusicPlayer();
         setDoubleBuffered(true);
         setFocusable(true);
@@ -56,7 +54,7 @@ public class GamePanel extends JPanel implements Runnable {
             e.printStackTrace();
         }
 
-        collisionDetector = new CollisionDetector(this);
+        collisionDetector = new CollisionDetector();
         setKeyBindings();
 
         setVisible(true);

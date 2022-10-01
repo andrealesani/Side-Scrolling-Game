@@ -7,15 +7,15 @@ import java.io.IOException;
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_HEIGHT;
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
 
-public class RPGSidescroller extends JFrame {
+public class RPGSideScroller extends JFrame {
 
-    private GamePanel gamePanel;
+    private final GamePanel gamePanel;
 
-    private GameMenu gameMenu;
+    private final GameMenu gameMenu;
 
-    private MusicPlayer musicPlayer;
+    private final MusicPlayer musicPlayer;
 
-    public RPGSidescroller() {
+    public RPGSideScroller() {
         super("RPG Sidescroller");
         registerFont();
         setResizable(false);

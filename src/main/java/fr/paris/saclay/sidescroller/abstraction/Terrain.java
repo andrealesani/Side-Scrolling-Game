@@ -31,7 +31,6 @@ public class Terrain extends Drawable {
 
     @Override
     public void draw(Graphics2D graphics2D) {
-        //System.out.println(numOfTiles);
         int pixelsOffset = -WIDTH_TILE_SIZE * (numOfTiles - SCREEN_WIDTH / WIDTH_TILE_SIZE - 2);
         int i;
 

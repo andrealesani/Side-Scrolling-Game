@@ -143,7 +143,6 @@ public class Player extends Entity {
     }
 
     public void draw(Graphics2D graphics2D) {
-//        System.out.println(spriteNumber);
         AffineTransform transformX = AffineTransform.getScaleInstance(-1, 1);
         if (spriteNumber != 0) {
             switch (direction) {

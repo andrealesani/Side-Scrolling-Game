@@ -11,14 +11,10 @@ import static fr.paris.saclay.sidescroller.utils.Constants.SECONDARY_COLOR;
 
 public class MusicBar extends JPanel {
 
-    private final String pathname = "sound/";
-
 
     private final MusicPlayer player;
 
     private Clip mediaPlayer;
-
-    private AudioInputStream currentSong;
 
     public MusicBar(int width, int height, MusicPlayer player) {
         this.player = player;
@@ -33,7 +29,8 @@ public class MusicBar extends JPanel {
     public void play() {
         try {
             String song = player.getModel().getSoundtrack().get(player.getModel().getCurrentSong());
-            currentSong = AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(pathname + song)));
+            String pathname = "sound/";
+            AudioInputStream currentSong = AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(pathname + song)));
             player.getCurrentSongLabel().setText(song.split(".wav")[0]);
             mediaPlayer.close();
             mediaPlayer.open(currentSong);
@@ -64,7 +61,7 @@ public class MusicBar extends JPanel {
     }
 
     public int getDeltaSong() {
-        double songProgress = mediaPlayer.getMicrosecondPosition() / 1000000;
+        double songProgress = mediaPlayer.getMicrosecondPosition() / 1000000.0;
         if (songProgress >= player.getModel().getSongDuration()) {
             mediaPlayer.setMicrosecondPosition(0);
         }

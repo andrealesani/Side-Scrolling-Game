@@ -1,9 +1,9 @@
 package fr.paris.saclay.sidescroller;
 
-import fr.paris.saclay.sidescroller.controller.RPGSidescroller;
+import fr.paris.saclay.sidescroller.controller.RPGSideScroller;
 
 public class Main {
     public static void main(String[] args) {
-    RPGSidescroller game = new RPGSidescroller();
+    RPGSideScroller game = new RPGSideScroller();
     }
 }

@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.PRIMARY_COLOR;
-import static fr.paris.saclay.sidescroller.utils.Constants.SECONDARY_COLOR;
 
 public class MenuButton extends JButton {
 

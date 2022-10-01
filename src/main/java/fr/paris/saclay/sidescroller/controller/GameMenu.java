@@ -18,7 +18,7 @@ public class GameMenu extends JPanel implements ActionListener {
 
     private final JPanel menuPanel;
 
-    public GameMenu(RPGSidescroller frame) {
+    public GameMenu(RPGSideScroller frame) {
         ui = new GameMenuUI();
         model = new GameMenuModel();
         SpringLayout springLayout = new SpringLayout();
@@ -37,7 +37,7 @@ public class GameMenu extends JPanel implements ActionListener {
         model.getTimer().start();
     }
 
-    private void initializeMenu(RPGSidescroller frame) {
+    private void initializeMenu(RPGSideScroller frame) {
         model.setTimer(new Timer(200, this));
         model.setPlayButton(new MenuButton("menu_button", "Play", this));
         model.setQuitButton(new MenuButton("menu_button", "Quit", this));
@@ -88,7 +88,7 @@ public class GameMenu extends JPanel implements ActionListener {
         });
     }
 
-    public void quitToMenu(RPGSidescroller frame) {
+    public void quitToMenu(RPGSideScroller frame) {
         frame.getGamePanel().stop();
         setPauseMenu(false);
         setNormalGridConstraints();
