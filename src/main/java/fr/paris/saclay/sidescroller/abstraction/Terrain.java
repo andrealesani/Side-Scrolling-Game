@@ -1,7 +1,6 @@
 package fr.paris.saclay.sidescroller.abstraction;
 
 import fr.paris.saclay.sidescroller.controller.GamePanel;
-import fr.paris.saclay.sidescroller.utils.InputHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

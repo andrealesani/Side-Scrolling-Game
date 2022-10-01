@@ -11,4 +11,5 @@ public class Constants {
 
     public static final int SCREEN_WIDTH = WIDTH_TILE_SIZE * MAX_SCREEN_COL;
     public static final int SCREEN_HEIGHT = HEIGHT_TILE_SIZE * MAX_SCREEN_ROWS;
+    public static final int PLAYER_MAX_HP = 6;
 }
