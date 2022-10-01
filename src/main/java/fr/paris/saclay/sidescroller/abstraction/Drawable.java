@@ -45,7 +45,7 @@ public abstract class Drawable {
     /**
      * Each Drawable object must implement a method to be rendered inside the JFrame.
      *
-     * @param graphics2D the object in charge of rendering shapes inside the JFrame.
+     * @param graphics2D the rendering environment.
      */
     public abstract void draw(Graphics2D graphics2D);
 }

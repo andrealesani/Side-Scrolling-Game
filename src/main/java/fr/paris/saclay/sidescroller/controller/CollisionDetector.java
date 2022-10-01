@@ -11,8 +11,7 @@ public class CollisionDetector {
     }
 
     public boolean checkCollision(Player player, Entity entity) {
-        //System.out.println("player:" + player.xPosition + " enemy: " + entity.xPosition);
-        if (player.hitBox.intersects(entity.hitBox)) {
+        if (player.getHitBox().intersects(entity.getHitBox())) {
             return true;
         }
         return false;

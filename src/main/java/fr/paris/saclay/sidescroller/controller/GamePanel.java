@@ -1,26 +1,25 @@
 package fr.paris.saclay.sidescroller.controller;
 
 import fr.paris.saclay.sidescroller.abstraction.*;
-import fr.paris.saclay.sidescroller.utils.InputHandler;
-import fr.paris.saclay.sidescroller.abstraction.*;
 import fr.paris.saclay.sidescroller.abstraction.entities.Bat;
 import fr.paris.saclay.sidescroller.abstraction.entities.Entity;
+import fr.paris.saclay.sidescroller.abstraction.entities.Ghost;
 import fr.paris.saclay.sidescroller.abstraction.entities.Player;
-import fr.paris.saclay.sidescroller.utils.InputHandler;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_HEIGHT;
-import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
+import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -43,6 +42,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean gameOver = false;
 
     private Clip mediaPlayer;
+    BufferedImage fullHeartImage, halfHeartImage, emptyHeartImage;
 
     public GamePanel(RPGSidescroller parent) {
         setBackground(Color.BLACK);
@@ -52,6 +52,9 @@ public class GamePanel extends JPanel implements Runnable {
         try {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(getClass().getClassLoader().getResource("fonts/Monocraft.otf").toURI())));
+            fullHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/full_heart.png"));
+            halfHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/half_heart.png"));
+            emptyHeartImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/empty_heart.png"));
         } catch (IOException | FontFormatException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -86,9 +89,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void startGame() {
         gameThread = new Thread(this);
         entities = new ArrayList<>();
-        entities.add(new Bat(this, 0));
-        entities.add(new Bat(this, 500));
-        entities.add(new Bat(this, 600));
+        entities.add(new Ghost(this, 600));
+        entities.add(new Bat(this, 400));
         drawables = new ArrayList<>();
         background = new Background(this);
         drawables.add(background);
@@ -174,15 +176,42 @@ public class GamePanel extends JPanel implements Runnable {
         for (Drawable drawable : drawables)
             drawable.draw(graphics2D);
 
+        if (player != null)
+            drawLifePoints(graphics2D);
+
         if (gameOver) {
-            graphics2D.setFont(new Font("Monocraft", Font.BOLD, 72));
-            // TODO dynamically center the text
-            graphics2D.drawString("GAME OVER", SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100);
-            graphics2D.setFont(new Font("Monocraft", Font.PLAIN, 24));
-            graphics2D.drawString("Press ESC to open menu and start again", SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2);
+            drawGameOver(graphics2D);
         }
 
         graphics2D.dispose();
+    }
+
+    private void drawGameOver(Graphics2D graphics2D) {
+        graphics2D.setFont(new Font("Monocraft", Font.BOLD, 72));
+        // TODO dynamically center the text
+        graphics2D.drawString("GAME OVER", SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100);
+        graphics2D.setFont(new Font("Monocraft", Font.PLAIN, 24));
+        graphics2D.drawString("Press ESC to open menu and start again", SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2);
+    }
+
+    /**
+     * Dynamically draws the life points to the GUI in the form of full, half or empty hearts.
+     *
+     * @param graphics2D the graphics environment on which to draw
+     */
+    private void drawLifePoints(Graphics2D graphics2D) {
+        BufferedImage image;
+        for (int i = 0; i < PLAYER_MAX_HP; i += 2) {
+            if (i < player.getLifePoints()) {
+                if (i + 1 < player.getLifePoints()) {
+                    image = fullHeartImage;
+                } else {
+                    image = halfHeartImage;
+                }
+            } else
+                image = emptyHeartImage;
+            graphics2D.drawImage(image, 30 + i * 20, 20, 30, 30, null);
+        }
     }
 
     public int getPlayerPositionX() {
