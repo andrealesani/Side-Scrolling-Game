@@ -7,8 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 
-import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_HEIGHT;
-import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
+import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class GameMenuUI {
 
@@ -30,7 +29,6 @@ public class GameMenuUI {
                 e.printStackTrace();
             }
         } else menu.setBackground(Color.green);
-        graphics2D.setColor(Color.BLACK);
         Image image = null;
         try {
             image = ImageIO.read(getClass().getClassLoader().getResourceAsStream(currentImage));
@@ -46,7 +44,7 @@ public class GameMenuUI {
     }
 
     private static void drawOutlinedTitle(Graphics graphics, GameMenu menu) {
-        graphics.setColor(Color.black);
+        graphics.setColor(Color.decode(PRIMARY_COLOR));
         graphics.setFont(new Font("Monocraft", Font.PLAIN, 28));
         graphics.drawString("RPG Side Scroller", (SCREEN_WIDTH - menu.getPreferredSize().width / 2) / 2, (SCREEN_HEIGHT -
                 menu.getPreferredSize().height) / 2 + 2);
@@ -56,7 +54,7 @@ public class GameMenuUI {
                 menu.getPreferredSize().height) / 2);
         graphics.drawString("RPG Side Scroller", (SCREEN_WIDTH - menu.getPreferredSize().width / 2) / 2 - 2, (SCREEN_HEIGHT -
                 menu.getPreferredSize().height) / 2);
-        graphics.setColor(Color.white);
+        graphics.setColor(Color.decode(SECONDARY_COLOR));
         graphics.setFont(new Font("Monocraft", Font.PLAIN, 28));
         graphics.drawString("RPG Side Scroller", (SCREEN_WIDTH - menu.getPreferredSize().width / 2) / 2, (SCREEN_HEIGHT -
                 menu.getPreferredSize().height) / 2);

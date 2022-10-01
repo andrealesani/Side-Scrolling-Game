@@ -44,7 +44,7 @@ public class RPGSidescroller extends JFrame {
 
     private JLayeredPane createLayeredPane() {
         JLayeredPane layeredPane = new JLayeredPane();
-        musicPlayer.setBounds(SCREEN_WIDTH-SCREEN_WIDTH/4, 10, 200, 100);
+        musicPlayer.setBounds(SCREEN_WIDTH/2-100, 10, 200, 100);
         layeredPane.add(musicPlayer, JLayeredPane.POPUP_LAYER);
         gamePanel.setBounds(0,0,SCREEN_WIDTH, SCREEN_HEIGHT);
         layeredPane.add(gamePanel, JLayeredPane.DEFAULT_LAYER);
