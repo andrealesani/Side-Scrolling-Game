@@ -3,6 +3,7 @@ package fr.paris.saclay.sidescroller.controller;
 import fr.paris.saclay.sidescroller.abstraction.*;
 import fr.paris.saclay.sidescroller.abstraction.entities.Bat;
 import fr.paris.saclay.sidescroller.abstraction.entities.Entity;
+import fr.paris.saclay.sidescroller.abstraction.entities.Ghost;
 import fr.paris.saclay.sidescroller.abstraction.entities.Player;
 
 import javax.imageio.ImageIO;
@@ -88,9 +89,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void startGame() {
         gameThread = new Thread(this);
         entities = new ArrayList<>();
-        entities.add(new Bat(this, 0));
-        entities.add(new Bat(this, 500));
-        entities.add(new Bat(this, 600));
+        entities.add(new Ghost(this, 600));
+        entities.add(new Bat(this, 400));
         drawables = new ArrayList<>();
         background = new Background(this);
         drawables.add(background);
@@ -194,9 +194,14 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.drawString("Press ESC to open menu and start again", SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2);
     }
 
+    /**
+     * Dynamically draws the life points to the GUI in the form of full, half or empty hearts.
+     *
+     * @param graphics2D the graphics environment on which to draw
+     */
     private void drawLifePoints(Graphics2D graphics2D) {
         BufferedImage image;
-        for (int i = 0; i < PLAYER_MAX_HP; i += 2) { // TODO this may break if we set max hp to an odd number
+        for (int i = 0; i < PLAYER_MAX_HP; i += 2) {
             if (i < player.getLifePoints()) {
                 if (i + 1 < player.getLifePoints()) {
                     image = fullHeartImage;

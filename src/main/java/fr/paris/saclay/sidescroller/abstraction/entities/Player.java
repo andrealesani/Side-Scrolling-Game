@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,31 +26,34 @@ public class Player extends Entity {
         invincible = false;
         invincibilityTimer = 0;
         setPlayerDefaultPosition();
-        setPlayerImage();
+        setSprites(Arrays.asList(
+                "images/pink_alien_left.png",
+                "images/pink_alien_left_2.png"
+        ));
+        setJumpSprites(Arrays.asList(
+                "images/pink_alien_left_jump_2.png",
+                "images/pink_alien_left_jump_3.png",
+                "images/pink_alien_left_jump_4.png",
+                "images/pink_alien_left_jump_5.png",
+                "images/pink_alien_left_jump_2.png",
+                "images/pink_alien_left_jump.png"
+        ));
     }
 
-    public void setPlayerDefaultPosition() {
+    private void setPlayerDefaultPosition() {
         xPosition = 100;
         yPosition = SCREEN_HEIGHT - HEIGHT_TILE_SIZE * 2;
         speed = 6;
         direction = Direction.RIGHT;
     }
 
-    public void setPlayerImage() {
+    private void setJumpSprites(List<String> paths) {
+        List<BufferedImage> upLeftSprites = new ArrayList<>();
         try {
-            List<BufferedImage> upLeftSprites = Arrays.asList(
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_2.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_3.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_4.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_5.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump_2.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_jump.png"))
-            );
+            for (String path : paths)
+                upLeftSprites.add(ImageIO.read(getClass().getClassLoader().getResourceAsStream(path)));
+
             animationMap.put(Direction.UP_LEFT, upLeftSprites);
-            List<BufferedImage> leftSprites = Arrays.asList(
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left.png")),
-                    ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/pink_alien_left_2.png")));
-            animationMap.put(Direction.LEFT, leftSprites);
         } catch (IOException e) {
             e.printStackTrace();
         }
