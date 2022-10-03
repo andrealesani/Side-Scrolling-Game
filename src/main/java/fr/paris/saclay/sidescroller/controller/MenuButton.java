@@ -43,4 +43,7 @@ public class MenuButton extends JButton {
         });
     }
 
+    public Image getImage() {
+        return image;
+    }
 }

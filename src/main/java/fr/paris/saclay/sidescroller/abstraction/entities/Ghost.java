@@ -2,6 +2,7 @@ package fr.paris.saclay.sidescroller.abstraction.entities;
 
 import fr.paris.saclay.sidescroller.controller.GamePanel;
 
+import java.awt.*;
 import java.util.Arrays;
 
 import static fr.paris.saclay.sidescroller.abstraction.Direction.LEFT;
@@ -12,14 +13,16 @@ public class Ghost extends Entity {
 
     public Ghost(GamePanel gamePanel, int xPosition) {
         super(gamePanel);
-
         this.xPosition = xPosition;
         yPosition = SCREEN_HEIGHT - HEIGHT_TILE_SIZE * 2;
         speed = 1;
-        lifePoints = 1;
+        lifePoints = 4;
+        invincibilityTimer = 0;
+        maximumInvincibility = 30;
         direction = LEFT;
-        hitboxSize = WIDTH_TILE_SIZE / 2 + 10;
-
+        hitboxSize = WIDTH_TILE_SIZE;
+        maximumLifePoints = 4;
+        attackHitboxSize = new Dimension(WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE);
         setSprites(Arrays.asList(
                 "images/enemies/ghost/boo.png",
                 "images/enemies/ghost/meh.png",
@@ -54,15 +57,15 @@ public class Ghost extends Entity {
         spriteCounter++;
 
         if (spriteCounter > 9) {
-            if (spriteNumber == 1)
-                spriteNumber = 2;
-            else
-                spriteNumber = 1;
+            if (spriteNumber >= animationMap.get(LEFT).size() - 2)
+                spriteNumber = 0;
+            else spriteNumber++;
             spriteCounter = 0;
         }
-
         if (frameCounter >= 60 && frameCounter <= 120) {
-            spriteNumber = 3;
+            spriteNumber = 2;
         }
     }
+
+
 }

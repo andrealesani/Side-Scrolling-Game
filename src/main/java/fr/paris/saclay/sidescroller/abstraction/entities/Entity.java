@@ -30,14 +30,17 @@ public abstract class Entity extends Drawable {
      * Identifies the number of frames that have to be rendered before changing a sprite (during an animation).
      */
     protected int spriteCounter = 0;
+
+    protected boolean isDead = false;
     /**
      * Identifies the sprite that is currently being rendered
      */
-    protected int spriteNumber = 1;
+    protected int spriteNumber = 0;
     /**
      * Is true when the entity is jumping, therefore blocking any other type of movement.
      */
     protected boolean isJumping = false;
+    protected int maximumLifePoints;
     /**
      * Final image that is shown during the rendering of the entity.
      */
@@ -47,10 +50,30 @@ public abstract class Entity extends Drawable {
      * Therefore, this number indicates both the height and the width of the hitbox square (in pixels).
      */
     protected int hitboxSize;
+    protected Dimension attackHitboxSize = new Dimension(0,0);
     /**
      * Represents the area of the entity that is used to compute collisions with enemies or projectiles.
      */
     protected Rectangle hitBox;
+
+    /**
+     * Represents the area of the entity that is used to compute collisions with enemies or projectiles.
+     */
+    protected Rectangle attackHitBox;
+    /**
+     * True if entity is currently invincible
+     */
+    protected boolean isInvincible;
+    /**
+     * Number of frames during which the player will stay invincible
+     */
+    protected int invincibilityTimer;
+
+    protected int maximumInvincibility;
+    /**
+     * True entity is currently invincible
+     */
+    protected boolean isAttacking = false;
 
     public Entity(GamePanel gamePanel) {
         super(gamePanel);
@@ -60,9 +83,16 @@ public abstract class Entity extends Drawable {
     /**
      * Updates the position of the entity's hitbox according to the entity's position inside the screen.
      */
-    // TODO don't hardcode hitbox position
     protected void updateHitboxPosition() {
-        hitBox = new Rectangle(xPosition + WIDTH_TILE_SIZE / 4, yPosition + HEIGHT_TILE_SIZE / 4, hitboxSize, hitboxSize);
+        int hitBoxHorizontalPosition = xPosition + WIDTH_TILE_SIZE / 2 -hitboxSize/2;
+        hitBox = new Rectangle(hitBoxHorizontalPosition, yPosition + HEIGHT_TILE_SIZE / 2 -hitboxSize/2, hitboxSize, hitboxSize);
+        int directionFactor = 0;
+        int directionHitFactor = 1;
+        if (direction == LEFT || direction == ATTACK_LEFT || direction == UP_LEFT){
+            directionFactor = 1;
+            directionHitFactor = 0;
+        }
+        attackHitBox = new Rectangle(hitBoxHorizontalPosition + hitboxSize*directionHitFactor -attackHitboxSize.width*directionFactor, yPosition, attackHitboxSize.width, attackHitboxSize.height);
     }
 
     /**
@@ -78,13 +108,29 @@ public abstract class Entity extends Drawable {
         }
     }
 
+    public void tookDamage() {
+        if (!isInvincible)
+            this.lifePoints -= 1;
+    }
+
     protected void setSprites(List<String> paths) {
-        List<BufferedImage> leftSprites = new ArrayList<>();
+        addSpritesToAnimationMap(paths, new ArrayList<>(), LEFT);
+    }
+
+    protected void setJumpSprites(List<String> paths) {
+        addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.UP_LEFT);
+    }
+
+    protected void setAttackSprites(List<String> paths) {
+        addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.ATTACK_LEFT);
+    }
+
+    private void addSpritesToAnimationMap(List<String> paths, List<BufferedImage> sprites, Direction direction) {
         try {
             for (String path : paths)
-                leftSprites.add(ImageIO.read(getClass().getClassLoader().getResourceAsStream(path)));
+                sprites.add(ImageIO.read(getClass().getClassLoader().getResourceAsStream(path)));
 
-            animationMap.put(LEFT, leftSprites);
+            animationMap.put(direction, sprites);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,19 +147,68 @@ public abstract class Entity extends Drawable {
         return hitBox;
     }
 
+    public int getInvincibilityTimer() {
+        return invincibilityTimer;
+    }
+
+    public void setInvincibilityTimer(int invincibilityTimer) {
+        this.invincibilityTimer = invincibilityTimer;
+    }
+
+    public void setInvincible(boolean invincible) {
+        isInvincible = invincible;
+    }
+
+    public void setEntityInvincible(int invincibilityTimer) {
+        this.isInvincible = true;
+        this.invincibilityTimer = invincibilityTimer;
+    }
+
+    public int getMaximumInvincibility() {
+        return maximumInvincibility;
+    }
+
+    public boolean isInvincible() {
+        return isInvincible;
+    }
+
+    public boolean isAttacking(){
+        return isAttacking;
+    }
+
+    public void setAttacking(boolean isAttacking){
+        this.isAttacking = isAttacking;
+    }
+
+    public Rectangle getAttackHitBox() {
+        return attackHitBox;
+    }
+
+    public int getMaximumLifePoints() {
+        return maximumLifePoints;
+    }
+
+    public void setDead(boolean dead) {
+        isDead = dead;
+    }
+
+    public boolean isDead() {
+        return isDead;
+    }
+
     /**
-     * Entities present a default version of the {@code updateSprites()} method. This method only supports two-sprite
-     * animation for horizontal movement. Each sprite only lasts for 5 frames before changing to the next one.
+     * Entities present a default version of the {@code updateSprites()} method.
+     * Each sprite only lasts for 5 frames before changing to the next one.
      * Feel free to {@code Override} if you want to implement more fancy stuff.
      */
     protected void updateSprites() {
         spriteCounter++;
 
         if (spriteCounter > 9) {
-            if (spriteNumber == 1)
-                spriteNumber = 2;
+            if (spriteNumber == animationMap.get(LEFT).size()-1)
+                spriteNumber = 0;
             else
-                spriteNumber = 1;
+                spriteNumber++;
             spriteCounter = 0;
         }
     }
@@ -123,14 +218,20 @@ public abstract class Entity extends Drawable {
 
     @Override
     public void update() {
+        if (!isDead) {
+            chasePlayer();
 
-        chasePlayer();
+            uniqueMovement();
 
-        uniqueMovement();
+            updateSprites();
 
-        updateSprites();
+            updateHitboxPosition();
 
-        updateHitboxPosition();
+            if (invincibilityTimer == 0)
+                isInvincible = false;
+            else
+                invincibilityTimer--;
+        }
     }
 
     /**
@@ -142,21 +243,46 @@ public abstract class Entity extends Drawable {
      */
     @Override
     public void draw(Graphics2D graphics2D) {
-        AffineTransform transformX = AffineTransform.getScaleInstance(-1, 1);
-        if (spriteNumber != 0) {
+        if (!isDead) {
+            AffineTransform transformX = AffineTransform.getScaleInstance(-1, 1);
             switch (direction) {
-                case LEFT, UP_LEFT -> image = animationMap.get(direction).get(spriteNumber - 1);
+                case LEFT, UP_LEFT -> image = animationMap.get(direction).get(spriteNumber);
                 case RIGHT, UP_RIGHT -> {
-                    transformX.translate(-animationMap.get(LEFT).get(spriteNumber - 1).getWidth(null), 0);
+                    transformX.translate(-animationMap.get(LEFT).get(spriteNumber).getWidth(null), 0);
                     AffineTransformOp op = new AffineTransformOp(transformX, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                    image = op.filter(animationMap.get(LEFT).get(spriteNumber - 1), null);
+                    image = op.filter(animationMap.get(LEFT).get(spriteNumber), null);
                 }
             }
+
+            graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
+
+            graphics2D.setColor(new Color(0, 0, 255, 127));
+            if (isInvincible())
+                graphics2D.setColor(new Color(255, 0, 0, 127));
+            else
+                graphics2D.setColor(new Color(0, 0, 255, 127));
+            graphics2D.fill(hitBox);
+            graphics2D.setColor(new Color(0, 255, 0, 127));
+            graphics2D.fill(attackHitBox);
+            drawHpBar(graphics2D);
         }
+    }
 
-        graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
-
-        graphics2D.setColor(new Color(0, 0, 255, 127));
-        graphics2D.fill(hitBox);
+    protected void drawHpBar(Graphics2D graphics2D){
+        int maximumWidthBar = WIDTH_TILE_SIZE + WIDTH_TILE_SIZE/4;
+        int lostLifePoints = maximumLifePoints - lifePoints;
+        int currentBarPosition = xPosition - WIDTH_TILE_SIZE/8;
+        graphics2D.setColor(Color.green);
+        for (int i = 0; i < lifePoints; i++) {
+            graphics2D.fillRect(currentBarPosition, yPosition - WIDTH_TILE_SIZE/4, maximumWidthBar/maximumLifePoints, 5);
+            currentBarPosition = currentBarPosition + maximumWidthBar/maximumLifePoints;
+        }
+        if(lostLifePoints>0){
+            graphics2D.setColor(Color.red);
+            for (int i = 0; i < lostLifePoints; i++) {
+                graphics2D.fillRect(currentBarPosition, yPosition - WIDTH_TILE_SIZE/4, maximumWidthBar/maximumLifePoints, 5);
+                currentBarPosition = currentBarPosition + maximumWidthBar/maximumLifePoints;
+            }
+        }
     }
 }
