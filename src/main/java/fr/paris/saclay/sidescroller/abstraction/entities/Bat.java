@@ -2,6 +2,7 @@ package fr.paris.saclay.sidescroller.abstraction.entities;
 
 import fr.paris.saclay.sidescroller.controller.GamePanel;
 
+import java.awt.*;
 import java.util.Arrays;
 
 import static fr.paris.saclay.sidescroller.abstraction.Direction.LEFT;
@@ -16,14 +17,16 @@ public class Bat extends Entity {
 
     public Bat(GamePanel gamePanel, int xPosition) {
         super(gamePanel);
-
         this.xPosition = xPosition;
         yPosition = SCREEN_HEIGHT - HEIGHT_TILE_SIZE * 2;
         speed = 2;
-        lifePoints = 1;
+        lifePoints = 3;
+        invincibilityTimer = 0;
+        maximumInvincibility = 30;
         direction = LEFT;
-        hitboxSize = WIDTH_TILE_SIZE / 2;
-
+        hitboxSize = WIDTH_TILE_SIZE;
+        maximumLifePoints = 3;
+        attackHitboxSize = new Dimension(WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE);
         setSprites(Arrays.asList(
                 "images/enemies/bat/wings_1.png",
                 "images/enemies/bat/wings_2.png"

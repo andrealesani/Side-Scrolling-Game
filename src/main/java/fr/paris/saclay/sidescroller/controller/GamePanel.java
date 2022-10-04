@@ -72,12 +72,14 @@ public class GamePanel extends JPanel implements Runnable {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false), "jump");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, false), "jump");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), "menu");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0, false), "attack");
         getActionMap().put("walk_right", walkRight());
         getActionMap().put("walk_right_released", walkRightReleased());
         getActionMap().put("walk_left", walkLeft());
         getActionMap().put("walk_left_released", walkLeftReleased());
         getActionMap().put("jump", jump());
         getActionMap().put("menu", showMenu());
+        getActionMap().put("attack", attack());
     }
 
     public void startGame() {
@@ -110,13 +112,14 @@ public class GamePanel extends JPanel implements Runnable {
         long timer = 0;
 
         while (gameThread != null) {
-            if (isRunning) {
                 currentTime = System.nanoTime();
                 delta += (currentTime - lastTime) / drawInterval;
                 timer += (currentTime - lastTime);
                 lastTime = currentTime;
                 if (delta >= 1) {
-                    update();
+                    if (isRunning) {
+                        update();
+                    }
                     repaint();
                     parentContainer.getMusicPlayer().repaint();
                     delta--;
@@ -124,13 +127,6 @@ public class GamePanel extends JPanel implements Runnable {
                 if (timer > 1000000000) {
                     timer = 0;
                 }
-            } else {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -140,7 +136,6 @@ public class GamePanel extends JPanel implements Runnable {
             return;
         }
 
-
         for (var drawable : drawables)
             drawable.update();
 
@@ -149,12 +144,25 @@ public class GamePanel extends JPanel implements Runnable {
                 entity.updatePositionToCamera();
             terrain.updatePositionToCamera();
         }
+        List<Entity> damagedEntities = checkCollision();
+        if (damagedEntities.size()>0) {
+            for (Entity entity : damagedEntities){
+                entity.tookDamage();
+                if (!entity.isInvincible())
+                    entity.setEntityInvincible(entity.getMaximumInvincibility());
+            }
+        }
 
-        if (isColliding()) {
-            player.tookDamage(1);
-
-            if (!player.isInvincible())
-                player.setInvincible(30); // TODO not hardcode here the invincibility time
+        for (Entity entity : entities){
+            if (entity.getLifePoints() == 0){
+                entity.setDead(true);
+//                SwingUtilities.invokeLater(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        entities.remove(entity);
+//                    }
+//                });
+            }
         }
 
         cameraHasMoved = false;
@@ -179,11 +187,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void drawGameOver(Graphics2D graphics2D) {
         graphics2D.setColor(Color.decode(PRIMARY_COLOR));
-        graphics2D.setFont(new Font("Monocraft", Font.BOLD, 72));
-        // TODO dynamically center the text
-        graphics2D.drawString("GAME OVER", SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100);
-        graphics2D.setFont(new Font("Monocraft", Font.PLAIN, 24));
-        graphics2D.drawString("Press ESC to open menu and start again", SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2);
+        Font titleFont = new Font("Monocraft", Font.BOLD, 72);
+        graphics2D.setFont(titleFont);
+        String gameOver = "GAME OVER";
+        graphics2D.drawString(gameOver, SCREEN_WIDTH / 2 - graphics2D.getFontMetrics(titleFont).stringWidth(gameOver)/2, SCREEN_HEIGHT / 2 - 100);
+        titleFont = new Font("Monocraft", Font.PLAIN, 24);
+        gameOver = "Press ESC to open menu and start again";
+        graphics2D.setFont(titleFont);
+        graphics2D.drawString(gameOver, SCREEN_WIDTH / 2 - graphics2D.getFontMetrics(titleFont).stringWidth(gameOver)/2,  SCREEN_HEIGHT / 2);
     }
 
     /**
@@ -193,7 +204,7 @@ public class GamePanel extends JPanel implements Runnable {
      */
     private void drawLifePoints(Graphics2D graphics2D) {
         BufferedImage image;
-        for (int i = 0; i < PLAYER_MAX_HP; i += 2) {
+        for (int i = 0; i < player.getMaximumLifePoints(); i += 2) {
             if (i < player.getLifePoints()) {
                 if (i + 1 < player.getLifePoints()) {
                     image = fullHeartImage;
@@ -250,6 +261,14 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    private Action attack() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                player.attack();
+            }
+        };
+    }
+
     private Action jump() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -263,17 +282,21 @@ public class GamePanel extends JPanel implements Runnable {
     public Action showMenu() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                if(gameOver){
-                    parentContainer.getGameMenu().quitToMenu(parentContainer);
+                if(isRunning){
+                    if(gameOver){
+                        parentContainer.getGameMenu().quitToMenu(parentContainer);
+                    }
+                    else {
+                        GameMenu menu = parentContainer.getGameMenu();
+                        menu.setPauseMenu(true);
+                        menu.setPausedGridConstraints();
+                        menu.getModel().getResumeButton().setVisible(true);
+                        menu.getModel().getQuitToMenuButton().setVisible(true);
+                    }
+                    parentContainer.getGlassPane().setVisible(true);
+                    isRunning = false;
+                    mediaPlayer.stop();
                 }
-                else {
-                    GameMenu menu = parentContainer.getGameMenu();
-                    menu.setPauseMenu(true);
-                    menu.setPausedGridConstraints();
-                }
-                parentContainer.getGlassPane().setVisible(true);
-                isRunning = false;
-                mediaPlayer.stop();
             }
         };
     }
@@ -300,13 +323,18 @@ public class GamePanel extends JPanel implements Runnable {
      *
      * @return true if the player is colliding with at least one other entity in the scene
      */
-    public boolean isColliding() {
-        for (Entity entity : entities)
-            if (!entity.equals(player) && collisionDetector.checkCollision(player, entity)) {
-                return true;
+    public List<Entity> checkCollision() {
+        List<Entity> damagedEntities = new ArrayList<>();
+        for (Entity entity : entities) {
+            if (!entity.equals(player) && collisionDetector.checkCollision(player, entity, false) && !player.isInvincible() && !entity.isDead()) {
+                if (!damagedEntities.contains(player))
+                    damagedEntities.add(player);
             }
-
-        return false;
+            if (player.isAttacking() && collisionDetector.checkCollision(player, entity, true) && !entity.isInvincible()) {
+                damagedEntities.add(entity);
+            }
+        }
+        return damagedEntities;
     }
 
     /**
@@ -318,5 +346,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setGameOver() {
         gameOver = true;
+    }
+
+    public boolean isPlayerAttacking(){
+        return player.isAttacking();
     }
 }

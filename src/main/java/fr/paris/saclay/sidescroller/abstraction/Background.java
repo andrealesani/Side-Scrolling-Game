@@ -28,7 +28,7 @@ public class Background extends Drawable {
     @Override
     public void update() {
         speed = gamePanel.getPlayerSpeed();
-        if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed)) {
+        if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed) && !gamePanel.isPlayerAttacking()) {
             if (gamePanel.rightPressed) {
                 direction = RIGHT;
                 if (gamePanel.getPlayerPositionX() >= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {

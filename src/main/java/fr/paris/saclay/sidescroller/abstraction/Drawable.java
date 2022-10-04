@@ -27,7 +27,6 @@ public abstract class Drawable {
         this.gamePanel = gamePanel;
     }
 
-    // TODO don't hardcode jumping speed
     public void updatePositionToCamera() {
         switch (gamePanel.getPlayerDirection()) {
             case LEFT -> xPosition += gamePanel.getPlayerSpeed();

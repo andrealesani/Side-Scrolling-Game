@@ -3,12 +3,12 @@ package fr.paris.saclay.sidescroller.controller;
 import fr.paris.saclay.sidescroller.abstraction.GameMenuModel;
 import fr.paris.saclay.sidescroller.presentation.GameMenuUI;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
@@ -49,6 +49,8 @@ public class GameMenu extends JPanel implements ActionListener {
         model.getPlayButton().setVisible(false);
         model.getQuitButton().setVisible(false);
         model.getCredits().setVisible(false);
+        model.getQuitToMenuButton().setVisible(false);
+        model.getResumeButton().setVisible(false);
         model.getPlayButton().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -91,9 +93,11 @@ public class GameMenu extends JPanel implements ActionListener {
     public void quitToMenu(RPGSideScroller frame) {
         frame.getGamePanel().stop();
         setPauseMenu(false);
+        model.getQuitToMenuButton().setIcon(new ImageIcon(GrayFilter.createDisabledImage(model.getQuitToMenuButton().getImage())));
+        model.getQuitToMenuButton().setForeground(Color.white);
+        model.getQuitToMenuButton().getModel().setPressed(false);
         setNormalGridConstraints();
         repaint();
-        revalidate();
     }
 
     public void setNormalGridConstraints() {

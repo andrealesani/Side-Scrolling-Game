@@ -16,4 +16,6 @@ public class Constants {
     public static final String PRIMARY_COLOR = "#3c1f30";
 
     public static final String SECONDARY_COLOR = "#fcc760";
+
+    public static final int PLAYER_INVINCIBILITY_TIME = 90;
 }
