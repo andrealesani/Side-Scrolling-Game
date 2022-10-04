@@ -10,11 +10,9 @@ import java.awt.event.MouseEvent;
 import static fr.paris.saclay.sidescroller.utils.Constants.PRIMARY_COLOR;
 
 public class MusicPlayer extends JPanel {
-    private MusicBar musicBar;
-
     private final MusicPlayerModel model;
-
     private final JLabel currentSongLabel = new JLabel("");
+    private MusicBar musicBar;
 
     public MusicPlayer() {
         model = new MusicPlayerModel();
@@ -36,26 +34,6 @@ public class MusicPlayer extends JPanel {
         currentSongLabel.setForeground(Color.decode(PRIMARY_COLOR));
         currentSongLabel.setFont(new Font("Monocraft", Font.PLAIN, 12));
         setupConstraints(constraints, previousButton, playButton, pauseButton, nextButton, musicPanel);
-    }
-
-    private void setupConstraints(GridBagConstraints constraints, MusicButton previousButton, MusicButton playButton, MusicButton pauseButton, MusicButton nextButton, JPanel musicPanel) {
-        constraints.gridwidth = 4;
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        add(currentSongLabel, constraints);
-        constraints.gridy = 1;
-        add(musicPanel, constraints);
-        constraints.weightx = 0.2;
-        constraints.gridwidth = 1;
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        add(previousButton, constraints);
-        constraints.gridx = 1;
-        add(playButton, constraints);
-        constraints.gridx = 2;
-        add(pauseButton, constraints);
-        constraints.gridx = 3;
-        add(nextButton, constraints);
     }
 
     private void addMouseListeners(MusicButton previousButton, MusicButton playButton, MusicButton pauseButton, MusicButton nextButton) {
@@ -85,17 +63,24 @@ public class MusicPlayer extends JPanel {
         });
     }
 
-    private void next() {
-        if (model.getCurrentSong() + 1 >= model.getSoundtrack().size()) {
-            model.setCurrentSong(0);
-        } else model.setCurrentSong(model.getCurrentSong() + 1);
-        musicBar.getMediaPlayer().stop();
-        musicBar.play();
-    }
-
-    private void pause() {
-        model.setCurrentSongTimestamp(musicBar.getMediaPlayer().getMicrosecondPosition());
-        musicBar.getMediaPlayer().stop();
+    private void setupConstraints(GridBagConstraints constraints, MusicButton previousButton, MusicButton playButton, MusicButton pauseButton, MusicButton nextButton, JPanel musicPanel) {
+        constraints.gridwidth = 4;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        add(currentSongLabel, constraints);
+        constraints.gridy = 1;
+        add(musicPanel, constraints);
+        constraints.weightx = 0.2;
+        constraints.gridwidth = 1;
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        add(previousButton, constraints);
+        constraints.gridx = 1;
+        add(playButton, constraints);
+        constraints.gridx = 2;
+        add(pauseButton, constraints);
+        constraints.gridx = 3;
+        add(nextButton, constraints);
     }
 
     private void previous() {
@@ -109,10 +94,23 @@ public class MusicPlayer extends JPanel {
     }
 
     private void resume() {
-        if(!musicBar.getMediaPlayer().isRunning()){
+        if (!musicBar.getMediaPlayer().isRunning()) {
             musicBar.getMediaPlayer().setMicrosecondPosition(model.getCurrentSongTimestamp());
             musicBar.getMediaPlayer().start();
         }
+    }
+
+    private void pause() {
+        model.setCurrentSongTimestamp(musicBar.getMediaPlayer().getMicrosecondPosition());
+        musicBar.getMediaPlayer().stop();
+    }
+
+    private void next() {
+        if (model.getCurrentSong() + 1 >= model.getSoundtrack().size()) {
+            model.setCurrentSong(0);
+        } else model.setCurrentSong(model.getCurrentSong() + 1);
+        musicBar.getMediaPlayer().stop();
+        musicBar.play();
     }
 
     @Override

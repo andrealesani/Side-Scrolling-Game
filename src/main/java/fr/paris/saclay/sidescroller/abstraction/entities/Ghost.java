@@ -66,6 +66,4 @@ public class Ghost extends Entity {
             spriteNumber = 2;
         }
     }
-
-
 }

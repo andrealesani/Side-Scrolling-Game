@@ -1,6 +1,9 @@
 package fr.paris.saclay.sidescroller.controller;
 
-import fr.paris.saclay.sidescroller.abstraction.*;
+import fr.paris.saclay.sidescroller.abstraction.Background;
+import fr.paris.saclay.sidescroller.abstraction.Direction;
+import fr.paris.saclay.sidescroller.abstraction.Drawable;
+import fr.paris.saclay.sidescroller.abstraction.Terrain;
 import fr.paris.saclay.sidescroller.abstraction.entities.Bat;
 import fr.paris.saclay.sidescroller.abstraction.entities.Entity;
 import fr.paris.saclay.sidescroller.abstraction.entities.Ghost;
@@ -20,26 +23,20 @@ import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    private boolean isRunning = true;
-
-    public boolean upPressed, rightPressed, leftPressed;
-
     private final RPGSideScroller parentContainer;
-
+    private final CollisionDetector collisionDetector;
+    private final MusicPlayer mediaPlayer;
+    public boolean upPressed, rightPressed, leftPressed;
+    BufferedImage fullHeartImage, halfHeartImage, emptyHeartImage;
+    private boolean isRunning = true;
     private Thread gameThread;
     private Player player;
     private List<Entity> entities = new ArrayList<>();
-
     private List<Drawable> drawables = new ArrayList<>();
-
     private Drawable background;
     private Drawable terrain;
-    private final CollisionDetector collisionDetector;
     private boolean cameraHasMoved;
     private boolean gameOver = false;
-
-    BufferedImage fullHeartImage, halfHeartImage, emptyHeartImage;
-    private final MusicPlayer mediaPlayer;
 
     public GamePanel(RPGSideScroller parent) {
         mediaPlayer = parent.getMusicPlayer();
@@ -87,6 +84,90 @@ public class GamePanel extends JPanel implements Runnable {
         getActionMap().put("block", block());
     }
 
+    private Action walkRight() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (!upPressed) {
+                    rightPressed = true;
+                }
+            }
+        };
+    }
+
+    private Action walkRightReleased() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                rightPressed = false;
+            }
+        };
+    }
+
+    private Action walkLeft() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (!upPressed) {
+                    leftPressed = true;
+                }
+            }
+        };
+    }
+
+    private Action walkLeftReleased() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                leftPressed = false;
+            }
+        };
+    }
+
+    private Action jump() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (!upPressed) {
+                    upPressed = true;
+                }
+            }
+        };
+    }
+
+    public Action showMenu() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (isRunning) {
+                    if (gameOver) {
+                        parentContainer.getGameMenu().quitToMenu(parentContainer);
+                    } else {
+                        GameMenu menu = parentContainer.getGameMenu();
+                        menu.setPauseMenu(true);
+                        menu.setPausedGridConstraints();
+                        menu.getModel().getResumeButton().setVisible(true);
+                        menu.getModel().getQuitToMenuButton().setVisible(true);
+                    }
+                    parentContainer.getGlassPane().setVisible(true);
+                    isRunning = false;
+                    mediaPlayer.stop();
+                }
+            }
+        };
+    }
+
+    private Action attack() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                player.attack();
+            }
+        };
+    }
+
+    private Action block() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                player.se
+                System.out.println("Block");
+            }
+        };
+    }
+
     public void startGame() {
         gameThread = new Thread(this);
         entities = new ArrayList<>();
@@ -117,26 +198,26 @@ public class GamePanel extends JPanel implements Runnable {
         long timer = 0;
 
         while (gameThread != null) {
-                currentTime = System.nanoTime();
-                delta += (currentTime - lastTime) / drawInterval;
-                timer += (currentTime - lastTime);
-                lastTime = currentTime;
-                if (delta >= 1) {
-                    if (isRunning) {
-                        update();
-                    }
-                    repaint();
-                    parentContainer.getMusicPlayer().repaint();
-                    delta--;
+            currentTime = System.nanoTime();
+            delta += (currentTime - lastTime) / drawInterval;
+            timer += (currentTime - lastTime);
+            lastTime = currentTime;
+            if (delta >= 1) {
+                if (isRunning) {
+                    update();
                 }
-                if (timer > 1000000000) {
-                    timer = 0;
-                }
+                repaint();
+                parentContainer.getMusicPlayer().repaint();
+                delta--;
+            }
+            if (timer > 1000000000) {
+                timer = 0;
+            }
         }
     }
 
     public void update() {
-        if (gameOver){
+        if (gameOver) {
             parentContainer.getMusicPlayer().close();
             return;
         }
@@ -150,16 +231,16 @@ public class GamePanel extends JPanel implements Runnable {
             terrain.updatePositionToCamera();
         }
         List<Entity> damagedEntities = checkCollision();
-        if (damagedEntities.size()>0) {
-            for (Entity entity : damagedEntities){
+        if (damagedEntities.size() > 0) {
+            for (Entity entity : damagedEntities) {
                 entity.tookDamage();
                 if (!entity.isInvincible())
                     entity.setEntityInvincible(entity.getMaximumInvincibility());
             }
         }
 
-        for (Entity entity : entities){
-            if (entity.getLifePoints() == 0){
+        for (Entity entity : entities) {
+            if (entity.getLifePoints() == 0) {
                 entity.setDead(true);
 //                SwingUtilities.invokeLater(new Runnable() {
 //                    @Override
@@ -171,6 +252,25 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         cameraHasMoved = false;
+    }
+
+    /**
+     * Checks if the player is colliding with any entities in the scene.
+     *
+     * @return true if the player is colliding with at least one other entity in the scene
+     */
+    public List<Entity> checkCollision() {
+        List<Entity> damagedEntities = new ArrayList<>();
+        for (Entity entity : entities) {
+            if (!entity.equals(player) && collisionDetector.checkCollision(player, entity, false) && !player.isInvincible() && !entity.isDead()) {
+                if (!damagedEntities.contains(player))
+                    damagedEntities.add(player);
+            }
+            if (player.isAttacking() && collisionDetector.checkCollision(player, entity, true) && !entity.isInvincible()) {
+                damagedEntities.add(entity);
+            }
+        }
+        return damagedEntities;
     }
 
     public void paintComponent(Graphics graphics) {
@@ -188,18 +288,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         graphics2D.dispose();
-    }
-
-    private void drawGameOver(Graphics2D graphics2D) {
-        graphics2D.setColor(Color.decode(PRIMARY_COLOR));
-        Font titleFont = new Font("Monocraft", Font.BOLD, 72);
-        graphics2D.setFont(titleFont);
-        String gameOver = "GAME OVER";
-        graphics2D.drawString(gameOver, SCREEN_WIDTH / 2 - graphics2D.getFontMetrics(titleFont).stringWidth(gameOver)/2, SCREEN_HEIGHT / 2 - 100);
-        titleFont = new Font("Monocraft", Font.PLAIN, 24);
-        gameOver = "Press ESC to open menu and start again";
-        graphics2D.setFont(titleFont);
-        graphics2D.drawString(gameOver, SCREEN_WIDTH / 2 - graphics2D.getFontMetrics(titleFont).stringWidth(gameOver)/2,  SCREEN_HEIGHT / 2);
     }
 
     /**
@@ -222,6 +310,18 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    private void drawGameOver(Graphics2D graphics2D) {
+        graphics2D.setColor(Color.decode(PRIMARY_COLOR));
+        Font titleFont = new Font("Monocraft", Font.BOLD, 72);
+        graphics2D.setFont(titleFont);
+        String gameOver = "GAME OVER";
+        graphics2D.drawString(gameOver, SCREEN_WIDTH / 2 - graphics2D.getFontMetrics(titleFont).stringWidth(gameOver) / 2, SCREEN_HEIGHT / 2 - 100);
+        titleFont = new Font("Monocraft", Font.PLAIN, 24);
+        gameOver = "Press ESC to open menu and start again";
+        graphics2D.setFont(titleFont);
+        graphics2D.drawString(gameOver, SCREEN_WIDTH / 2 - graphics2D.getFontMetrics(titleFont).stringWidth(gameOver) / 2, SCREEN_HEIGHT / 2);
+    }
+
     public int getPlayerPositionX() {
         return player.xPosition;
     }
@@ -229,91 +329,6 @@ public class GamePanel extends JPanel implements Runnable {
     public int getPlayerSpeed() {
         return player.speed;
     }
-
-    private Action walkRight() {
-        return new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                if (!upPressed) {
-                    rightPressed = true;
-                }
-            }
-        };
-    }
-
-    private Action walkRightReleased() {
-        return new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                rightPressed = false;
-            }
-        };
-    }
-
-    private Action walkLeftReleased() {
-        return new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                leftPressed = false;
-            }
-        };
-    }
-
-    private Action walkLeft() {
-        return new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                if (!upPressed) {
-                    leftPressed = true;
-                }
-            }
-        };
-    }
-
-    private Action attack() {
-        return new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                player.attack();
-            }
-        };
-    }
-
-    private Action block() {
-        return new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Block");
-            }
-        };
-    }
-
-    private Action jump() {
-        return new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                if (!upPressed) {
-                    upPressed = true;
-                }
-            }
-        };
-    }
-
-    public Action showMenu() {
-        return new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                if(isRunning){
-                    if(gameOver){
-                        parentContainer.getGameMenu().quitToMenu(parentContainer);
-                    }
-                    else {
-                        GameMenu menu = parentContainer.getGameMenu();
-                        menu.setPauseMenu(true);
-                        menu.setPausedGridConstraints();
-                        menu.getModel().getResumeButton().setVisible(true);
-                        menu.getModel().getQuitToMenuButton().setVisible(true);
-                    }
-                    parentContainer.getGlassPane().setVisible(true);
-                    isRunning = false;
-                    mediaPlayer.stop();
-                }
-            }
-        };
-    }
-
 
     public void setRunning(boolean running) {
         isRunning = running;
@@ -332,25 +347,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
-     * Checks if the player is colliding with any entities in the scene.
-     *
-     * @return true if the player is colliding with at least one other entity in the scene
-     */
-    public List<Entity> checkCollision() {
-        List<Entity> damagedEntities = new ArrayList<>();
-        for (Entity entity : entities) {
-            if (!entity.equals(player) && collisionDetector.checkCollision(player, entity, false) && !player.isInvincible() && !entity.isDead()) {
-                if (!damagedEntities.contains(player))
-                    damagedEntities.add(player);
-            }
-            if (player.isAttacking() && collisionDetector.checkCollision(player, entity, true) && !entity.isInvincible()) {
-                damagedEntities.add(entity);
-            }
-        }
-        return damagedEntities;
-    }
-
-    /**
      * Sets up a flag that forces the terrain and all the entities update their position relatively to the player.
      */
     public void notifyCameraMoved() {
@@ -361,7 +357,7 @@ public class GamePanel extends JPanel implements Runnable {
         gameOver = true;
     }
 
-    public boolean isPlayerAttacking(){
+    public boolean isPlayerAttacking() {
         return player.isAttacking();
     }
 }

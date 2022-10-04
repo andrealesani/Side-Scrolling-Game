@@ -3,12 +3,12 @@ package fr.paris.saclay.sidescroller.controller;
 import fr.paris.saclay.sidescroller.abstraction.GameMenuModel;
 import fr.paris.saclay.sidescroller.presentation.GameMenuUI;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
@@ -177,5 +177,4 @@ public class GameMenu extends JPanel implements ActionListener {
     public GameMenuModel getModel() {
         return model;
     }
-
 }

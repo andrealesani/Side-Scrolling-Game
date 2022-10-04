@@ -43,7 +43,6 @@ public class MusicBar extends JPanel {
             e.printStackTrace();
         }
         mediaPlayer.start();
-
     }
 
     @Override
@@ -56,10 +55,6 @@ public class MusicBar extends JPanel {
         graphics2D.fillRect(getDeltaSong() + 1, getY() - 4, 3, 8);
     }
 
-    public Clip getMediaPlayer() {
-        return mediaPlayer;
-    }
-
     public int getDeltaSong() {
         double songProgress = mediaPlayer.getMicrosecondPosition() / 1000000.0;
         if (songProgress >= player.getModel().getSongDuration()) {
@@ -68,5 +63,9 @@ public class MusicBar extends JPanel {
         if (player.getModel().getSongDuration() != 0) {
             return (int) (songProgress * getWidth() / player.getModel().getSongDuration());
         } else return 0;
+    }
+
+    public Clip getMediaPlayer() {
+        return mediaPlayer;
     }
 }

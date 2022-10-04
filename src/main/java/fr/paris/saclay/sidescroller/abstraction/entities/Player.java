@@ -20,6 +20,8 @@ public class Player extends Entity {
 
     int currentStamina;
 
+    boolean isBlocking = false;
+
     public Player(GamePanel gamePanel) {
         super(gamePanel);
         currentStamina = PLAYER_MAX_STAMINA;
@@ -97,10 +99,10 @@ public class Player extends Entity {
 
             spriteCounter++;
             if (spriteCounter > 5) {
-                if (spriteNumber == animationMap.get(Direction.LEFT).size()-1 && !isJumping) {
+                if (spriteNumber == animationMap.get(Direction.LEFT).size() - 1 && !isJumping) {
                     spriteNumber = 0;
                     spriteCounter = 0;
-                } else if (spriteNumber == animationMap.get(Direction.UP_LEFT).size()-1 && isJumping) {
+                } else if (spriteNumber == animationMap.get(Direction.UP_LEFT).size() - 1 && isJumping) {
                     spriteNumber = 0;
                     isJumping = false;
                     gamePanel.upPressed = false;
@@ -113,17 +115,16 @@ public class Player extends Entity {
                     spriteCounter = 0;
                 }
             }
-        }
-        else if (isAttacking){
+        } else if (isAttacking) {
             spriteCounter++;
-            if(spriteCounter>10){
-                if (spriteNumber == animationMap.get(Direction.ATTACK_LEFT).size()-1){
+            if (spriteCounter > 10) {
+                if (spriteNumber == animationMap.get(Direction.ATTACK_LEFT).size() - 1) {
                     spriteNumber = 0;
                     if (direction == Direction.ATTACK_LEFT) {
                         direction = Direction.LEFT;
                     } else direction = Direction.RIGHT;
                     isAttacking = false;
-                }else {
+                } else {
                     spriteNumber++;
                 }
                 spriteCounter = 0;
@@ -138,22 +139,19 @@ public class Player extends Entity {
         if (this.lifePoints == 0) {
             gamePanel.setGameOver();
         }
-        System.out.println(isRecovering);
-        System.out.println(staminaTimer);
-        if(!isRecovering && currentStamina<PLAYER_MAX_STAMINA){
-            if (staminaTimer == 0){
+        if (!isRecovering && currentStamina < PLAYER_MAX_STAMINA) {
+            if (staminaTimer == 0) {
                 isRecovering = true;
-            }
-            else
+            } else
                 staminaTimer--;
         }
-        if(isRecovering){
-            if(isAttacking){
+        if (isRecovering) {
+            if (isAttacking) {
                 isRecovering = false;
                 staminaTimer = PLAYER_STAMINA_TIMER;
             }
             currentStamina++;
-            if(currentStamina == PLAYER_MAX_STAMINA){
+            if (currentStamina == PLAYER_MAX_STAMINA) {
                 isRecovering = false;
             }
         }
@@ -167,72 +165,71 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D graphics2D) {
         AffineTransform transformX = AffineTransform.getScaleInstance(-1, 1);
-            switch (direction) {
-                case LEFT, UP_LEFT, ATTACK_LEFT -> {
-                    if (direction == Direction.UP_LEFT && spriteNumber == 6) {
-                        isJumping = false;
-                    }
-                    image = animationMap.get(direction).get(spriteNumber);
+        switch (direction) {
+            case LEFT, UP_LEFT, ATTACK_LEFT -> {
+                if (direction == Direction.UP_LEFT && spriteNumber == 6) {
+                    isJumping = false;
                 }
-                case RIGHT, UP_RIGHT, ATTACK_RIGHT -> {
-                    if (direction == Direction.UP_RIGHT && spriteNumber == 6) {
-                        isJumping = false;
-                    }
-                    Direction utilDirection = direction == Direction.RIGHT ? Direction.LEFT :
-                            ((direction==Direction.UP_RIGHT) ? Direction.UP_LEFT : Direction.ATTACK_LEFT);
-                    transformX.translate(-animationMap.get(utilDirection).get(spriteNumber).getWidth(null), 0);
-                    AffineTransformOp op = new AffineTransformOp(transformX, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                    image = op.filter(animationMap.get(utilDirection).get(spriteNumber), null);
+                image = animationMap.get(direction).get(spriteNumber);
+            }
+            case RIGHT, UP_RIGHT, ATTACK_RIGHT -> {
+                if (direction == Direction.UP_RIGHT && spriteNumber == 6) {
+                    isJumping = false;
                 }
+                Direction utilDirection = direction == Direction.RIGHT ? Direction.LEFT :
+                        ((direction == Direction.UP_RIGHT) ? Direction.UP_LEFT : Direction.ATTACK_LEFT);
+                transformX.translate(-animationMap.get(utilDirection).get(spriteNumber).getWidth(null), 0);
+                AffineTransformOp op = new AffineTransformOp(transformX, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                image = op.filter(animationMap.get(utilDirection).get(spriteNumber), null);
             }
-            if (isAttacking){
-                int directionFactor = 0;
-                if(direction == Direction.ATTACK_LEFT){
-                    directionFactor = 1;
-                }
-                graphics2D.drawImage(image, xPosition - (WIDTH_TILE_SIZE)*directionFactor, yPosition, 2*WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
-            }
-            else graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
-            if (isInvincible())
-                graphics2D.setColor(new Color(255, 0, 0, 127));
-            else
-                graphics2D.setColor(new Color(0, 0, 255, 127));
-            graphics2D.fill(hitBox);
-            graphics2D.setColor(new Color(0, 255, 0, 127));
-            if (isAttacking)
-                graphics2D.fill(attackHitBox);
-            drawStaminaBar(graphics2D);
-    }
-
-    public void attack(){
-        if (!gamePanel.upPressed && !isAttacking() && (currentStamina>0 || !isRecovering) ) {
-            setAttacking(true);
-            currentStamina -= 25;
-            staminaTimer = PLAYER_STAMINA_TIMER;
-            if(currentStamina<0){
-                currentStamina=0;
-            }
-            spriteNumber = 0;
-            direction = direction == Direction.LEFT ? Direction.ATTACK_LEFT : Direction.ATTACK_RIGHT;
         }
+        if (isAttacking) {
+            int directionFactor = 0;
+            if (direction == Direction.ATTACK_LEFT) {
+                directionFactor = 1;
+            }
+            graphics2D.drawImage(image, xPosition - (WIDTH_TILE_SIZE) * directionFactor, yPosition, 2 * WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
+        } else graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
+        if (isInvincible())
+            graphics2D.setColor(new Color(255, 0, 0, 127));
+        else
+            graphics2D.setColor(new Color(0, 0, 255, 127));
+        graphics2D.fill(hitBox);
+        graphics2D.setColor(new Color(0, 255, 0, 127));
+        if (isAttacking)
+            graphics2D.fill(attackHitBox);
+        drawStaminaBar(graphics2D);
     }
 
-    private void drawStaminaBar(Graphics2D graphics2D){
-        int maximumStaminaBarWidth = WIDTH_TILE_SIZE*4;
+    private void drawStaminaBar(Graphics2D graphics2D) {
+        int maximumStaminaBarWidth = WIDTH_TILE_SIZE * 4;
         int lostStamina = maximumStamina - currentStamina;
         int currentX = 30;
         int currentY = 60;
-        graphics2D.setColor(new Color(0,255,0,255));
+        graphics2D.setColor(new Color(0, 255, 0, 255));
         for (int i = 0; i < currentStamina; i++) {
-            graphics2D.fillRect(currentX, currentY, maximumStaminaBarWidth/maximumStamina, 10);
-            currentX = currentX + maximumStaminaBarWidth/maximumStamina;
+            graphics2D.fillRect(currentX, currentY, maximumStaminaBarWidth / maximumStamina, 10);
+            currentX = currentX + maximumStaminaBarWidth / maximumStamina;
         }
-        if(lostStamina>0){
+        if (lostStamina > 0) {
             graphics2D.setColor(Color.gray);
             for (int i = 0; i < lostStamina; i++) {
-                graphics2D.fillRect(currentX, currentY, maximumStaminaBarWidth/maximumStamina, 10);
-                currentX = currentX + maximumStaminaBarWidth/maximumStamina;
+                graphics2D.fillRect(currentX, currentY, maximumStaminaBarWidth / maximumStamina, 10);
+                currentX = currentX + maximumStaminaBarWidth / maximumStamina;
             }
+        }
+    }
+
+    public void attack() {
+        if (!gamePanel.upPressed && !isAttacking() && (currentStamina > 0 || !isRecovering)) {
+            setAttacking(true);
+            currentStamina -= 25;
+            staminaTimer = PLAYER_STAMINA_TIMER;
+            if (currentStamina < 0) {
+                currentStamina = 0;
+            }
+            spriteNumber = 0;
+            direction = direction == Direction.LEFT ? Direction.ATTACK_LEFT : Direction.ATTACK_RIGHT;
         }
     }
 }

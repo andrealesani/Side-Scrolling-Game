@@ -15,17 +15,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import static fr.paris.saclay.sidescroller.abstraction.Direction.*;
-import static fr.paris.saclay.sidescroller.utils.Constants.*;
+import static fr.paris.saclay.sidescroller.utils.Constants.HEIGHT_TILE_SIZE;
+import static fr.paris.saclay.sidescroller.utils.Constants.WIDTH_TILE_SIZE;
 
 public abstract class Entity extends Drawable {
-    /**
-     * The number of the life points that the entity currently has.
-     */
-    protected int lifePoints;
     /**
      * Links the Direction the entity is facing to the list of images that represent the entity in that direction.
      */
     protected final HashMap<Direction, List<BufferedImage>> animationMap = new HashMap<>();
+    /**
+     * The number of the life points that the entity currently has.
+     */
+    protected int lifePoints;
     /**
      * Identifies the number of frames that have to be rendered before changing a sprite (during an animation).
      */
@@ -50,7 +51,7 @@ public abstract class Entity extends Drawable {
      * Therefore, this number indicates both the height and the width of the hitbox square (in pixels).
      */
     protected int hitboxSize;
-    protected Dimension attackHitboxSize = new Dimension(0,0);
+    protected Dimension attackHitboxSize = new Dimension(0, 0);
     /**
      * Represents the area of the entity that is used to compute collisions with enemies or projectiles.
      */
@@ -84,28 +85,15 @@ public abstract class Entity extends Drawable {
      * Updates the position of the entity's hitbox according to the entity's position inside the screen.
      */
     protected void updateHitboxPosition() {
-        int hitBoxHorizontalPosition = xPosition + WIDTH_TILE_SIZE / 2 -hitboxSize/2;
-        hitBox = new Rectangle(hitBoxHorizontalPosition, yPosition + HEIGHT_TILE_SIZE / 2 -hitboxSize/2, hitboxSize, hitboxSize);
+        int hitBoxHorizontalPosition = xPosition + WIDTH_TILE_SIZE / 2 - hitboxSize / 2;
+        hitBox = new Rectangle(hitBoxHorizontalPosition, yPosition + HEIGHT_TILE_SIZE / 2 - hitboxSize / 2, hitboxSize, hitboxSize);
         int directionFactor = 0;
         int directionHitFactor = 1;
-        if (direction == LEFT || direction == ATTACK_LEFT || direction == UP_LEFT){
+        if (direction == LEFT || direction == ATTACK_LEFT || direction == UP_LEFT) {
             directionFactor = 1;
             directionHitFactor = 0;
         }
-        attackHitBox = new Rectangle(hitBoxHorizontalPosition + hitboxSize*directionHitFactor -attackHitboxSize.width*directionFactor, yPosition, attackHitboxSize.width, attackHitboxSize.height);
-    }
-
-    /**
-     * This method makes the entity chase the player on the X axis until its hitbox collides with the one of the player.
-     */
-    protected void chasePlayer() {
-        if (gamePanel.getPlayerPositionX() > xPosition + hitboxSize / 2) {
-            xPosition += speed;
-            direction = RIGHT;
-        } else if (gamePanel.getPlayerPositionX() < xPosition - hitboxSize / 2) {
-            xPosition -= speed;
-            direction = LEFT;
-        }
+        attackHitBox = new Rectangle(hitBoxHorizontalPosition + hitboxSize * directionHitFactor - attackHitboxSize.width * directionFactor, yPosition, attackHitboxSize.width, attackHitboxSize.height);
     }
 
     public void tookDamage() {
@@ -117,14 +105,6 @@ public abstract class Entity extends Drawable {
         addSpritesToAnimationMap(paths, new ArrayList<>(), LEFT);
     }
 
-    protected void setJumpSprites(List<String> paths) {
-        addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.UP_LEFT);
-    }
-
-    protected void setAttackSprites(List<String> paths) {
-        addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.ATTACK_LEFT);
-    }
-
     private void addSpritesToAnimationMap(List<String> paths, List<BufferedImage> sprites, Direction direction) {
         try {
             for (String path : paths)
@@ -134,6 +114,14 @@ public abstract class Entity extends Drawable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    protected void setJumpSprites(List<String> paths) {
+        addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.UP_LEFT);
+    }
+
+    protected void setAttackSprites(List<String> paths) {
+        addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.ATTACK_LEFT);
     }
 
     /**
@@ -155,10 +143,6 @@ public abstract class Entity extends Drawable {
         this.invincibilityTimer = invincibilityTimer;
     }
 
-    public void setInvincible(boolean invincible) {
-        isInvincible = invincible;
-    }
-
     public void setEntityInvincible(int invincibilityTimer) {
         this.isInvincible = true;
         this.invincibilityTimer = invincibilityTimer;
@@ -168,15 +152,11 @@ public abstract class Entity extends Drawable {
         return maximumInvincibility;
     }
 
-    public boolean isInvincible() {
-        return isInvincible;
-    }
-
-    public boolean isAttacking(){
+    public boolean isAttacking() {
         return isAttacking;
     }
 
-    public void setAttacking(boolean isAttacking){
+    public void setAttacking(boolean isAttacking) {
         this.isAttacking = isAttacking;
     }
 
@@ -188,32 +168,12 @@ public abstract class Entity extends Drawable {
         return maximumLifePoints;
     }
 
-    public void setDead(boolean dead) {
-        isDead = dead;
-    }
-
     public boolean isDead() {
         return isDead;
     }
 
-    /**
-     * Entities present a default version of the {@code updateSprites()} method.
-     * Each sprite only lasts for 5 frames before changing to the next one.
-     * Feel free to {@code Override} if you want to implement more fancy stuff.
-     */
-    protected void updateSprites() {
-        spriteCounter++;
-
-        if (spriteCounter > 9) {
-            if (spriteNumber == animationMap.get(LEFT).size()-1)
-                spriteNumber = 0;
-            else
-                spriteNumber++;
-            spriteCounter = 0;
-        }
-    }
-
-    protected void uniqueMovement() {
+    public void setDead(boolean dead) {
+        isDead = dead;
     }
 
     @Override
@@ -231,6 +191,39 @@ public abstract class Entity extends Drawable {
                 isInvincible = false;
             else
                 invincibilityTimer--;
+        }
+    }
+
+    /**
+     * This method makes the entity chase the player on the X axis until its hitbox collides with the one of the player.
+     */
+    protected void chasePlayer() {
+        if (gamePanel.getPlayerPositionX() > xPosition + hitboxSize / 2) {
+            xPosition += speed;
+            direction = RIGHT;
+        } else if (gamePanel.getPlayerPositionX() < xPosition - hitboxSize / 2) {
+            xPosition -= speed;
+            direction = LEFT;
+        }
+    }
+
+    protected void uniqueMovement() {
+    }
+
+    /**
+     * Entities present a default version of the {@code updateSprites()} method.
+     * Each sprite only lasts for 5 frames before changing to the next one.
+     * Feel free to {@code Override} if you want to implement more fancy stuff.
+     */
+    protected void updateSprites() {
+        spriteCounter++;
+
+        if (spriteCounter > 9) {
+            if (spriteNumber == animationMap.get(LEFT).size() - 1)
+                spriteNumber = 0;
+            else
+                spriteNumber++;
+            spriteCounter = 0;
         }
     }
 
@@ -263,26 +256,34 @@ public abstract class Entity extends Drawable {
                 graphics2D.setColor(new Color(0, 0, 255, 127));
             graphics2D.fill(hitBox);
             graphics2D.setColor(new Color(0, 255, 0, 127));
-            if(isAttacking)
+            if (isAttacking)
                 graphics2D.fill(attackHitBox);
             drawHpBar(graphics2D);
         }
     }
 
-    protected void drawHpBar(Graphics2D graphics2D){
-        int maximumWidthBar = WIDTH_TILE_SIZE + WIDTH_TILE_SIZE/4;
+    public boolean isInvincible() {
+        return isInvincible;
+    }
+
+    public void setInvincible(boolean invincible) {
+        isInvincible = invincible;
+    }
+
+    protected void drawHpBar(Graphics2D graphics2D) {
+        int maximumWidthBar = WIDTH_TILE_SIZE + WIDTH_TILE_SIZE / 4;
         int lostLifePoints = maximumLifePoints - lifePoints;
-        int currentBarPosition = xPosition - WIDTH_TILE_SIZE/8;
+        int currentBarPosition = xPosition - WIDTH_TILE_SIZE / 8;
         graphics2D.setColor(Color.green);
         for (int i = 0; i < lifePoints; i++) {
-            graphics2D.fillRect(currentBarPosition, yPosition - WIDTH_TILE_SIZE/4, maximumWidthBar/maximumLifePoints, 5);
-            currentBarPosition = currentBarPosition + maximumWidthBar/maximumLifePoints;
+            graphics2D.fillRect(currentBarPosition, yPosition - WIDTH_TILE_SIZE / 4, maximumWidthBar / maximumLifePoints, 5);
+            currentBarPosition = currentBarPosition + maximumWidthBar / maximumLifePoints;
         }
-        if(lostLifePoints>0){
+        if (lostLifePoints > 0) {
             graphics2D.setColor(Color.red);
             for (int i = 0; i < lostLifePoints; i++) {
-                graphics2D.fillRect(currentBarPosition, yPosition - WIDTH_TILE_SIZE/4, maximumWidthBar/maximumLifePoints, 5);
-                currentBarPosition = currentBarPosition + maximumWidthBar/maximumLifePoints;
+                graphics2D.fillRect(currentBarPosition, yPosition - WIDTH_TILE_SIZE / 4, maximumWidthBar / maximumLifePoints, 5);
+                currentBarPosition = currentBarPosition + maximumWidthBar / maximumLifePoints;
             }
         }
     }
