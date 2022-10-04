@@ -71,8 +71,12 @@ public class GamePanel extends JPanel implements Runnable {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "walk_left_released");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false), "jump");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, false), "jump");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false), "jump");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), "menu");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0, false), "attack");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, 0, false), "attack");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, false), "block");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_COLON, 0, false), "block");
         getActionMap().put("walk_right", walkRight());
         getActionMap().put("walk_right_released", walkRightReleased());
         getActionMap().put("walk_left", walkLeft());
@@ -80,6 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
         getActionMap().put("jump", jump());
         getActionMap().put("menu", showMenu());
         getActionMap().put("attack", attack());
+        getActionMap().put("block", block());
     }
 
     public void startGame() {
@@ -265,6 +270,14 @@ public class GamePanel extends JPanel implements Runnable {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 player.attack();
+            }
+        };
+    }
+
+    private Action block() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Block");
             }
         };
     }
