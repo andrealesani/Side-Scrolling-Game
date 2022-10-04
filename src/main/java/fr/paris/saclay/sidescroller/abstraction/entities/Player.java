@@ -12,8 +12,17 @@ import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Player extends Entity {
 
+    int maximumStamina = PLAYER_MAX_STAMINA;
+
+    int staminaTimer = PLAYER_STAMINA_TIMER;
+
+    boolean isRecovering = false;
+
+    int currentStamina;
+
     public Player(GamePanel gamePanel) {
         super(gamePanel);
+        currentStamina = PLAYER_MAX_STAMINA;
         hitboxSize = WIDTH_TILE_SIZE / 2;
         attackHitboxSize = new Dimension(WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE);
         lifePoints = PLAYER_MAX_HP;
@@ -129,6 +138,30 @@ public class Player extends Entity {
         if (this.lifePoints == 0) {
             gamePanel.setGameOver();
         }
+        System.out.println(isRecovering);
+        System.out.println(staminaTimer);
+        if(!isRecovering && currentStamina<PLAYER_MAX_STAMINA){
+            if (staminaTimer == 0){
+                isRecovering = true;
+            }
+            else
+                staminaTimer--;
+        }
+        if(isRecovering){
+            if(isAttacking){
+                isRecovering = false;
+                staminaTimer = PLAYER_STAMINA_TIMER;
+            }
+            currentStamina++;
+            if(currentStamina == PLAYER_MAX_STAMINA){
+                isRecovering = false;
+            }
+        }
+
+
+        if (this.lifePoints == 0) {
+            gamePanel.setGameOver();
+        }
     }
 
     @Override
@@ -168,13 +201,38 @@ public class Player extends Entity {
             graphics2D.setColor(new Color(0, 255, 0, 127));
             if (isAttacking)
                 graphics2D.fill(attackHitBox);
+            drawStaminaBar(graphics2D);
     }
 
     public void attack(){
-        if (!gamePanel.upPressed && !isAttacking()) {
+        if (!gamePanel.upPressed && !isAttacking() && (currentStamina>0 || !isRecovering) ) {
             setAttacking(true);
+            currentStamina -= 25;
+            staminaTimer = PLAYER_STAMINA_TIMER;
+            if(currentStamina<0){
+                currentStamina=0;
+            }
             spriteNumber = 0;
             direction = direction == Direction.LEFT ? Direction.ATTACK_LEFT : Direction.ATTACK_RIGHT;
+        }
+    }
+
+    private void drawStaminaBar(Graphics2D graphics2D){
+        int maximumStaminaBarWidth = WIDTH_TILE_SIZE*4;
+        int lostStamina = maximumStamina - currentStamina;
+        int currentX = 30;
+        int currentY = 60;
+        graphics2D.setColor(new Color(0,255,0,255));
+        for (int i = 0; i < currentStamina; i++) {
+            graphics2D.fillRect(currentX, currentY, maximumStaminaBarWidth/maximumStamina, 10);
+            currentX = currentX + maximumStaminaBarWidth/maximumStamina;
+        }
+        if(lostStamina>0){
+            graphics2D.setColor(Color.gray);
+            for (int i = 0; i < lostStamina; i++) {
+                graphics2D.fillRect(currentX, currentY, maximumStaminaBarWidth/maximumStamina, 10);
+                currentX = currentX + maximumStaminaBarWidth/maximumStamina;
+            }
         }
     }
 }
