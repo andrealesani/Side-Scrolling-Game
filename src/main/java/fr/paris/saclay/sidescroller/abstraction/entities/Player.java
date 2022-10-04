@@ -165,12 +165,9 @@ public class Player extends Entity {
             else
                 graphics2D.setColor(new Color(0, 0, 255, 127));
             graphics2D.fill(hitBox);
+            graphics2D.setColor(new Color(0, 255, 0, 127));
             if (isAttacking)
-                graphics2D.setColor(new Color(234, 0, 0, 127));
-            else
-                graphics2D.setColor(new Color(0, 255, 0, 127));
-
-        graphics2D.fill(attackHitBox);
+                graphics2D.fill(attackHitBox);
     }
 
     public void attack(){

@@ -263,7 +263,8 @@ public abstract class Entity extends Drawable {
                 graphics2D.setColor(new Color(0, 0, 255, 127));
             graphics2D.fill(hitBox);
             graphics2D.setColor(new Color(0, 255, 0, 127));
-            graphics2D.fill(attackHitBox);
+            if(isAttacking)
+                graphics2D.fill(attackHitBox);
             drawHpBar(graphics2D);
         }
     }
