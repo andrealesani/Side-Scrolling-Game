@@ -22,6 +22,7 @@ public class MusicButton extends JButton {
         setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentAreaFilled(false);
         setHorizontalTextPosition(JButton.CENTER);
+        getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "none");
     }
 
 }
