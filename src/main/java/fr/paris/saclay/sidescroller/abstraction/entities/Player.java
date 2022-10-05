@@ -164,8 +164,7 @@ public class Player extends Entity {
                 staminaTimer--;
         }
         if (isRecovering) {
-            if (isAttacking && currentStamina >= 25) {
-                System.out.println("AMOGUS");
+            if ((isAttacking || isBlocking) && currentStamina >= 25) {
                 isRecovering = false;
                 staminaTimer = PLAYER_STAMINA_TIMER;
             }
@@ -262,7 +261,7 @@ public class Player extends Entity {
     }
 
     public void block() {
-        if (!gamePanel.upPressed && !isAttacking() && !isBlocking && (currentStamina >= PLAYER_MAX_STAMINA / 2 || !isRecovering)) {
+        if (!gamePanel.upPressed && !isAttacking() && !isBlocking && (currentStamina >= 0 || !isRecovering)) {
             isBlocking = true;
             staminaTimer = PLAYER_STAMINA_TIMER;
             if (currentStamina < 0) {

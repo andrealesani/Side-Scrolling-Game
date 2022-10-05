@@ -251,12 +251,6 @@ public class GamePanel extends JPanel implements Runnable {
         for (Entity entity : entities) {
             if (entity.getLifePoints() == 0) {
                 entity.setDead(true);
-//                SwingUtilities.invokeLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        entities.remove(entity);
-//                    }
-//                });
             }
         }
 
