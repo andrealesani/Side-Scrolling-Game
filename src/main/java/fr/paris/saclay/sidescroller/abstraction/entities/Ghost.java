@@ -23,6 +23,7 @@ public class Ghost extends Entity {
         hitboxSize = WIDTH_TILE_SIZE;
         maximumLifePoints = 4;
         attackHitboxSize = new Dimension(WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE);
+        blockHitboxSize = new Dimension(WIDTH_TILE_SIZE / 2, HEIGHT_TILE_SIZE);
         setSprites(Arrays.asList(
                 "images/enemies/ghost/boo.png",
                 "images/enemies/ghost/meh.png",
@@ -66,6 +67,4 @@ public class Ghost extends Entity {
             spriteNumber = 2;
         }
     }
-
-
 }

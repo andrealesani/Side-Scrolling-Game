@@ -27,7 +27,7 @@ public class RPGSideScroller extends JFrame {
         setLayeredPane(layeredPane);
         setGlassPane(gameMenu);
         getGlassPane().setVisible(true);
-        setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT+25)); // +25 is needed because JFrame takes into account the title bar
+        setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT + 25)); // +25 is needed because JFrame takes into account the title bar
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -44,9 +44,9 @@ public class RPGSideScroller extends JFrame {
 
     private JLayeredPane createLayeredPane() {
         JLayeredPane layeredPane = new JLayeredPane();
-        musicPlayer.setBounds(SCREEN_WIDTH/2-100, 10, 200, 100);
+        musicPlayer.setBounds(SCREEN_WIDTH / 2 - 100, 10, 200, 100);
         layeredPane.add(musicPlayer, JLayeredPane.POPUP_LAYER);
-        gamePanel.setBounds(0,0,SCREEN_WIDTH, SCREEN_HEIGHT);
+        gamePanel.setBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         layeredPane.add(gamePanel, JLayeredPane.DEFAULT_LAYER);
         layeredPane.setVisible(true);
         return layeredPane;

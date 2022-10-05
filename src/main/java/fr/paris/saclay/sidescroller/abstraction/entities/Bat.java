@@ -27,6 +27,7 @@ public class Bat extends Entity {
         hitboxSize = WIDTH_TILE_SIZE;
         maximumLifePoints = 3;
         attackHitboxSize = new Dimension(WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE);
+        blockHitboxSize = new Dimension(WIDTH_TILE_SIZE / 2, HEIGHT_TILE_SIZE);
         setSprites(Arrays.asList(
                 "images/enemies/bat/wings_1.png",
                 "images/enemies/bat/wings_2.png"

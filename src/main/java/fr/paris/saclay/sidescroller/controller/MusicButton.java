@@ -11,7 +11,7 @@ public class MusicButton extends JButton {
     private Image image;
 
     public MusicButton(String filename) {
-        setPreferredSize(new Dimension(30,30));
+        setPreferredSize(new Dimension(30, 30));
         try {
             image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/media_player/" + filename + ".png"));
             image = image.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
@@ -24,5 +24,4 @@ public class MusicButton extends JButton {
         setHorizontalTextPosition(JButton.CENTER);
         getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "none");
     }
-
 }

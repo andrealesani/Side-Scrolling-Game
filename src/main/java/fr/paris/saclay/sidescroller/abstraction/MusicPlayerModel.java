@@ -7,14 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MusicPlayerModel {
-    private int songDuration;
-
-    private long currentSongTimestamp;
-
-    private int currentSong = 0;
-
-    private Image image;
     private final List<String> soundtrack;
+    private int songDuration;
+    private long currentSongTimestamp;
+    private int currentSong = 0;
+    private Image image;
 
     public MusicPlayerModel() {
         try {
@@ -39,6 +36,10 @@ public class MusicPlayerModel {
         return songDuration;
     }
 
+    public void setSongDuration(int songDuration) {
+        this.songDuration = songDuration;
+    }
+
     public long getCurrentSongTimestamp() {
         return currentSongTimestamp;
     }
@@ -57,10 +58,6 @@ public class MusicPlayerModel {
 
     public void setCurrentSong(int currentSong) {
         this.currentSong = currentSong;
-    }
-
-    public void setSongDuration(int songDuration) {
-        this.songDuration = songDuration;
     }
 
     public Image getImage() {
