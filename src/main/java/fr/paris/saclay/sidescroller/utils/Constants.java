@@ -1,5 +1,7 @@
 package fr.paris.saclay.sidescroller.utils;
 
+import fr.paris.saclay.sidescroller.abstraction.Direction;
+
 public class Constants {
     public static final int ORIGINAL_SQUARE_TILE = 16;
     public static final int MAX_SCREEN_COL = 16;
@@ -21,4 +23,15 @@ public class Constants {
     public static final String SECONDARY_COLOR = "#fcc760";
 
     public static final int PLAYER_INVINCIBILITY_TIME = 90;
+
+    public static Direction getOppositeDirection(Direction direction) {
+        Direction finalDirection = null;
+        switch (direction) {
+            case RIGHT -> finalDirection = Direction.LEFT;
+            case UP_RIGHT -> finalDirection = Direction.UP_LEFT;
+            case ATTACK_RIGHT -> finalDirection = Direction.ATTACK_LEFT;
+            case BLOCK_RIGHT -> finalDirection = Direction.BLOCK_LEFT;
+        }
+        return finalDirection;
+    }
 }

@@ -2,11 +2,13 @@ package fr.paris.saclay.sidescroller.abstraction.entities;
 
 import fr.paris.saclay.sidescroller.abstraction.Direction;
 import fr.paris.saclay.sidescroller.controller.GamePanel;
+import fr.paris.saclay.sidescroller.utils.Constants;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.util.Arrays;
+import java.util.List;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
@@ -20,13 +22,12 @@ public class Player extends Entity {
 
     int currentStamina;
 
-    boolean isBlocking = false;
-
     public Player(GamePanel gamePanel) {
         super(gamePanel);
         currentStamina = PLAYER_MAX_STAMINA;
         hitboxSize = WIDTH_TILE_SIZE / 2;
         attackHitboxSize = new Dimension(WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE);
+        blockHitboxSize = new Dimension(WIDTH_TILE_SIZE / 2, HEIGHT_TILE_SIZE);
         lifePoints = PLAYER_MAX_HP;
         isInvincible = false;
         invincibilityTimer = 0;
@@ -49,6 +50,9 @@ public class Player extends Entity {
                 "images/player/avatars/pink/alien_left_attack_1.png",
                 "images/player/avatars/pink/alien_left_attack_2.png"
         ));
+        setBlockSprites(List.of(
+                "images/player/avatars/pink/alien_block_left.png"
+        ));
     }
 
     private void setPlayerDefaultPosition() {
@@ -67,7 +71,7 @@ public class Player extends Entity {
 
     @Override
     public void update() {
-        if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed) && !isAttacking) {
+        if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed) && !isAttacking && !isBlocking) {
             if (gamePanel.rightPressed) {
                 direction = Direction.RIGHT;
                 if (xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
@@ -115,7 +119,7 @@ public class Player extends Entity {
                     spriteCounter = 0;
                 }
             }
-        } else if (isAttacking) {
+        } else if (isAttacking && !isBlocking) {
             spriteCounter++;
             if (spriteCounter > 10) {
                 if (spriteNumber == animationMap.get(Direction.ATTACK_LEFT).size() - 1) {
@@ -129,6 +133,20 @@ public class Player extends Entity {
                 }
                 spriteCounter = 0;
             }
+        } else if (isBlocking) {
+            spriteNumber = 0;
+            if (currentStamina == 0 || gamePanel.upPressed || gamePanel.leftPressed || gamePanel.rightPressed || isAttacking) {
+                isBlocking = false;
+                if (gamePanel.upPressed) {
+                    direction = direction == Direction.BLOCK_LEFT ? Direction.UP_LEFT : Direction.UP_RIGHT;
+                } else if (gamePanel.leftPressed) {
+                    direction = Direction.LEFT;
+                } else if (gamePanel.rightPressed) {
+                    direction = Direction.RIGHT;
+                } else if (isAttacking) {
+                    direction = direction == Direction.BLOCK_LEFT ? Direction.ATTACK_LEFT : Direction.ATTACK_RIGHT;
+                } else direction = direction == Direction.BLOCK_LEFT ? Direction.LEFT : Direction.RIGHT;
+            }
         }
 
         updateHitboxPosition();
@@ -139,14 +157,15 @@ public class Player extends Entity {
         if (this.lifePoints == 0) {
             gamePanel.setGameOver();
         }
-        if (!isRecovering && currentStamina < PLAYER_MAX_STAMINA) {
+        if (!isRecovering && currentStamina < PLAYER_MAX_STAMINA && !isBlocking) {
             if (staminaTimer == 0) {
                 isRecovering = true;
             } else
                 staminaTimer--;
         }
         if (isRecovering) {
-            if (isAttacking) {
+            if (isAttacking && currentStamina >= 25) {
+                System.out.println("AMOGUS");
                 isRecovering = false;
                 staminaTimer = PLAYER_STAMINA_TIMER;
             }
@@ -166,18 +185,17 @@ public class Player extends Entity {
     public void draw(Graphics2D graphics2D) {
         AffineTransform transformX = AffineTransform.getScaleInstance(-1, 1);
         switch (direction) {
-            case LEFT, UP_LEFT, ATTACK_LEFT -> {
+            case LEFT, UP_LEFT, ATTACK_LEFT, BLOCK_LEFT -> {
                 if (direction == Direction.UP_LEFT && spriteNumber == 6) {
                     isJumping = false;
                 }
                 image = animationMap.get(direction).get(spriteNumber);
             }
-            case RIGHT, UP_RIGHT, ATTACK_RIGHT -> {
+            case RIGHT, UP_RIGHT, ATTACK_RIGHT, BLOCK_RIGHT -> {
                 if (direction == Direction.UP_RIGHT && spriteNumber == 6) {
                     isJumping = false;
                 }
-                Direction utilDirection = direction == Direction.RIGHT ? Direction.LEFT :
-                        ((direction == Direction.UP_RIGHT) ? Direction.UP_LEFT : Direction.ATTACK_LEFT);
+                Direction utilDirection = Constants.getOppositeDirection(direction);
                 transformX.translate(-animationMap.get(utilDirection).get(spriteNumber).getWidth(null), 0);
                 AffineTransformOp op = new AffineTransformOp(transformX, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
                 image = op.filter(animationMap.get(utilDirection).get(spriteNumber), null);
@@ -189,6 +207,12 @@ public class Player extends Entity {
                 directionFactor = 1;
             }
             graphics2D.drawImage(image, xPosition - (WIDTH_TILE_SIZE) * directionFactor, yPosition, 2 * WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
+        } else if (isBlocking) {
+            int directionFactor = 0;
+            if (direction == Direction.BLOCK_LEFT) {
+                directionFactor = 1;
+            }
+            graphics2D.drawImage(image, xPosition - (WIDTH_TILE_SIZE / 2) * directionFactor, yPosition, WIDTH_TILE_SIZE + WIDTH_TILE_SIZE / 2, HEIGHT_TILE_SIZE, null);
         } else graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
         if (isInvincible())
             graphics2D.setColor(new Color(255, 0, 0, 127));
@@ -198,6 +222,9 @@ public class Player extends Entity {
         graphics2D.setColor(new Color(0, 255, 0, 127));
         if (isAttacking)
             graphics2D.fill(attackHitBox);
+        graphics2D.setColor(new Color(255, 255, 255, 127));
+        if (isBlocking)
+            graphics2D.fill(blockHitBox);
         drawStaminaBar(graphics2D);
     }
 
@@ -221,7 +248,7 @@ public class Player extends Entity {
     }
 
     public void attack() {
-        if (!gamePanel.upPressed && !isAttacking() && (currentStamina > 0 || !isRecovering)) {
+        if ((!gamePanel.upPressed && !isAttacking()) || (currentStamina >= 25 && isRecovering)) {
             setAttacking(true);
             currentStamina -= 25;
             staminaTimer = PLAYER_STAMINA_TIMER;
@@ -229,7 +256,33 @@ public class Player extends Entity {
                 currentStamina = 0;
             }
             spriteNumber = 0;
-            direction = direction == Direction.LEFT ? Direction.ATTACK_LEFT : Direction.ATTACK_RIGHT;
+            if (!isBlocking)
+                direction = direction == Direction.LEFT ? Direction.ATTACK_LEFT : Direction.ATTACK_RIGHT;
         }
+    }
+
+    public void block() {
+        if (!gamePanel.upPressed && !isAttacking() && !isBlocking && (currentStamina >= PLAYER_MAX_STAMINA / 2 || !isRecovering)) {
+            isBlocking = true;
+            staminaTimer = PLAYER_STAMINA_TIMER;
+            if (currentStamina < 0) {
+                currentStamina = 0;
+            }
+            spriteNumber = 0;
+            direction = direction == Direction.LEFT ? Direction.BLOCK_LEFT : Direction.BLOCK_RIGHT;
+        }
+    }
+
+    public void blockRelease() {
+        isBlocking = false;
+        direction = direction == Direction.BLOCK_LEFT ? Direction.LEFT : Direction.RIGHT;
+    }
+
+    public int getCurrentStamina() {
+        return currentStamina;
+    }
+
+    public void setCurrentStamina(int currentStamina) {
+        this.currentStamina = currentStamina;
     }
 }

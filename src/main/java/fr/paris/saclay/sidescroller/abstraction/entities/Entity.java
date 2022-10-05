@@ -52,6 +52,7 @@ public abstract class Entity extends Drawable {
      */
     protected int hitboxSize;
     protected Dimension attackHitboxSize = new Dimension(0, 0);
+    protected Dimension blockHitboxSize = new Dimension(0, 0);
     /**
      * Represents the area of the entity that is used to compute collisions with enemies or projectiles.
      */
@@ -61,6 +62,7 @@ public abstract class Entity extends Drawable {
      * Represents the area of the entity that is used to compute collisions with enemies or projectiles.
      */
     protected Rectangle attackHitBox;
+    protected Rectangle blockHitBox;
     /**
      * True if entity is currently invincible
      */
@@ -76,6 +78,8 @@ public abstract class Entity extends Drawable {
      */
     protected boolean isAttacking = false;
 
+    protected boolean isBlocking = false;
+
     public Entity(GamePanel gamePanel) {
         super(gamePanel);
         updateHitboxPosition(); // gamePanel is drawn before thread starting
@@ -89,11 +93,12 @@ public abstract class Entity extends Drawable {
         hitBox = new Rectangle(hitBoxHorizontalPosition, yPosition + HEIGHT_TILE_SIZE / 2 - hitboxSize / 2, hitboxSize, hitboxSize);
         int directionFactor = 0;
         int directionHitFactor = 1;
-        if (direction == LEFT || direction == ATTACK_LEFT || direction == UP_LEFT) {
+        if (direction == LEFT || direction == ATTACK_LEFT || direction == UP_LEFT || direction == BLOCK_LEFT) {
             directionFactor = 1;
             directionHitFactor = 0;
         }
         attackHitBox = new Rectangle(hitBoxHorizontalPosition + hitboxSize * directionHitFactor - attackHitboxSize.width * directionFactor, yPosition, attackHitboxSize.width, attackHitboxSize.height);
+        blockHitBox = new Rectangle(hitBoxHorizontalPosition + hitboxSize * directionHitFactor - blockHitboxSize.width * directionFactor, yPosition, blockHitboxSize.width, blockHitboxSize.height);
     }
 
     public void tookDamage() {
@@ -124,6 +129,10 @@ public abstract class Entity extends Drawable {
         addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.ATTACK_LEFT);
     }
 
+    protected void setBlockSprites(List<String> paths) {
+        addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.BLOCK_LEFT);
+    }
+
     /**
      * @return how many life-points the entity currently has.
      */
@@ -135,12 +144,8 @@ public abstract class Entity extends Drawable {
         return hitBox;
     }
 
-    public int getInvincibilityTimer() {
-        return invincibilityTimer;
-    }
-
-    public void setInvincibilityTimer(int invincibilityTimer) {
-        this.invincibilityTimer = invincibilityTimer;
+    public Rectangle getBlockHitBox() {
+        return blockHitBox;
     }
 
     public void setEntityInvincible(int invincibilityTimer) {
@@ -195,39 +200,6 @@ public abstract class Entity extends Drawable {
     }
 
     /**
-     * This method makes the entity chase the player on the X axis until its hitbox collides with the one of the player.
-     */
-    protected void chasePlayer() {
-        if (gamePanel.getPlayerPositionX() > xPosition + hitboxSize / 2) {
-            xPosition += speed;
-            direction = RIGHT;
-        } else if (gamePanel.getPlayerPositionX() < xPosition - hitboxSize / 2) {
-            xPosition -= speed;
-            direction = LEFT;
-        }
-    }
-
-    protected void uniqueMovement() {
-    }
-
-    /**
-     * Entities present a default version of the {@code updateSprites()} method.
-     * Each sprite only lasts for 5 frames before changing to the next one.
-     * Feel free to {@code Override} if you want to implement more fancy stuff.
-     */
-    protected void updateSprites() {
-        spriteCounter++;
-
-        if (spriteCounter > 9) {
-            if (spriteNumber == animationMap.get(LEFT).size() - 1)
-                spriteNumber = 0;
-            else
-                spriteNumber++;
-            spriteCounter = 0;
-        }
-    }
-
-    /**
      * Entities present a default version of the {@code draw()} method. This method only supports basic sprite
      * animations, namely when moving to the left and right directions (jump, up-left and up-right are not supported).
      * Feel free to {@code Override} if you want to implement more fancy stuff.
@@ -258,6 +230,8 @@ public abstract class Entity extends Drawable {
             graphics2D.setColor(new Color(0, 255, 0, 127));
             if (isAttacking)
                 graphics2D.fill(attackHitBox);
+            if (isBlocking)
+                graphics2D.fill(blockHitBox);
             drawHpBar(graphics2D);
         }
     }
@@ -286,5 +260,43 @@ public abstract class Entity extends Drawable {
                 currentBarPosition = currentBarPosition + maximumWidthBar / maximumLifePoints;
             }
         }
+    }
+
+    /**
+     * This method makes the entity chase the player on the X axis until its hitbox collides with the one of the player.
+     */
+    protected void chasePlayer() {
+        int blockOffset = gamePanel.getPlayer().isBlocking() ? blockHitBox.width / 2 : 0;
+        if (gamePanel.getPlayerPositionX() > xPosition + hitboxSize / 2 + blockOffset) {
+            xPosition += speed;
+            direction = RIGHT;
+        } else if (gamePanel.getPlayerPositionX() < xPosition - hitboxSize / 2 - blockOffset) {
+            xPosition -= speed;
+            direction = LEFT;
+        }
+    }
+
+    protected void uniqueMovement() {
+    }
+
+    /**
+     * Entities present a default version of the {@code updateSprites()} method.
+     * Each sprite only lasts for 5 frames before changing to the next one.
+     * Feel free to {@code Override} if you want to implement more fancy stuff.
+     */
+    protected void updateSprites() {
+        spriteCounter++;
+
+        if (spriteCounter > 9) {
+            if (spriteNumber == animationMap.get(LEFT).size() - 1)
+                spriteNumber = 0;
+            else
+                spriteNumber++;
+            spriteCounter = 0;
+        }
+    }
+
+    public boolean isBlocking() {
+        return isBlocking;
     }
 }

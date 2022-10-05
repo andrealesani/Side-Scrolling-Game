@@ -6,7 +6,6 @@ import fr.paris.saclay.sidescroller.abstraction.Drawable;
 import fr.paris.saclay.sidescroller.abstraction.Terrain;
 import fr.paris.saclay.sidescroller.abstraction.entities.Bat;
 import fr.paris.saclay.sidescroller.abstraction.entities.Entity;
-import fr.paris.saclay.sidescroller.abstraction.entities.Ghost;
 import fr.paris.saclay.sidescroller.abstraction.entities.Player;
 
 import javax.imageio.ImageIO;
@@ -74,6 +73,8 @@ public class GamePanel extends JPanel implements Runnable {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, 0, false), "attack");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, false), "block");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_COLON, 0, false), "block");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, true), "block_released");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_COLON, 0, false), "block_released");
         getActionMap().put("walk_right", walkRight());
         getActionMap().put("walk_right_released", walkRightReleased());
         getActionMap().put("walk_left", walkLeft());
@@ -82,6 +83,7 @@ public class GamePanel extends JPanel implements Runnable {
         getActionMap().put("menu", showMenu());
         getActionMap().put("attack", attack());
         getActionMap().put("block", block());
+        getActionMap().put("block_released", blockRelease());
     }
 
     private Action walkRight() {
@@ -162,8 +164,15 @@ public class GamePanel extends JPanel implements Runnable {
     private Action block() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                player.se
-                System.out.println("Block");
+                player.block();
+            }
+        };
+    }
+
+    private Action blockRelease() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                player.blockRelease();
             }
         };
     }
@@ -171,7 +180,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void startGame() {
         gameThread = new Thread(this);
         entities = new ArrayList<>();
-        entities.add(new Ghost(this, 600));
+//        entities.add(new Ghost(this, 600));
         entities.add(new Bat(this, 400));
         drawables = new ArrayList<>();
         background = new Background(this);
@@ -359,5 +368,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public boolean isPlayerAttacking() {
         return player.isAttacking();
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
