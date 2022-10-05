@@ -89,9 +89,7 @@ public class GamePanel extends JPanel implements Runnable {
     private Action walkRight() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                if (!upPressed) {
-                    rightPressed = true;
-                }
+                rightPressed = true;
             }
         };
     }
@@ -107,9 +105,7 @@ public class GamePanel extends JPanel implements Runnable {
     private Action walkLeft() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                if (!upPressed) {
-                    leftPressed = true;
-                }
+                leftPressed = true;
             }
         };
     }

@@ -72,17 +72,17 @@ public class Player extends Entity {
     @Override
     public void update() {
         if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed) && !isAttacking && !isBlocking) {
-            if (gamePanel.rightPressed) {
+            if (gamePanel.rightPressed && !isJumping && !gamePanel.upPressed) {
                 direction = Direction.RIGHT;
                 if (xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
                     xPosition += speed;
                 }
-            } else if (gamePanel.leftPressed) {
+            } else if (gamePanel.leftPressed && !isJumping && !gamePanel.upPressed) {
                 direction = Direction.LEFT;
                 if (xPosition >= 5) {
                     xPosition -= speed;
                 }
-            } else {
+            } else if (gamePanel.upPressed) {
                 isJumping = true;
                 switch (direction) {
                     case LEFT, RIGHT -> {
@@ -91,10 +91,16 @@ public class Player extends Entity {
                     }
                     case UP_LEFT, UP_RIGHT -> {
                         if (spriteNumber == 1 || spriteNumber == 2) {
-                            yPosition -= speed * 1.5;
+                            yPosition -= speed * 2;
                         } else if (spriteNumber == 4 || spriteNumber == 5) {
-                            yPosition += speed * 1.5;
+                            yPosition += speed * 2;
                         }
+                        if (gamePanel.rightPressed)
+                            if (xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2)
+                                xPosition += speed * 1.5;
+                        if (gamePanel.leftPressed)
+                            if (xPosition >= 5)
+                                xPosition -= speed * 1.5;
                     }
                 }
             }
@@ -183,17 +189,13 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D graphics2D) {
         AffineTransform transformX = AffineTransform.getScaleInstance(-1, 1);
+        if ((direction == Direction.UP_LEFT || direction == Direction.UP_RIGHT) && spriteNumber == animationMap.get(direction == Direction.UP_LEFT ? direction : Constants.getOppositeDirection(direction)).size() - 1)
+            isJumping = false;
         switch (direction) {
             case LEFT, UP_LEFT, ATTACK_LEFT, BLOCK_LEFT -> {
-                if (direction == Direction.UP_LEFT && spriteNumber == 6) {
-                    isJumping = false;
-                }
                 image = animationMap.get(direction).get(spriteNumber);
             }
             case RIGHT, UP_RIGHT, ATTACK_RIGHT, BLOCK_RIGHT -> {
-                if (direction == Direction.UP_RIGHT && spriteNumber == 6) {
-                    isJumping = false;
-                }
                 Direction utilDirection = Constants.getOppositeDirection(direction);
                 transformX.translate(-animationMap.get(utilDirection).get(spriteNumber).getWidth(null), 0);
                 AffineTransformOp op = new AffineTransformOp(transformX, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
