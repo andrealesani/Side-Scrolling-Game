@@ -63,23 +63,17 @@ public class Player extends Entity {
         direction = Direction.RIGHT;
     }
 
-    /**
-     * Sets the player invincible for the specified amount of frames.
-     *
-     * @param invincibilityTimer the number of frames during which the player is invincible.
-     */
-
     @Override
     public void update() {
         if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed) && !isAttacking && !isBlocking) {
             if (gamePanel.rightPressed && !isJumping && !gamePanel.upPressed) {
                 direction = Direction.RIGHT;
-                if (xPosition <= SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2) {
+                if (xPosition <= CAMERA_MIN_RIGHT) {
                     xPosition += speed;
                 }
             } else if (gamePanel.leftPressed && !isJumping && !gamePanel.upPressed) {
                 direction = Direction.LEFT;
-                if (xPosition >= 5) {
+                if (xPosition >= CAMERA_MIN_LEFT) {
                     xPosition -= speed;
                 }
             } else if (gamePanel.upPressed) {

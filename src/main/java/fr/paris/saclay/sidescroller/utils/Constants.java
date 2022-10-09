@@ -24,6 +24,10 @@ public class Constants {
 
     public static final int PLAYER_INVINCIBILITY_TIME = 90;
 
+    public static final int CAMERA_MIN_LEFT = 300;
+
+    public static final int CAMERA_MIN_RIGHT = SCREEN_WIDTH / 2 - WIDTH_TILE_SIZE / 2;
+
     public static Direction getOppositeDirection(Direction direction) {
         Direction finalDirection = null;
         switch (direction) {
