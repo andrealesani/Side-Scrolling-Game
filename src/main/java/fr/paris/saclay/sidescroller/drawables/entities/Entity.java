@@ -240,10 +240,6 @@ public abstract class Entity extends Drawable {
         return isInvincible;
     }
 
-    public void setInvincible(boolean invincible) {
-        isInvincible = invincible;
-    }
-
     protected void drawHpBar(Graphics2D graphics2D) {
         int maximumWidthBar = WIDTH_TILE_SIZE + WIDTH_TILE_SIZE / 4;
         int lostLifePoints = maximumLifePoints - lifePoints;

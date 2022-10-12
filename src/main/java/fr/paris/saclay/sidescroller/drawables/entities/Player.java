@@ -14,13 +14,11 @@ import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class Player extends Entity {
 
-    int maximumStamina = PLAYER_MAX_STAMINA;
+    private int staminaTimer = PLAYER_STAMINA_TIMER;
 
-    int staminaTimer = PLAYER_STAMINA_TIMER;
+    private boolean isRecovering = false;
 
-    boolean isRecovering = false;
-
-    int currentStamina;
+    private int currentStamina;
 
     public Player(GamePanel gamePanel, String theme) {
         super(gamePanel);
@@ -73,7 +71,7 @@ public class Player extends Entity {
                 }
             } else if (gamePanel.leftPressed && !isJumping && !gamePanel.upPressed) {
                 direction = Direction.LEFT;
-                if (xPosition >= CAMERA_MIN_LEFT || gamePanel.getDrawableBackground().getxPosition() == 0) {
+                if (xPosition >= CAMERA_MIN_LEFT || gamePanel.getDrawableBackground().getXPosition() == 0) {
                     xPosition -= speed;
                 }
             } else if (gamePanel.upPressed) {
@@ -186,9 +184,7 @@ public class Player extends Entity {
         if ((direction == Direction.UP_LEFT || direction == Direction.UP_RIGHT) && spriteNumber == animationMap.get(direction == Direction.UP_LEFT ? direction : Constants.getOppositeDirection(direction)).size() - 1)
             isJumping = false;
         switch (direction) {
-            case LEFT, UP_LEFT, ATTACK_LEFT, BLOCK_LEFT -> {
-                image = animationMap.get(direction).get(spriteNumber);
-            }
+            case LEFT, UP_LEFT, ATTACK_LEFT, BLOCK_LEFT -> image = animationMap.get(direction).get(spriteNumber);
             case RIGHT, UP_RIGHT, ATTACK_RIGHT, BLOCK_RIGHT -> {
                 Direction utilDirection = Constants.getOppositeDirection(direction);
                 transformX.translate(-animationMap.get(utilDirection).get(spriteNumber).getWidth(null), 0);
@@ -225,6 +221,7 @@ public class Player extends Entity {
 
     private void drawStaminaBar(Graphics2D graphics2D) {
         int maximumStaminaBarWidth = WIDTH_TILE_SIZE * 4;
+        int maximumStamina = PLAYER_MAX_STAMINA;
         int lostStamina = maximumStamina - currentStamina;
         int currentX = 30;
         int currentY = 60;

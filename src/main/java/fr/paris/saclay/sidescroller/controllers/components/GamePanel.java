@@ -11,7 +11,6 @@ import fr.paris.saclay.sidescroller.drawables.entities.Entity;
 import fr.paris.saclay.sidescroller.drawables.entities.Player;
 import fr.paris.saclay.sidescroller.drawables.entities.enemies.Bat;
 import fr.paris.saclay.sidescroller.drawables.entities.enemies.Ghost;
-import fr.paris.saclay.sidescroller.utils.Direction;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -273,7 +272,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
 
-        score = Integer.max(score, -background.getxPosition() / 10 + scoreOffset);
+        score = Integer.max(score, -background.getXPosition() / 10 + scoreOffset);
         spawnEnemies();
         cameraHasMoved = false;
     }
@@ -408,10 +407,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void stop() {
         gameThread.stop();
-    }
-
-    public Direction getPlayerDirection() {
-        return player.direction;
     }
 
     /**
