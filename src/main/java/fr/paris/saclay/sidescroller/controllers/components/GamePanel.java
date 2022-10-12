@@ -10,6 +10,8 @@ import fr.paris.saclay.sidescroller.drawables.Terrain;
 import fr.paris.saclay.sidescroller.drawables.entities.Entity;
 import fr.paris.saclay.sidescroller.drawables.entities.Player;
 import fr.paris.saclay.sidescroller.drawables.entities.enemies.Bat;
+import fr.paris.saclay.sidescroller.drawables.entities.enemies.Ghost;
+import fr.paris.saclay.sidescroller.utils.Constants;
 import fr.paris.saclay.sidescroller.utils.Direction;
 
 import javax.imageio.ImageIO;
@@ -40,6 +42,10 @@ public class GamePanel extends JPanel implements Runnable {
     private Drawable terrain;
     private boolean cameraHasMoved;
     private boolean gameOver = false;
+    private int spawnCounter = 0;
+
+    private int score = 12345678;
+    private int scoreOffset = 0;
 
     public GamePanel(RPGSideScroller parent) {
         mediaPlayer = parent.getMusicPlayer();
@@ -56,7 +62,6 @@ public class GamePanel extends JPanel implements Runnable {
 
         collisionDetector = new CollisionDetector();
         setKeyBindings();
-
         setVisible(true);
     }
 
@@ -235,11 +240,11 @@ public class GamePanel extends JPanel implements Runnable {
             drawable.update();
 
         if (cameraHasMoved) {
-            System.out.println("camera has moved");
             for (var entity : entities)
                 entity.updatePositionToCamera(((Background) background).getDeltaX());
             terrain.updatePositionToCamera(((Background) background).getDeltaX());
         }
+
         List<Entity> damagedEntities = checkCollision();
         if (damagedEntities.size() > 0) {
             for (Entity entity : damagedEntities) {
@@ -251,11 +256,32 @@ public class GamePanel extends JPanel implements Runnable {
 
         for (Entity entity : entities) {
             if (entity.getLifePoints() == 0) {
-                entity.setDead(true);
+                if (!entity.isDead()) {
+                    entity.setDead(true);
+                    score += 100;
+                    scoreOffset += 100;
+                }
             }
         }
 
+        score = Integer.max(score, -background.getxPosition() / 10 + scoreOffset);
+        spawnEnemies();
         cameraHasMoved = false;
+    }
+
+    /**
+     * Randomly spawns a new {@code Entity} that is randomly chosen between {@code Ghost} and {@code Bat}.
+     * The spawn position is a random number that depends on the player position.
+     */
+    private void spawnEnemies() {
+        spawnCounter++;
+        if (spawnCounter == 60 * 5) {
+            Entity entity;
+            entity = Math.random() < 0.5 ? new Ghost(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900) : new Bat(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900);
+            entities.add(entity);
+            drawables.add(entity);
+            spawnCounter = 0;
+        }
     }
 
     /**
@@ -287,6 +313,8 @@ public class GamePanel extends JPanel implements Runnable {
         if (player != null)
             drawLifePoints(graphics2D);
 
+        drawScore(graphics2D);
+
         if (gameOver) {
             drawGameOver(graphics2D);
         }
@@ -314,6 +342,29 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Dynamically draws the player score in the top right corner of the screen.
+     *
+     * @param graphics2D the graphics environment on which to draw
+     */
+    private void drawScore(Graphics2D graphics2D) {
+        Font font = new Font("Monocraft", Font.BOLD, 24);
+        int scorePosition = SCREEN_WIDTH - graphics2D.getFontMetrics(font).stringWidth(Integer.toString(score)) / 2 - 70;
+        graphics2D.setFont(font);
+        graphics2D.setColor(Color.BLACK);
+        graphics2D.drawString(Integer.toString(score), scorePosition + 2, 40 + 2);
+        graphics2D.drawString(Integer.toString(score), scorePosition + 2, 40 - 2);
+        graphics2D.drawString(Integer.toString(score), scorePosition - 2, 40 + 2);
+        graphics2D.drawString(Integer.toString(score), scorePosition - 2, 40 - 2);
+        graphics2D.setColor(Color.decode(SECONDARY_COLOR));
+        graphics2D.drawString(Integer.toString(score), scorePosition, 40);
+    }
+
+    /**
+     * Draws the "Game Over" string on the UI.
+     *
+     * @param graphics2D the graphics environment on which to draw
+     */
     private void drawGameOver(Graphics2D graphics2D) {
         graphics2D.setColor(Color.decode(PRIMARY_COLOR));
         Font titleFont = new Font("Monocraft", Font.BOLD, 72);
