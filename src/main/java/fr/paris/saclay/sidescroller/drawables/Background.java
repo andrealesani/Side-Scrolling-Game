@@ -9,12 +9,30 @@ import java.io.IOException;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 import static fr.paris.saclay.sidescroller.utils.Direction.*;
 
+/**
+ * Drawable responsible for creating the background.
+ */
 public class Background extends Drawable {
-
+    /**
+     * Background images displayed in the scene.
+     */
     private final Image backgroundImage;
+    /**
+     * Numbers of backgrounds rendered.
+     */
     private int numOfBackgrounds = 1;
+    /**
+     * Distance travelled by the player.
+     */
     private int deltaX = 0;
 
+    /**
+     * Creates a Background instance, saves the GamePanel reference and sets the theme (background related to the level selected
+     * in the initial menu).
+     *
+     * @param gamePanel reference.
+     * @param theme     theme types: grass, mushroom, castle (each one related to a different level).
+     */
     public Background(GamePanel gamePanel, String theme) {
         super(gamePanel);
         direction = RIGHT;
@@ -26,6 +44,10 @@ public class Background extends Drawable {
         }
     }
 
+    /**
+     * Handles Background movement. The player cannot exceed xPosition = 0 to the left and the half of the screen
+     * when walking on the right. Since the player has different speed while jumping, the camera is updated differently.
+     */
     @Override
     public void update() {
         speed = gamePanel.getPlayerSpeed();
@@ -58,6 +80,11 @@ public class Background extends Drawable {
         }
     }
 
+    /**
+     * Renders the component into the scene.
+     *
+     * @param graphics2D the rendering environment.
+     */
     @Override
     public void draw(Graphics2D graphics2D) {
 
