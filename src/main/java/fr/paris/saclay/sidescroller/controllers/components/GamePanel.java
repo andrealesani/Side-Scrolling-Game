@@ -272,25 +272,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
-     * Randomly spawns a new {@code Entity} that is randomly chosen between {@code Ghost} and {@code Bat}.
-     * The spawn position depends on the player position but has a random value added so that if the player stands
-     * still enemies will not be spawned in the same position.
-     */
-    private void spawnEnemies() {
-        double multiplier = 1.0;
-        for (int i = 0; i < score / 1000; i++)
-            multiplier *= 1.5;
-        spawnCounter++;
-        if (spawnCounter >= 60 * 5 / multiplier) {
-            Entity entity;
-            entity = Math.random() < 0.5 ? new Ghost(this, getPlayerPositionX() + (int) (Math.random() * 400) + 900) : new Bat(this, getPlayerPositionX() + (int) (Math.random() * 400) + 900);
-            entities.add(entity);
-            drawables.add(entity);
-            spawnCounter = 0;
-        }
-    }
-
-    /**
      * Checks if the player is colliding with any entities in the scene.
      *
      * @return true if the player is colliding with at least one other entity in the scene
@@ -311,13 +292,17 @@ public class GamePanel extends JPanel implements Runnable {
 
     /**
      * Randomly spawns a new {@code Entity} that is randomly chosen between {@code Ghost} and {@code Bat}.
-     * The spawn position is a random number that depends on the player position.
+     * The spawn position depends on the player position but has a random value added so that if the player stands
+     * still enemies will not be spawned in the same position.
      */
     private void spawnEnemies() {
+        double multiplier = 1.0;
+        for (int i = 0; i < score / 1000; i++)
+            multiplier *= 1.5;
         spawnCounter++;
-        if (spawnCounter == 60 * 5) {
+        if (spawnCounter >= 60 * 5 / multiplier) {
             Entity entity;
-            entity = Math.random() < 0.5 ? new Ghost(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900) : new Bat(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900);
+            entity = Math.random() < 0.5 ? new Ghost(this, getPlayerPositionX() + (int) (Math.random() * 400) + 900) : new Bat(this, getPlayerPositionX() + (int) (Math.random() * 400) + 900);
             entities.add(entity);
             drawables.add(entity);
             spawnCounter = 0;
