@@ -10,6 +10,7 @@ import fr.paris.saclay.sidescroller.drawables.Terrain;
 import fr.paris.saclay.sidescroller.drawables.entities.Entity;
 import fr.paris.saclay.sidescroller.drawables.entities.Player;
 import fr.paris.saclay.sidescroller.drawables.entities.enemies.Bat;
+import fr.paris.saclay.sidescroller.drawables.entities.enemies.Ghost;
 import fr.paris.saclay.sidescroller.utils.Direction;
 
 import javax.imageio.ImageIO;
@@ -40,6 +41,7 @@ public class GamePanel extends JPanel implements Runnable {
     private Drawable terrain;
     private boolean cameraHasMoved;
     private boolean gameOver = false;
+    private int spawnCounter = 0;
 
     public GamePanel(RPGSideScroller parent) {
         mediaPlayer = parent.getMusicPlayer();
@@ -56,7 +58,6 @@ public class GamePanel extends JPanel implements Runnable {
 
         collisionDetector = new CollisionDetector();
         setKeyBindings();
-
         setVisible(true);
     }
 
@@ -235,7 +236,6 @@ public class GamePanel extends JPanel implements Runnable {
             drawable.update();
 
         if (cameraHasMoved) {
-            System.out.println("camera has moved");
             for (var entity : entities)
                 entity.updatePositionToCamera(((Background) background).getDeltaX());
             terrain.updatePositionToCamera(((Background) background).getDeltaX());
@@ -255,7 +255,24 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
 
+        spawnEnemies();
+
         cameraHasMoved = false;
+    }
+
+    /**
+     * Randomly spawns a new {@code Entity} that is randomly chosen between {@code Ghost} and {@code Bat}.
+     * The spawn position is a random number that depends on the player position.
+     */
+    private void spawnEnemies() {
+        spawnCounter++;
+        if (spawnCounter == 60 * 5) {
+            Entity entity;
+            entity = Math.random() < 0.5 ? new Ghost(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900) : new Bat(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900);
+            entities.add(entity);
+            drawables.add(entity);
+            spawnCounter = 0;
+        }
     }
 
     /**
