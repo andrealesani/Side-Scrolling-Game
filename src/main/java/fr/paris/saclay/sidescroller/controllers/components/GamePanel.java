@@ -29,8 +29,12 @@ public class GamePanel extends JPanel implements Runnable {
     private final RPGSideScroller parentContainer;
     private final CollisionDetector collisionDetector;
     private final MusicPlayer mediaPlayer;
-    public boolean upPressed, rightPressed, leftPressed;
-    BufferedImage fullHeartImage, halfHeartImage, emptyHeartImage;
+    public boolean upPressed,
+            rightPressed,
+            leftPressed;
+    BufferedImage fullHeartImage,
+            halfHeartImage,
+            emptyHeartImage;
     private boolean isRunning = false;
     private Thread gameThread;
     private Player player;
@@ -277,11 +281,6 @@ public class GamePanel extends JPanel implements Runnable {
         cameraHasMoved = false;
     }
 
-    /**
-     * Checks if the player is colliding with any entities in the scene.
-     *
-     * @return true if the player is colliding with at least one other entity in the scene
-     */
     public List<Entity> checkCollision() {
         List<Entity> damagedEntities = new ArrayList<>();
         for (Entity entity : entities) {
@@ -296,11 +295,6 @@ public class GamePanel extends JPanel implements Runnable {
         return damagedEntities;
     }
 
-    /**
-     * Randomly spawns a new {@code Entity} that is randomly chosen between {@code Ghost} and {@code Bat}.
-     * The spawn position depends on the player position but has a random value added so that if the player stands
-     * still enemies will not be spawned in the same position.
-     */
     private void spawnEnemies() {
         double multiplier = 1.0;
         for (int i = 0; i < score / 1000; i++)
@@ -338,11 +332,6 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.dispose();
     }
 
-    /**
-     * Dynamically draws the life points to the GUI in the form of full, half or empty hearts.
-     *
-     * @param graphics2D the graphics environment on which to draw
-     */
     private void drawLifePoints(Graphics2D graphics2D) {
         BufferedImage image;
         for (int i = 0; i < player.getMaximumLifePoints(); i += 2) {
@@ -358,11 +347,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    /**
-     * Dynamically draws the player score in the top right corner of the screen.
-     *
-     * @param graphics2D the graphics environment on which to draw
-     */
     private void drawScore(Graphics2D graphics2D) {
         Font font = new Font("Monocraft", Font.BOLD, 24);
         int scorePosition = SCREEN_WIDTH - graphics2D.getFontMetrics(font).stringWidth(Integer.toString(score)) / 2 - 70;
@@ -376,11 +360,6 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.drawString(Integer.toString(score), scorePosition, 40);
     }
 
-    /**
-     * Draws the "Game Over" string on the UI.
-     *
-     * @param graphics2D the graphics environment on which to draw
-     */
     private void drawGameOver(Graphics2D graphics2D) {
         graphics2D.setColor(Color.decode(PRIMARY_COLOR));
         Font titleFont = new Font("Monocraft", Font.BOLD, 72);
@@ -409,9 +388,6 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread.stop();
     }
 
-    /**
-     * Sets up a flag that forces the terrain and all the entities update their position relatively to the player.
-     */
     public void notifyCameraMoved() {
         this.cameraHasMoved = true;
     }

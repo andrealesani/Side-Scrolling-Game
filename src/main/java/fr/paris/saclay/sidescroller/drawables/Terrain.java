@@ -9,10 +9,26 @@ import java.io.IOException;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
+/**
+ * Drawable responsible for creating the terrain.
+ */
 public class Terrain extends Drawable {
-    Image terrain;
-    int numOfTiles;
+    /**
+     * Tile image used for terrain generation.
+     */
+    private final Image terrain;
+    /**
+     * Number of tiles.
+     */
+    private int numOfTiles;
 
+    /**
+     * Creates a Terrain instance, saves the GamePanel reference and sets the theme (tile related to the level selected
+     * in the initial menu).
+     *
+     * @param gamePanel reference.
+     * @param theme     theme types: grass, mushroom, castle (each one related to a different level).
+     */
     public Terrain(GamePanel gamePanel, String theme) {
         super(gamePanel);
         direction = Direction.RIGHT;
@@ -27,9 +43,13 @@ public class Terrain extends Drawable {
 
     @Override
     public void update() {
-
     }
 
+    /**
+     * Draws the component.
+     *
+     * @param graphics2D the rendering environment.
+     */
     @Override
     public void draw(Graphics2D graphics2D) {
         int pixelsOffset = -WIDTH_TILE_SIZE * (numOfTiles - SCREEN_WIDTH / WIDTH_TILE_SIZE - 2);
