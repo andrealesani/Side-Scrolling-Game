@@ -32,7 +32,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final MusicPlayer mediaPlayer;
     public boolean upPressed, rightPressed, leftPressed;
     BufferedImage fullHeartImage, halfHeartImage, emptyHeartImage;
-    private boolean isRunning = true;
+    private boolean isRunning = false;
     private Thread gameThread;
     private Player player;
     private List<Entity> entities = new ArrayList<>();
@@ -97,7 +97,8 @@ public class GamePanel extends JPanel implements Runnable {
     private Action walkRight() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                rightPressed = true;
+                if (isRunning)
+                    rightPressed = true;
             }
         };
     }
@@ -105,7 +106,8 @@ public class GamePanel extends JPanel implements Runnable {
     private Action walkRightReleased() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                rightPressed = false;
+                if (isRunning)
+                    rightPressed = false;
             }
         };
     }
@@ -113,7 +115,8 @@ public class GamePanel extends JPanel implements Runnable {
     private Action walkLeft() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                leftPressed = true;
+                if (isRunning)
+                    leftPressed = true;
             }
         };
     }
@@ -121,7 +124,8 @@ public class GamePanel extends JPanel implements Runnable {
     private Action walkLeftReleased() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                leftPressed = false;
+                if (isRunning)
+                    leftPressed = false;
             }
         };
     }
@@ -129,7 +133,7 @@ public class GamePanel extends JPanel implements Runnable {
     private Action jump() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                if (!upPressed) {
+                if (!upPressed && isRunning) {
                     upPressed = true;
                 }
             }
@@ -160,7 +164,8 @@ public class GamePanel extends JPanel implements Runnable {
     private Action attack() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                player.attack();
+                if (isRunning)
+                    player.attack();
             }
         };
     }
@@ -168,7 +173,8 @@ public class GamePanel extends JPanel implements Runnable {
     private Action block() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                player.block();
+                if (isRunning)
+                    player.block();
             }
         };
     }
@@ -176,7 +182,8 @@ public class GamePanel extends JPanel implements Runnable {
     private Action blockRelease() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                player.blockRelease();
+                if (isRunning)
+                    player.blockRelease();
             }
         };
     }

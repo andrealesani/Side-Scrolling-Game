@@ -28,7 +28,7 @@ public class Bat extends Entity {
         direction = LEFT;
         hitboxSize = WIDTH_TILE_SIZE * 3 / 4;
         attackHitboxSize = new Dimension(WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE);
-        blockHitboxSize = new Dimension(WIDTH_TILE_SIZE / 2, HEIGHT_TILE_SIZE);
+        blockHitboxSize = new Dimension(WIDTH_TILE_SIZE / 2 + WIDTH_TILE_SIZE / 3, HEIGHT_TILE_SIZE);
         setSprites(Arrays.asList(
                 "images/enemies/bat/wings_1.png",
                 "images/enemies/bat/wings_2.png"

@@ -27,7 +27,7 @@ public class Player extends Entity {
         currentStamina = PLAYER_MAX_STAMINA;
         hitboxSize = WIDTH_TILE_SIZE / 2;
         attackHitboxSize = new Dimension(WIDTH_TILE_SIZE * 4 / 3, HEIGHT_TILE_SIZE * 4 / 3);
-        blockHitboxSize = new Dimension(WIDTH_TILE_SIZE / 2, HEIGHT_TILE_SIZE);
+        blockHitboxSize = new Dimension(WIDTH_TILE_SIZE / 2 + WIDTH_TILE_SIZE / 3, HEIGHT_TILE_SIZE);
         lifePoints = PLAYER_MAX_HP;
         isInvincible = false;
         invincibilityTimer = 0;
@@ -243,7 +243,7 @@ public class Player extends Entity {
     }
 
     public void attack() {
-        if ((!gamePanel.upPressed && !isAttacking()) || (currentStamina >= 25 && isRecovering)) {
+        if ((!gamePanel.upPressed && !isAttacking()) && ((currentStamina >= 25 && isRecovering) || (!isRecovering && currentStamina != 0))) {
             setAttacking(true);
             currentStamina -= 25;
             staminaTimer = PLAYER_STAMINA_TIMER;
