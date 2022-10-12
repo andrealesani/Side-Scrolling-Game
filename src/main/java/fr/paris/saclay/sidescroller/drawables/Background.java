@@ -101,6 +101,12 @@ public class Background extends Drawable {
         }
     }
 
+
+    /**
+     * Gets delta x.
+     *
+     * @return the delta x
+     */
     public int getDeltaX() {
         return deltaX;
     }

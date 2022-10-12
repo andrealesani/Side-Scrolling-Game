@@ -18,6 +18,9 @@ import static fr.paris.saclay.sidescroller.utils.Constants.HEIGHT_TILE_SIZE;
 import static fr.paris.saclay.sidescroller.utils.Constants.WIDTH_TILE_SIZE;
 import static fr.paris.saclay.sidescroller.utils.Direction.*;
 
+/**
+ * Template for each moving entity (player or enemy).
+ */
 public abstract class Entity extends Drawable {
     /**
      * Links the Direction the entity is facing to the list of images that represent the entity in that direction.
@@ -31,7 +34,9 @@ public abstract class Entity extends Drawable {
      * Identifies the number of frames that have to be rendered before changing a sprite (during an animation).
      */
     protected int spriteCounter = 0;
-
+    /**
+     * True when entity's life points reach 0.
+     */
     protected boolean isDead = false;
     /**
      * Identifies the sprite that is currently being rendered
@@ -41,6 +46,9 @@ public abstract class Entity extends Drawable {
      * Is true when the entity is jumping, therefore blocking any other type of movement.
      */
     protected boolean isJumping = false;
+    /**
+     * Maximum life points.
+     */
     protected int maximumLifePoints;
     /**
      * Final image that is shown during the rendering of the entity.
@@ -51,35 +59,52 @@ public abstract class Entity extends Drawable {
      * Therefore, this number indicates both the height and the width of the hitbox square (in pixels).
      */
     protected int hitboxSize;
+    /**
+     * Hitbox size of attack action.
+     */
     protected Dimension attackHitboxSize = new Dimension(0, 0);
+    /**
+     * Hitbox size of block action.
+     */
     protected Dimension blockHitboxSize = new Dimension(0, 0);
     /**
      * Represents the area of the entity that is used to compute collisions with enemies or projectiles.
      */
     protected Rectangle hitBox;
-
     /**
      * Represents the area of the entity that is used to compute collisions with enemies or projectiles.
      */
     protected Rectangle attackHitBox;
+    /**
+     * Represents the area of the entity that is used to compute blocks with enemies or projectiles.
+     */
     protected Rectangle blockHitBox;
     /**
-     * True if entity is currently invincible
+     * True if entity is currently invincible.
      */
     protected boolean isInvincible;
     /**
-     * Number of frames during which the player will stay invincible
+     * Number of frames during which the player will stay invincible.
      */
     protected int invincibilityTimer;
-
+    /**
+     * Maximum invincibility timer.
+     */
     protected int maximumInvincibility;
     /**
-     * True entity is currently invincible
+     * True if entity is currently attacking.
      */
     protected boolean isAttacking = false;
-
+    /**
+     * True if entity is currently blocking.
+     */
     protected boolean isBlocking = false;
 
+    /**
+     * Creates an Entity instance passing down GamePanel reference.
+     *
+     * @param gamePanel reference.
+     */
     public Entity(GamePanel gamePanel) {
         super(gamePanel);
         updateHitboxPosition(); // gamePanel is drawn before thread starting
@@ -101,11 +126,19 @@ public abstract class Entity extends Drawable {
         blockHitBox = new Rectangle(hitBoxHorizontalPosition + hitboxSize * directionHitFactor - blockHitboxSize.width * directionFactor, yPosition, blockHitboxSize.width, blockHitboxSize.height);
     }
 
+    /**
+     * Decreases life points if the entity reaches damage.
+     */
     public void tookDamage() {
         if (!isInvincible)
             this.lifePoints -= 1;
     }
 
+    /**
+     * Adds provided sprites to animation map.
+     *
+     * @param paths sprites.
+     */
     protected void setSprites(List<String> paths) {
         addSpritesToAnimationMap(paths, new ArrayList<>(), LEFT);
     }
@@ -133,9 +166,7 @@ public abstract class Entity extends Drawable {
         addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.BLOCK_LEFT);
     }
 
-    /**
-     * @return how many life-points the entity currently has.
-     */
+
     public int getLifePoints() {
         return lifePoints;
     }

@@ -62,6 +62,11 @@ public abstract class Drawable {
      */
     public abstract void draw(Graphics2D graphics2D);
 
+    /**
+     * Gets x position.
+     *
+     * @return the x position
+     */
     public int getXPosition() {
         return xPosition;
     }
