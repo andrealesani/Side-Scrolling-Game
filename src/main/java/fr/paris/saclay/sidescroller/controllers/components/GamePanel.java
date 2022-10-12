@@ -11,7 +11,6 @@ import fr.paris.saclay.sidescroller.drawables.entities.Entity;
 import fr.paris.saclay.sidescroller.drawables.entities.Player;
 import fr.paris.saclay.sidescroller.drawables.entities.enemies.Bat;
 import fr.paris.saclay.sidescroller.drawables.entities.enemies.Ghost;
-import fr.paris.saclay.sidescroller.utils.Constants;
 import fr.paris.saclay.sidescroller.utils.Direction;
 
 import javax.imageio.ImageIO;
@@ -188,11 +187,14 @@ public class GamePanel extends JPanel implements Runnable {
 //        entities.add(new Ghost(this, 600));
         entities.add(new Bat(this, 400));
         drawables = new ArrayList<>();
-        background = new Background(this);
+        background = new Background(this,
+                parentContainer.getGameMenu().getModel().getBackgroundThemes().get(parentContainer.getGameMenu().getModel().getCurrentThemeSelection()));
         drawables.add(background);
-        terrain = new Terrain(this);
+        terrain = new Terrain(this,
+                parentContainer.getGameMenu().getModel().getBackgroundThemes().get(parentContainer.getGameMenu().getModel().getCurrentThemeSelection()));
         drawables.add(terrain);
-        player = new Player(this);
+        player = new Player(this,
+                parentContainer.getGameMenu().getModel().getPlayerThemes().get(parentContainer.getGameMenu().getModel().getCurrentPlayerSelection()));
         drawables.add(player);
         drawables.addAll(entities);
         gameOver = false;
@@ -307,6 +309,25 @@ public class GamePanel extends JPanel implements Runnable {
         return damagedEntities;
     }
 
+    /**
+     * Randomly spawns a new {@code Entity} that is randomly chosen between {@code Ghost} and {@code Bat}.
+     * The spawn position is a random number that depends on the player position.
+     */
+    private void spawnEnemies() {
+        spawnCounter++;
+        if (spawnCounter == 60 * 5) {
+            Entity entity;
+            entity = Math.random() < 0.5 ? new Ghost(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900) : new Bat(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900);
+            entities.add(entity);
+            drawables.add(entity);
+            spawnCounter = 0;
+        }
+    }
+
+    public int getPlayerPositionX() {
+        return player.xPosition;
+    }
+
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
@@ -379,10 +400,6 @@ public class GamePanel extends JPanel implements Runnable {
         gameOver = "Press ESC to open menu and start again";
         graphics2D.setFont(titleFont);
         graphics2D.drawString(gameOver, SCREEN_WIDTH / 2 - graphics2D.getFontMetrics(titleFont).stringWidth(gameOver) / 2, SCREEN_HEIGHT / 2);
-    }
-
-    public int getPlayerPositionX() {
-        return player.xPosition;
     }
 
     public int getPlayerSpeed() {

@@ -17,6 +17,7 @@ public class MusicPlayer extends JPanel {
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         setupButtons(constraints);
+        setOpaque(false);
     }
 
     private void setupButtons(GridBagConstraints constraints) {

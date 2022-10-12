@@ -22,7 +22,7 @@ public class Player extends Entity {
 
     int currentStamina;
 
-    public Player(GamePanel gamePanel) {
+    public Player(GamePanel gamePanel, String theme) {
         super(gamePanel);
         currentStamina = PLAYER_MAX_STAMINA;
         hitboxSize = WIDTH_TILE_SIZE / 2;
@@ -35,23 +35,23 @@ public class Player extends Entity {
         maximumLifePoints = PLAYER_MAX_HP;
         setPlayerDefaultPosition();
         setSprites(Arrays.asList(
-                "images/player/avatars/pink/alien_left.png",
-                "images/player/avatars/pink/alien_left_2.png"
+                "images/player/avatars/" + theme + "/alien_left.png",
+                "images/player/avatars/" + theme + "/alien_left_2.png"
         ));
         setJumpSprites(Arrays.asList(
-                "images/player/avatars/pink/alien_left_jump_2.png",
-                "images/player/avatars/pink/alien_left_jump_3.png",
-                "images/player/avatars/pink/alien_left_jump_4.png",
-                "images/player/avatars/pink/alien_left_jump_5.png",
-                "images/player/avatars/pink/alien_left_jump_2.png",
-                "images/player/avatars/pink/alien_left_jump.png"
+                "images/player/avatars/" + theme + "/alien_left_jump_2.png",
+                "images/player/avatars/" + theme + "/alien_left_jump_3.png",
+                "images/player/avatars/" + theme + "/alien_left_jump_4.png",
+                "images/player/avatars/" + theme + "/alien_left_jump_5.png",
+                "images/player/avatars/" + theme + "/alien_left_jump_2.png",
+                "images/player/avatars/" + theme + "/alien_left_jump.png"
         ));
         setAttackSprites(Arrays.asList(
-                "images/player/avatars/pink/alien_left_attack_1.png",
-                "images/player/avatars/pink/alien_left_attack_2.png"
+                "images/player/avatars/" + theme + "/alien_left_attack_1.png",
+                "images/player/avatars/" + theme + "/alien_left_attack_2.png"
         ));
         setBlockSprites(List.of(
-                "images/player/avatars/pink/alien_block_left.png"
+                "images/player/avatars/" + theme + "/alien_block_left.png"
         ));
     }
 

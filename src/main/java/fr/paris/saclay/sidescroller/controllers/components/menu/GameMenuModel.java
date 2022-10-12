@@ -2,25 +2,25 @@ package fr.paris.saclay.sidescroller.controllers.components.menu;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_HEIGHT;
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
 
 public class GameMenuModel {
 
+    private final java.util.List<String> backgroundThemes = Arrays.asList("grass", "mushroom", "castle");
+    private final java.util.List<String> playerThemes = Arrays.asList("pink", "blue", "green", "yellow");
     private boolean isPauseMenu = false;
-
     private MenuButton playButton;
-
     private MenuButton quitButton;
-
     private MenuButton resumeButton;
-
     private MenuButton quitToMenuButton;
-
     private JLabel credits;
-
     private Timer timer;
+    private int currentThemeSelection = 0;
+
+    private int currentPlayerSelection = 0;
 
     public Dimension getPreferredSize() {
         return new Dimension(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
@@ -84,5 +84,29 @@ public class GameMenuModel {
 
     public void setTimer(Timer timer) {
         this.timer = timer;
+    }
+
+    public java.util.List<String> getBackgroundThemes() {
+        return backgroundThemes;
+    }
+
+    public java.util.List<String> getPlayerThemes() {
+        return playerThemes;
+    }
+
+    public int getCurrentThemeSelection() {
+        return currentThemeSelection;
+    }
+
+    public void setCurrentThemeSelection(int currentThemeSelection) {
+        this.currentThemeSelection = currentThemeSelection;
+    }
+
+    public int getCurrentPlayerSelection() {
+        return currentPlayerSelection;
+    }
+
+    public void setCurrentPlayerSelection(int currentPlayerSelection) {
+        this.currentPlayerSelection = currentPlayerSelection;
     }
 }

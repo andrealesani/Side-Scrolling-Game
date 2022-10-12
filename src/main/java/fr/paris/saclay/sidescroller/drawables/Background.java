@@ -11,16 +11,16 @@ import static fr.paris.saclay.sidescroller.utils.Direction.*;
 
 public class Background extends Drawable {
 
-    Image backgroundImage;
-    int numOfBackgrounds = 1;
-    int deltaX = 0;
+    private final Image backgroundImage;
+    private int numOfBackgrounds = 1;
+    private int deltaX = 0;
 
-    public Background(GamePanel gamePanel) {
+    public Background(GamePanel gamePanel, String theme) {
         super(gamePanel);
         direction = RIGHT;
         speed = 0;
         try {
-            backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/backgrounds/grasslands.png"));
+            backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/backgrounds/" + theme + "/background.png"));
         } catch (IOException e) {
             throw new RuntimeException("Couldn't find background image", e);
         }
