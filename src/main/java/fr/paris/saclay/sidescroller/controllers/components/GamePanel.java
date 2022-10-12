@@ -11,7 +11,6 @@ import fr.paris.saclay.sidescroller.drawables.entities.Entity;
 import fr.paris.saclay.sidescroller.drawables.entities.Player;
 import fr.paris.saclay.sidescroller.drawables.entities.enemies.Bat;
 import fr.paris.saclay.sidescroller.drawables.entities.enemies.Ghost;
-import fr.paris.saclay.sidescroller.utils.Constants;
 import fr.paris.saclay.sidescroller.utils.Direction;
 
 import javax.imageio.ImageIO;
@@ -188,11 +187,14 @@ public class GamePanel extends JPanel implements Runnable {
 //        entities.add(new Ghost(this, 600));
         entities.add(new Bat(this, 400));
         drawables = new ArrayList<>();
-        background = new Background(this);
+        background = new Background(this,
+                parentContainer.getGameMenu().getModel().getBackgroundThemes().get(parentContainer.getGameMenu().getModel().getCurrentThemeSelection()));
         drawables.add(background);
-        terrain = new Terrain(this);
+        terrain = new Terrain(this,
+                parentContainer.getGameMenu().getModel().getBackgroundThemes().get(parentContainer.getGameMenu().getModel().getCurrentThemeSelection()));
         drawables.add(terrain);
-        player = new Player(this);
+        player = new Player(this,
+                parentContainer.getGameMenu().getModel().getPlayerThemes().get(parentContainer.getGameMenu().getModel().getCurrentPlayerSelection()));
         drawables.add(player);
         drawables.addAll(entities);
         gameOver = false;
@@ -270,6 +272,25 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     /**
+     * Checks if the player is colliding with any entities in the scene.
+     *
+     * @return true if the player is colliding with at least one other entity in the scene
+     */
+    public List<Entity> checkCollision() {
+        List<Entity> damagedEntities = new ArrayList<>();
+        for (Entity entity : entities) {
+            if (!entity.equals(player) && collisionDetector.checkCollision(player, entity, false) && !player.isInvincible() && !entity.isDead()) {
+                if (!damagedEntities.contains(player))
+                    damagedEntities.add(player);
+            }
+            if (player.isAttacking() && collisionDetector.checkCollision(player, entity, true) && !entity.isInvincible()) {
+                damagedEntities.add(entity);
+            }
+        }
+        return damagedEntities;
+    }
+
+    /**
      * Randomly spawns a new {@code Entity} that is randomly chosen between {@code Ghost} and {@code Bat}.
      * The spawn position depends on the player position but has a random value added so that if the player stands
      * still enemies will not be spawned in the same position.
@@ -288,23 +309,8 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    /**
-     * Checks if the player is colliding with any entities in the scene.
-     *
-     * @return true if the player is colliding with at least one other entity in the scene
-     */
-    public List<Entity> checkCollision() {
-        List<Entity> damagedEntities = new ArrayList<>();
-        for (Entity entity : entities) {
-            if (!entity.equals(player) && collisionDetector.checkCollision(player, entity, false) && !player.isInvincible() && !entity.isDead()) {
-                if (!damagedEntities.contains(player))
-                    damagedEntities.add(player);
-            }
-            if (player.isAttacking() && collisionDetector.checkCollision(player, entity, true) && !entity.isInvincible()) {
-                damagedEntities.add(entity);
-            }
-        }
-        return damagedEntities;
+    public int getPlayerPositionX() {
+        return player.xPosition;
     }
 
     public void paintComponent(Graphics graphics) {
@@ -379,10 +385,6 @@ public class GamePanel extends JPanel implements Runnable {
         gameOver = "Press ESC to open menu and start again";
         graphics2D.setFont(titleFont);
         graphics2D.drawString(gameOver, SCREEN_WIDTH / 2 - graphics2D.getFontMetrics(titleFont).stringWidth(gameOver) / 2, SCREEN_HEIGHT / 2);
-    }
-
-    public int getPlayerPositionX() {
-        return player.xPosition;
     }
 
     public int getPlayerSpeed() {

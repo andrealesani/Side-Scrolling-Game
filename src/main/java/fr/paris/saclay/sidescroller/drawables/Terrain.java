@@ -13,13 +13,13 @@ public class Terrain extends Drawable {
     Image terrain;
     int numOfTiles;
 
-    public Terrain(GamePanel gamePanel) {
+    public Terrain(GamePanel gamePanel, String theme) {
         super(gamePanel);
         direction = Direction.RIGHT;
         speed = 0;
         numOfTiles = SCREEN_WIDTH / WIDTH_TILE_SIZE;
         try {
-            terrain = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/backgrounds/grass.png"));
+            terrain = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/backgrounds/" + theme + "/tile.png"));
         } catch (IOException e) {
             throw new RuntimeException("Couldn't find background image", e);
         }
