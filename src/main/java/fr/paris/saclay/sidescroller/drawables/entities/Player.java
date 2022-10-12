@@ -26,7 +26,7 @@ public class Player extends Entity {
         super(gamePanel);
         currentStamina = PLAYER_MAX_STAMINA;
         hitboxSize = WIDTH_TILE_SIZE / 2;
-        attackHitboxSize = new Dimension(WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE);
+        attackHitboxSize = new Dimension(WIDTH_TILE_SIZE * 4 / 3, HEIGHT_TILE_SIZE * 4 / 3);
         blockHitboxSize = new Dimension(WIDTH_TILE_SIZE / 2, HEIGHT_TILE_SIZE);
         lifePoints = PLAYER_MAX_HP;
         isInvincible = false;
@@ -121,7 +121,7 @@ public class Player extends Entity {
             }
         } else if (isAttacking && !isBlocking) {
             spriteCounter++;
-            if (spriteCounter > 10) {
+            if (spriteCounter > 6) {
                 if (spriteNumber == animationMap.get(Direction.ATTACK_LEFT).size() - 1) {
                     spriteNumber = 0;
                     if (direction == Direction.ATTACK_LEFT) {

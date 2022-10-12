@@ -44,7 +44,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean gameOver = false;
     private int spawnCounter = 0;
 
-    private int score = 12345678;
+    private int score = 0;
     private int scoreOffset = 0;
 
     public GamePanel(RPGSideScroller parent) {
@@ -271,13 +271,17 @@ public class GamePanel extends JPanel implements Runnable {
 
     /**
      * Randomly spawns a new {@code Entity} that is randomly chosen between {@code Ghost} and {@code Bat}.
-     * The spawn position is a random number that depends on the player position.
+     * The spawn position depends on the player position but has a random value added so that if the player stands
+     * still enemies will not be spawned in the same position.
      */
     private void spawnEnemies() {
+        double multiplier = 1.0;
+        for (int i = 0; i < score / 1000; i++)
+            multiplier *= 1.5;
         spawnCounter++;
-        if (spawnCounter == 60 * 5) {
+        if (spawnCounter >= 60 * 5 / multiplier) {
             Entity entity;
-            entity = Math.random() < 0.5 ? new Ghost(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900) : new Bat(this, getPlayerPositionX() + (int) (Math.random() * 200) + 900);
+            entity = Math.random() < 0.5 ? new Ghost(this, getPlayerPositionX() + (int) (Math.random() * 400) + 900) : new Bat(this, getPlayerPositionX() + (int) (Math.random() * 400) + 900);
             entities.add(entity);
             drawables.add(entity);
             spawnCounter = 0;

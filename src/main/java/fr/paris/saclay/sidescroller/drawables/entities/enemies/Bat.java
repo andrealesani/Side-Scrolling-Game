@@ -21,12 +21,12 @@ public class Bat extends Entity {
         this.xPosition = xPosition;
         yPosition = SCREEN_HEIGHT - HEIGHT_TILE_SIZE * 2;
         speed = 2;
-        lifePoints = 3;
+        lifePoints = 2;
+        maximumLifePoints = 2;
         invincibilityTimer = 0;
         maximumInvincibility = 30;
         direction = LEFT;
-        hitboxSize = WIDTH_TILE_SIZE;
-        maximumLifePoints = 3;
+        hitboxSize = WIDTH_TILE_SIZE * 3 / 4;
         attackHitboxSize = new Dimension(WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE);
         blockHitboxSize = new Dimension(WIDTH_TILE_SIZE / 2, HEIGHT_TILE_SIZE);
         setSprites(Arrays.asList(
