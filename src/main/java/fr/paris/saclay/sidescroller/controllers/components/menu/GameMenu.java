@@ -42,22 +42,39 @@ public class GameMenu extends JPanel implements ActionListener {
         model.setQuitButton(new MenuButton("menu_button", "Quit", this));
         model.setResumeButton(new MenuButton("menu_button", "Resume", this));
         model.setQuitToMenuButton(new MenuButton("menu_button", "Menu", this));
+        model.setStartGameButton(new MenuButton("menu_button", "Start", this));
+        model.setBackButton(new MenuButton("menu_button", "Back", this));
         model.setCredits(new JLabel("<html><body style=\"text-align: center\">Credits<br><br>Sonny<br>&<br>Andrea</body></html>"));
         model.getCredits().setForeground(Color.decode(PRIMARY_COLOR));
         model.getCredits().setFont(new Font("Monocraft", Font.PLAIN, 28));
+        model.setNextAvatarButton(new SelectionMenuButton("next"));
+        model.setPreviousAvatarButton(new SelectionMenuButton("previous"));
+        model.setNextBackgroundButton(new SelectionMenuButton("next"));
+        model.setPreviousBackgroundButton(new SelectionMenuButton("previous"));
         model.getPlayButton().setVisible(false);
         model.getQuitButton().setVisible(false);
         model.getCredits().setVisible(false);
         model.getQuitToMenuButton().setVisible(false);
         model.getResumeButton().setVisible(false);
+        model.getNextBackgroundButton().setVisible(false);
+        model.getPreviousBackgroundButton().setVisible(false);
+        model.getNextAvatarButton().setVisible(false);
+        model.getPreviousAvatarButton().setVisible(false);
+        model.getStartGameButton().setVisible(false);
         model.getPlayButton().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                frame.getGamePanel().startGame();
-                frame.getGamePanel().setRunning(true);
-                frame.getGamePanel().setFocusable(true);
-                frame.getGamePanel().transferFocus();
-                frame.getGlassPane().setVisible(false);
+                model.getNextBackgroundButton().setVisible(true);
+                model.getPreviousBackgroundButton().setVisible(true);
+                model.getNextAvatarButton().setVisible(true);
+                model.getPreviousAvatarButton().setVisible(true);
+                model.getStartGameButton().setVisible(true);
+                model.getPlayButton().setVisible(false);
+                model.getQuitButton().setVisible(false);
+                model.getBackButton().getModel().setPressed(false);
+                model.getBackButton().setIcon(new ImageIcon(GrayFilter.createDisabledImage(model.getPlayButton().getImage())));
+                model.getBackButton().setForeground(Color.white);
+                setSelectionGridConstraints();
                 repaint();
             }
         });
@@ -87,6 +104,85 @@ public class GameMenu extends JPanel implements ActionListener {
                 System.exit(0);
             }
         });
+
+        model.getNextBackgroundButton().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                changePreview(model.getCurrentThemeSelection(), true, true);
+            }
+        });
+
+        model.getNextAvatarButton().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                changePreview(model.getCurrentPlayerSelection(), false, true);
+            }
+        });
+
+        model.getPreviousBackgroundButton().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                changePreview(model.getCurrentThemeSelection(), true, false);
+            }
+        });
+
+        model.getPreviousAvatarButton().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                changePreview(model.getCurrentPlayerSelection(), false, false);
+            }
+        });
+
+        model.getStartGameButton().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                model.getPlayButton().getModel().setPressed(false);
+                model.getPlayButton().setIcon(new ImageIcon(GrayFilter.createDisabledImage(model.getPlayButton().getImage())));
+                model.getPlayButton().setForeground(Color.white);
+                frame.getGamePanel().startGame();
+                frame.getGamePanel().setRunning(true);
+                frame.getGamePanel().setFocusable(true);
+                frame.getGamePanel().transferFocus();
+                frame.getGlassPane().setVisible(false);
+                repaint();
+            }
+        });
+
+        model.getBackButton().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                model.getPlayButton().getModel().setPressed(false);
+                model.getPlayButton().setIcon(new ImageIcon(GrayFilter.createDisabledImage(model.getPlayButton().getImage())));
+                model.getPlayButton().setForeground(Color.white);
+                model.getPlayButton().setVisible(true);
+                model.getQuitButton().setVisible(true);
+                setNormalGridConstraints();
+                repaint();
+            }
+        });
+    }
+
+    private void changePreview(int currentSelection, boolean isBackground, boolean isNext) {
+        int length = model.getBackgroundThemes().size();
+        if (!isBackground) {
+            length = model.getPlayerThemes().size();
+        }
+        if (isNext) {
+            if (currentSelection == length - 1) {
+                currentSelection = 0;
+            } else currentSelection++;
+        } else {
+            if (currentSelection == 0) {
+                currentSelection = length - 1;
+            } else currentSelection--;
+        }
+        if (isBackground) {
+            model.setCurrentThemeSelection(currentSelection);
+            model.getBackgroundPreview().updateTheme(model.getBackgroundThemes().get(currentSelection));
+        } else {
+            model.setCurrentPlayerSelection(currentSelection);
+            model.getAvatarPreview().updateTheme(model.getPlayerThemes().get(currentSelection));
+        }
     }
 
     public void quitToMenu(RPGSideScroller frame) {
@@ -95,6 +191,8 @@ public class GameMenu extends JPanel implements ActionListener {
         model.getQuitToMenuButton().setIcon(new ImageIcon(GrayFilter.createDisabledImage(model.getQuitToMenuButton().getImage())));
         model.getQuitToMenuButton().setForeground(Color.white);
         model.getQuitToMenuButton().getModel().setPressed(false);
+        model.getPlayButton().setVisible(true);
+        model.getQuitButton().setVisible(true);
         setNormalGridConstraints();
         repaint();
     }
@@ -135,6 +233,62 @@ public class GameMenu extends JPanel implements ActionListener {
         menuPanel.add(Box.createVerticalStrut(getPreferredSize().height / 10), constraints);
         constraints.gridy = 2;
         menuPanel.add(model.getQuitToMenuButton(), constraints);
+        menuPanel.setOpaque(false);
+    }
+
+    public void setSelectionGridConstraints() {
+        menuPanel.removeAll();
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        menuPanel.add(model.getPreviousBackgroundButton(), constraints);
+        constraints.gridx = 1;
+        constraints.gridwidth = 3;
+        menuPanel.add(model.getBackgroundPreview(), constraints);
+        constraints.gridwidth = 1;
+        constraints.gridx = 4;
+        menuPanel.add(model.getNextBackgroundButton(), constraints);
+        constraints.gridx = 5;
+        menuPanel.add(Box.createHorizontalStrut(100), constraints);
+        constraints.gridx = 6;
+        constraints.gridwidth = 3;
+        JLabel levelSelection = new JLabel("Select a level");
+        levelSelection.setForeground(Color.decode(PRIMARY_COLOR));
+        levelSelection.setFont(new Font("Monocraft", Font.PLAIN, 18));
+        levelSelection.setHorizontalAlignment(JLabel.LEFT);
+        menuPanel.add(levelSelection, constraints);
+        constraints.gridy = 1;
+        constraints.gridx = 0;
+        constraints.gridwidth = 6;
+        menuPanel.add(Box.createVerticalStrut(10), constraints);
+        constraints.gridy = 2;
+        constraints.gridwidth = 1;
+        menuPanel.add(model.getPreviousAvatarButton(), constraints);
+        constraints.gridx = 1;
+        constraints.gridwidth = 3;
+        menuPanel.add(model.getAvatarPreview(), constraints);
+        constraints.gridwidth = 1;
+        constraints.gridx = 4;
+        menuPanel.add(model.getNextAvatarButton(), constraints);
+        constraints.gridx = 5;
+        menuPanel.add(Box.createHorizontalStrut(100), constraints);
+        constraints.gridx = 6;
+        constraints.gridwidth = 3;
+        JLabel avatarSelection = new JLabel("Select an avatar");
+        avatarSelection.setForeground(Color.decode(PRIMARY_COLOR));
+        avatarSelection.setFont(new Font("Monocraft", Font.PLAIN, 18));
+        avatarSelection.setHorizontalAlignment(JLabel.LEFT);
+        menuPanel.add(avatarSelection, constraints);
+        constraints.gridwidth = 9;
+        constraints.gridy = 3;
+        constraints.gridx = 0;
+        JPanel menuButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        menuButtons.setOpaque(false);
+        menuPanel.add(menuButtons, constraints);
+        menuButtons.add(model.getBackButton());
+        menuButtons.add(Box.createHorizontalStrut(50));
+        menuButtons.add(model.getStartGameButton());
         menuPanel.setOpaque(false);
     }
 

@@ -18,7 +18,7 @@ public class MenuButton extends JButton {
         setPreferredSize(new Dimension(menu.getPreferredSize().width / 3, menu.getPreferredSize().height / 5));
         try {
             image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/menu/" + filename + ".png"));
-            image = image.getScaledInstance(menu.getPreferredSize().width / 3, menu.getPreferredSize().height / 5, Image.SCALE_SMOOTH);
+            image = image.getScaledInstance(menu.getPreferredSize().width / 4, menu.getPreferredSize().height / 6, Image.SCALE_SMOOTH);
             setIcon(new ImageIcon(GrayFilter.createDisabledImage(image)));
         } catch (IOException e) {
             e.printStackTrace();
