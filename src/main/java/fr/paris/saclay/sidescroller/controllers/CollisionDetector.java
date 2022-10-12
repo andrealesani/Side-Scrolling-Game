@@ -1,7 +1,7 @@
-package fr.paris.saclay.sidescroller.controller;
+package fr.paris.saclay.sidescroller.controllers;
 
-import fr.paris.saclay.sidescroller.abstraction.entities.Entity;
-import fr.paris.saclay.sidescroller.abstraction.entities.Player;
+import fr.paris.saclay.sidescroller.drawables.entities.Entity;
+import fr.paris.saclay.sidescroller.drawables.entities.Player;
 
 public class CollisionDetector {
 

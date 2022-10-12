@@ -1,8 +1,8 @@
-package fr.paris.saclay.sidescroller.abstraction.entities;
+package fr.paris.saclay.sidescroller.drawables.entities;
 
-import fr.paris.saclay.sidescroller.abstraction.Direction;
-import fr.paris.saclay.sidescroller.abstraction.Drawable;
-import fr.paris.saclay.sidescroller.controller.GamePanel;
+import fr.paris.saclay.sidescroller.controllers.components.GamePanel;
+import fr.paris.saclay.sidescroller.drawables.Drawable;
+import fr.paris.saclay.sidescroller.utils.Direction;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static fr.paris.saclay.sidescroller.abstraction.Direction.*;
 import static fr.paris.saclay.sidescroller.utils.Constants.HEIGHT_TILE_SIZE;
 import static fr.paris.saclay.sidescroller.utils.Constants.WIDTH_TILE_SIZE;
+import static fr.paris.saclay.sidescroller.utils.Direction.*;
 
 public abstract class Entity extends Drawable {
     /**
@@ -298,5 +298,9 @@ public abstract class Entity extends Drawable {
 
     public boolean isBlocking() {
         return isBlocking;
+    }
+
+    public boolean isJumping() {
+        return isJumping;
     }
 }

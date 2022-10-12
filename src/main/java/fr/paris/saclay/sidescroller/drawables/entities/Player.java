@@ -1,8 +1,8 @@
-package fr.paris.saclay.sidescroller.abstraction.entities;
+package fr.paris.saclay.sidescroller.drawables.entities;
 
-import fr.paris.saclay.sidescroller.abstraction.Direction;
-import fr.paris.saclay.sidescroller.controller.GamePanel;
+import fr.paris.saclay.sidescroller.controllers.components.GamePanel;
 import fr.paris.saclay.sidescroller.utils.Constants;
+import fr.paris.saclay.sidescroller.utils.Direction;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -73,7 +73,7 @@ public class Player extends Entity {
                 }
             } else if (gamePanel.leftPressed && !isJumping && !gamePanel.upPressed) {
                 direction = Direction.LEFT;
-                if (xPosition >= CAMERA_MIN_LEFT) {
+                if (xPosition >= CAMERA_MIN_LEFT || gamePanel.getDrawableBackground().getxPosition() == 0) {
                     xPosition -= speed;
                 }
             } else if (gamePanel.upPressed) {

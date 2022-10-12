@@ -1,4 +1,8 @@
-package fr.paris.saclay.sidescroller.controller;
+package fr.paris.saclay.sidescroller.controllers;
+
+import fr.paris.saclay.sidescroller.controllers.components.GamePanel;
+import fr.paris.saclay.sidescroller.controllers.components.menu.GameMenu;
+import fr.paris.saclay.sidescroller.controllers.components.musicPlayer.MusicPlayer;
 
 import javax.swing.*;
 import java.awt.*;

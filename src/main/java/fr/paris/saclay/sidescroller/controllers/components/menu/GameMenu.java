@@ -1,7 +1,6 @@
-package fr.paris.saclay.sidescroller.controller;
+package fr.paris.saclay.sidescroller.controllers.components.menu;
 
-import fr.paris.saclay.sidescroller.abstraction.GameMenuModel;
-import fr.paris.saclay.sidescroller.presentation.GameMenuUI;
+import fr.paris.saclay.sidescroller.controllers.RPGSideScroller;
 
 import javax.swing.*;
 import java.awt.*;

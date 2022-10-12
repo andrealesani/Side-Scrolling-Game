@@ -1,4 +1,4 @@
-package fr.paris.saclay.sidescroller.abstraction;
+package fr.paris.saclay.sidescroller.controllers.components.musicPlayer;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

@@ -1,6 +1,7 @@
-package fr.paris.saclay.sidescroller.abstraction;
+package fr.paris.saclay.sidescroller.drawables;
 
-import fr.paris.saclay.sidescroller.controller.GamePanel;
+import fr.paris.saclay.sidescroller.controllers.components.GamePanel;
+import fr.paris.saclay.sidescroller.utils.Direction;
 
 import java.awt.*;
 
@@ -27,11 +28,8 @@ public abstract class Drawable {
         this.gamePanel = gamePanel;
     }
 
-    public void updatePositionToCamera() {
-        switch (gamePanel.getPlayerDirection()) {
-            case LEFT -> xPosition += gamePanel.getPlayerSpeed();
-            case RIGHT -> xPosition -= gamePanel.getPlayerSpeed();
-        }
+    public void updatePositionToCamera(int deltaX) {
+        xPosition += deltaX;
     }
 
     /**
@@ -47,4 +45,8 @@ public abstract class Drawable {
      * @param graphics2D the rendering environment.
      */
     public abstract void draw(Graphics2D graphics2D);
+
+    public int getxPosition() {
+        return xPosition;
+    }
 }

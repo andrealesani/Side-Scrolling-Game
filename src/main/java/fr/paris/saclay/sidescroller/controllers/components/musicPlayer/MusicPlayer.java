@@ -1,6 +1,4 @@
-package fr.paris.saclay.sidescroller.controller;
-
-import fr.paris.saclay.sidescroller.abstraction.MusicPlayerModel;
+package fr.paris.saclay.sidescroller.controllers.components.musicPlayer;
 
 import javax.swing.*;
 import java.awt.*;
