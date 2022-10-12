@@ -1,6 +1,7 @@
-package fr.paris.saclay.sidescroller.abstraction;
+package fr.paris.saclay.sidescroller.drawables;
 
-import fr.paris.saclay.sidescroller.controller.GamePanel;
+import fr.paris.saclay.sidescroller.controllers.components.GamePanel;
+import fr.paris.saclay.sidescroller.utils.Direction;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

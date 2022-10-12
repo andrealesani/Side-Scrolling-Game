@@ -1,4 +1,4 @@
-package fr.paris.saclay.sidescroller.controller;
+package fr.paris.saclay.sidescroller.controllers.components.menu;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

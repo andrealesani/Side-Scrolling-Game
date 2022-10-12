@@ -1,12 +1,13 @@
-package fr.paris.saclay.sidescroller.abstraction.entities;
+package fr.paris.saclay.sidescroller.drawables.entities.enemies;
 
-import fr.paris.saclay.sidescroller.controller.GamePanel;
+import fr.paris.saclay.sidescroller.controllers.components.GamePanel;
+import fr.paris.saclay.sidescroller.drawables.entities.Entity;
 
 import java.awt.*;
 import java.util.Arrays;
 
-import static fr.paris.saclay.sidescroller.abstraction.Direction.LEFT;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
+import static fr.paris.saclay.sidescroller.utils.Direction.LEFT;
 
 public class Bat extends Entity {
     /**

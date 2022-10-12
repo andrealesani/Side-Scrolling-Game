@@ -1,12 +1,16 @@
-package fr.paris.saclay.sidescroller.controller;
+package fr.paris.saclay.sidescroller.controllers.components;
 
-import fr.paris.saclay.sidescroller.abstraction.Background;
-import fr.paris.saclay.sidescroller.abstraction.Direction;
-import fr.paris.saclay.sidescroller.abstraction.Drawable;
-import fr.paris.saclay.sidescroller.abstraction.Terrain;
-import fr.paris.saclay.sidescroller.abstraction.entities.Bat;
-import fr.paris.saclay.sidescroller.abstraction.entities.Entity;
-import fr.paris.saclay.sidescroller.abstraction.entities.Player;
+import fr.paris.saclay.sidescroller.controllers.CollisionDetector;
+import fr.paris.saclay.sidescroller.controllers.RPGSideScroller;
+import fr.paris.saclay.sidescroller.controllers.components.menu.GameMenu;
+import fr.paris.saclay.sidescroller.controllers.components.musicPlayer.MusicPlayer;
+import fr.paris.saclay.sidescroller.drawables.Background;
+import fr.paris.saclay.sidescroller.drawables.Drawable;
+import fr.paris.saclay.sidescroller.drawables.Terrain;
+import fr.paris.saclay.sidescroller.drawables.entities.Entity;
+import fr.paris.saclay.sidescroller.drawables.entities.Player;
+import fr.paris.saclay.sidescroller.drawables.entities.enemies.Bat;
+import fr.paris.saclay.sidescroller.utils.Direction;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -231,9 +235,10 @@ public class GamePanel extends JPanel implements Runnable {
             drawable.update();
 
         if (cameraHasMoved) {
+            System.out.println("camera has moved");
             for (var entity : entities)
-                entity.updatePositionToCamera();
-            terrain.updatePositionToCamera();
+                entity.updatePositionToCamera(((Background) background).getDeltaX());
+            terrain.updatePositionToCamera(((Background) background).getDeltaX());
         }
         List<Entity> damagedEntities = checkCollision();
         if (damagedEntities.size() > 0) {
@@ -362,5 +367,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Drawable getDrawableBackground() {
+        return background;
     }
 }

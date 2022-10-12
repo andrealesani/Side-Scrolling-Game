@@ -1,7 +1,4 @@
-package fr.paris.saclay.sidescroller.presentation;
-
-import fr.paris.saclay.sidescroller.abstraction.GameMenuModel;
-import fr.paris.saclay.sidescroller.controller.GameMenu;
+package fr.paris.saclay.sidescroller.controllers.components.menu;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

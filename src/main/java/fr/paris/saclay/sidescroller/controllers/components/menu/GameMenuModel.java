@@ -1,6 +1,4 @@
-package fr.paris.saclay.sidescroller.abstraction;
-
-import fr.paris.saclay.sidescroller.controller.MenuButton;
+package fr.paris.saclay.sidescroller.controllers.components.menu;
 
 import javax.swing.*;
 import java.awt.*;
