@@ -395,6 +395,8 @@ public class GameMenu extends JPanel implements ActionListener {
 
     /**
      * Calls related method of the model.
+     *
+     * @param pauseMenu pause menu flag.
      */
     public void setPauseMenu(boolean pauseMenu) {
         model.setPauseMenu(pauseMenu);

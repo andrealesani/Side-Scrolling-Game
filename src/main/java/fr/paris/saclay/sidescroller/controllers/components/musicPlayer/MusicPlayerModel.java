@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Model of MusicPlayer class.
+ */
 public class MusicPlayerModel {
     /**
      * Soundtrack.

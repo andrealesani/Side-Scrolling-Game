@@ -8,6 +8,9 @@ import java.util.List;
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_HEIGHT;
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
 
+/**
+ * Model of GameMenu class, it stores its logic.
+ */
 public class GameMenuModel {
     /**
      * Background themes.

@@ -24,35 +24,97 @@ import java.util.List;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
+/**
+ * Main screen displayed, it is the core controller of the game.
+ */
 public class GamePanel extends JPanel implements Runnable {
 
+    /**
+     * Parent reference.
+     */
     private final MainFrame parentContainer;
+    /**
+     * CollisionDetector reference.
+     */
     private final CollisionDetector collisionDetector;
+    /**
+     * MusicPlayer reference.
+     */
     private final MusicPlayer mediaPlayer;
+    /**
+     * Flags identifying if certain keyboard keys are pressed.
+     */
     public boolean upPressed,
             rightPressed,
             leftPressed;
-    BufferedImage fullHeartImage,
+    /**
+     * Life point images representing each possible state for each heart.
+     */
+    private BufferedImage fullHeartImage,
             halfHeartImage,
             emptyHeartImage;
+    /**
+     * Flag identifying if game is running and not paused.
+     */
     private boolean isRunning = false;
+    /**
+     * Game thread.
+     */
     private Thread gameThread;
+    /**
+     * The player.
+     */
     private Player player;
+    /**
+     * List of entities on the screen.
+     */
     private List<Entity> entities = new ArrayList<>();
+    /**
+     * List of Drawables on the screen.
+     */
     private List<Drawable> drawables = new ArrayList<>();
+    /**
+     * Moving background.
+     */
     private Drawable background;
+    /**
+     * Moving terrain.
+     */
     private Drawable terrain;
+    /**
+     * Flag identifying if camera has to move (if player moves or reaches the half of the screen).
+     */
     private boolean cameraHasMoved;
+    /**
+     * Identifies if game is over or not.
+     */
     private boolean gameOver = false;
+    /**
+     * Counter of enemies spawned.
+     */
     private int spawnCounter = 0;
-
+    /**
+     * Total player score.
+     */
     private int score = 0;
+    /**
+     * Scores obtained by dead enemies.
+     */
     private int scoreOffset = 0;
-
+    /**
+     * Debug flag disabling/enabling hitbox drawing.
+     */
     private boolean isDebugHitbox = false;
-
+    /**
+     * Debug flag disabling/enabling enemies' spawn.
+     */
     private boolean isDebugEnemyGeneration = false;
 
+    /**
+     * Creates a GamePanel instance.
+     *
+     * @param parent parent reference.
+     */
     public GamePanel(MainFrame parent) {
         mediaPlayer = parent.getMusicPlayer();
         setDoubleBuffered(true);
@@ -71,6 +133,9 @@ public class GamePanel extends JPanel implements Runnable {
         setVisible(true);
     }
 
+    /**
+     * Setups all keyboard keybindings.
+     */
     private void setKeyBindings() {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "walk_right");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), "walk_right");
@@ -107,6 +172,11 @@ public class GamePanel extends JPanel implements Runnable {
         getActionMap().put("toggle_invulnerability", toggleInvulnerability());
     }
 
+    /**
+     * Handles walk right action.
+     *
+     * @return Action.
+     */
     private Action walkRight() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -116,6 +186,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Handles walk right release action.
+     *
+     * @return Action.
+     */
     private Action walkRightReleased() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -125,6 +200,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Handles walk left action.
+     *
+     * @return Action.
+     */
     private Action walkLeft() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -134,6 +214,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Handles walk left release action.
+     *
+     * @return Action.
+     */
     private Action walkLeftReleased() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -143,6 +228,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Handles jump action.
+     *
+     * @return Action.
+     */
     private Action jump() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -153,6 +243,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Shows pause menu.
+     *
+     * @return Action.
+     */
     public Action showMenu() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -174,6 +269,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Handles attack action.
+     *
+     * @return Action.
+     */
     private Action attack() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -183,6 +283,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Handles block action.
+     *
+     * @return Action.
+     */
     private Action block() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -192,6 +297,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Handles block release.
+     *
+     * @return Action.
+     */
     private Action blockRelease() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -201,6 +311,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Enables/Disables hitbox drawing (for debug purpose).
+     *
+     * @return Action.
+     */
     private Action toggleHitbox() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -209,6 +324,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Enables/Disables enemies' spawning (for debug purpose).
+     *
+     * @return Action.
+     */
     private Action toggleEntities() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -217,6 +337,11 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Enables/Disables invulnerability for the player (for debug purpose).
+     *
+     * @return Action.
+     */
     private Action toggleInvulnerability() {
         return new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -228,14 +353,23 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    /**
+     * Sets debug hitbox.
+     */
     public void setDebugHitbox() {
         isDebugHitbox = !isDebugHitbox;
     }
 
+    /**
+     * Sets debug enemy generation.
+     */
     public void setDebugEnemyGeneration() {
         isDebugEnemyGeneration = !isDebugEnemyGeneration;
     }
 
+    /**
+     * Starts game and generates level.
+     */
     public void startGame() {
         gameThread = new Thread(this);
         entities = new ArrayList<>();
@@ -258,6 +392,9 @@ public class GamePanel extends JPanel implements Runnable {
         parentContainer.getMusicPlayer().getMusicBar().play();
     }
 
+    /**
+     * Thread main method.
+     */
     @Override
     public void run() {
         double drawInterval = 1000000000.0 / 60.0;
@@ -285,6 +422,9 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Handles update for each entity/drawable.
+     */
     public void update() {
         if (gameOver) {
             parentContainer.getMusicPlayer().close();
@@ -325,6 +465,11 @@ public class GamePanel extends JPanel implements Runnable {
         cameraHasMoved = false;
     }
 
+    /**
+     * Check collisions of drawn entities.
+     *
+     * @return list of entities colliding.
+     */
     public List<Entity> checkCollision() {
         List<Entity> damagedEntities = new ArrayList<>();
         for (Entity entity : entities) {
@@ -339,6 +484,9 @@ public class GamePanel extends JPanel implements Runnable {
         return damagedEntities;
     }
 
+    /**
+     * Handles the spawning of enemies (semi-random).
+     */
     private void spawnEnemies() {
         double multiplier = 1.0;
         for (int i = 0; i < score / 1000; i++)
@@ -353,6 +501,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Gets player position x.
+     *
+     * @return the player position x
+     */
     public int getPlayerPositionX() {
         return player.xPosition;
     }
@@ -376,6 +529,11 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.dispose();
     }
 
+    /**
+     * Draws life points in the top left corner: each time the player takes damage, the life bar is updated.
+     *
+     * @param graphics2D the rendering environment.
+     */
     private void drawLifePoints(Graphics2D graphics2D) {
         BufferedImage image;
         for (int i = 0; i < player.getMaximumLifePoints(); i += 2) {
@@ -391,6 +549,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Draws score in the top right corner: each time the player walks forward or kill an enemy the score is updated.
+     *
+     * @param graphics2D the rendering environment.
+     */
     private void drawScore(Graphics2D graphics2D) {
         Font font = new Font("Monocraft", Font.BOLD, 24);
         int scorePosition = SCREEN_WIDTH - graphics2D.getFontMetrics(font).stringWidth(Integer.toString(score)) / 2 - 70;
@@ -404,6 +567,11 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.drawString(Integer.toString(score), scorePosition, 40);
     }
 
+    /**
+     * Draws Game Over text when player is dead.
+     *
+     * @param graphics2D the rendering environment.
+     */
     private void drawGameOver(Graphics2D graphics2D) {
         graphics2D.setColor(Color.decode(PRIMARY_COLOR));
         Font titleFont = new Font("Monocraft", Font.BOLD, 72);
@@ -416,47 +584,85 @@ public class GamePanel extends JPanel implements Runnable {
         graphics2D.drawString(gameOver, SCREEN_WIDTH / 2 - graphics2D.getFontMetrics(titleFont).stringWidth(gameOver) / 2, SCREEN_HEIGHT / 2);
     }
 
+    /**
+     * Gets player speed.
+     *
+     * @return the player speed
+     */
     public int getPlayerSpeed() {
         return player.speed;
     }
 
+    /**
+     * Sets running.
+     *
+     * @param running the running
+     */
     public void setRunning(boolean running) {
         isRunning = running;
     }
 
+    /**
+     * Play.
+     */
     public void play() {
         mediaPlayer.start();
     }
 
+    /**
+     * Stop.
+     */
     public void stop() {
         gameThread.stop();
     }
 
+    /**
+     * Notify camera moved.
+     */
     public void notifyCameraMoved() {
         this.cameraHasMoved = true;
     }
 
+    /**
+     * Sets game over.
+     */
     public void setGameOver() {
         gameOver = true;
     }
 
+    /**
+     * Is player attacking boolean.
+     *
+     * @return the boolean
+     */
     public boolean isPlayerAttacking() {
         return player.isAttacking();
     }
 
+    /**
+     * Gets player.
+     *
+     * @return the player
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Gets drawable background.
+     *
+     * @return the drawable background
+     */
     public Drawable getDrawableBackground() {
         return background;
     }
 
+    /**
+     * Is debug hitbox boolean.
+     *
+     * @return the boolean
+     */
     public boolean isDebugHitbox() {
         return isDebugHitbox;
-    }
-
-    public boolean isDebugEnemyGeneration() {
-        return isDebugEnemyGeneration;
     }
 }
