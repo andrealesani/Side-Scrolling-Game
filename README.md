@@ -20,8 +20,8 @@ installation setup for both Windows and macOS versions.
 
 🚧 **Requirements**
 
-- Java JDK 18
-- Maven
+- [Java JDK 18](https://jdk.java.net/18/)
+- [Maven](https://maven.apache.org/download.cgi)
 
 🔨 **Compiling**
 
