@@ -10,10 +10,22 @@ import java.io.IOException;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.PRIMARY_COLOR;
 
+/**
+ * Button used in all the menus.
+ */
 public class MenuButton extends JButton {
-
+    /**
+     * Background image of the button.
+     */
     private Image image;
 
+    /**
+     * Creates a MenuButton instance: the button reacts to mouse by changing color if selected.
+     *
+     * @param filename image path.
+     * @param label    text of the button.
+     * @param menu     parent reference.
+     */
     public MenuButton(String filename, String label, GameMenu menu) {
         setPreferredSize(new Dimension(menu.getPreferredSize().width / 3, menu.getPreferredSize().height / 5));
         try {
@@ -44,6 +56,11 @@ public class MenuButton extends JButton {
         });
     }
 
+    /**
+     * Gets image.
+     *
+     * @return the image
+     */
     public Image getImage() {
         return image;
     }

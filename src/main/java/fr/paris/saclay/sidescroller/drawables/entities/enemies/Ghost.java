@@ -9,9 +9,21 @@ import java.util.Arrays;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 import static fr.paris.saclay.sidescroller.utils.Direction.LEFT;
 
+/**
+ * Ghost enemy.
+ */
 public class Ghost extends Entity {
+    /**
+     * Used to determine the horizontal movement
+     */
     private int frameCounter;
 
+    /**
+     * Creates a Ghost instance passing the GamePanel reference and initial position of the entity.
+     *
+     * @param gamePanel reference.
+     * @param xPosition initial position.
+     */
     public Ghost(GamePanel gamePanel, int xPosition) {
         super(gamePanel);
         this.xPosition = xPosition;

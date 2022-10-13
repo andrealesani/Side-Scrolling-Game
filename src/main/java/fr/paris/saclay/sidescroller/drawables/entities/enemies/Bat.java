@@ -9,6 +9,9 @@ import java.util.Arrays;
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 import static fr.paris.saclay.sidescroller.utils.Direction.LEFT;
 
+/**
+ * Bat enemy.
+ */
 public class Bat extends Entity {
     /**
      * Used to determine the vertical movement. It is initialized randomly so that if there
@@ -16,6 +19,12 @@ public class Bat extends Entity {
      */
     private int flyFrameCounter = (int) (Math.random() * 60);
 
+    /**
+     * Creates a Bat instance passing the GamePanel reference and initial position of the entity.
+     *
+     * @param gamePanel reference.
+     * @param xPosition initial position.
+     */
     public Bat(GamePanel gamePanel, int xPosition) {
         super(gamePanel);
         this.xPosition = xPosition;
@@ -35,6 +44,9 @@ public class Bat extends Entity {
         ));
     }
 
+    /**
+     * Bats fy up and down while moving forward.
+     */
     @Override
     protected void uniqueMovement() {
         // VERTICAL MOVEMENT

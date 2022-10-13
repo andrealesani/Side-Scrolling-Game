@@ -6,15 +6,26 @@ import java.io.IOException;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
+/**
+ * View class of GameMenu class.
+ */
 public class GameMenuUI {
 
+    /**
+     * Menu container image, it changes for each animation sprite.
+     */
     private String currentImage = "images/menu/book_1.png";
-
+    /**
+     * Current animation index.
+     */
     private int currentAnimation = 1;
 
-    public GameMenuUI() {
-    }
-
+    /**
+     * Draws GameMenu: menu container book and title.
+     *
+     * @param graphics the rending environment.
+     * @param menu     controller reference.
+     */
     public void paint(Graphics graphics, GameMenu menu) {
         Graphics2D graphics2D = (Graphics2D) graphics;
         if (!menu.getModel().isPauseMenu()) {
@@ -40,6 +51,12 @@ public class GameMenuUI {
         }
     }
 
+    /**
+     * Draws title with an outlined stroke.
+     *
+     * @param graphics the rending environment.
+     * @param menu     controller reference.
+     */
     private static void drawOutlinedTitle(Graphics graphics, GameMenu menu) {
         graphics.setColor(Color.decode(PRIMARY_COLOR));
         graphics.setFont(new Font("Monocraft", Font.PLAIN, 28));
@@ -57,15 +74,28 @@ public class GameMenuUI {
                 menu.getPreferredSize().height) / 2);
     }
 
+    /**
+     * Updates the menu background during animation.
+     */
     public void updateImage() {
         currentAnimation++;
         this.currentImage = "images/menu/book_" + currentAnimation + ".png";
     }
 
+    /**
+     * Gets current animation.
+     *
+     * @return the current animation
+     */
     public int getCurrentAnimation() {
         return currentAnimation;
     }
 
+    /**
+     * Display initial menu after animation concludes.
+     *
+     * @param model reference.
+     */
     public void displayNormalMenu(GameMenuModel model) {
         model.getTimer().stop();
         model.getPlayButton().setVisible(true);

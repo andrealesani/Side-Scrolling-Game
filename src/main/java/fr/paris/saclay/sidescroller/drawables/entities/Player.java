@@ -240,7 +240,7 @@ public class Player extends Entity {
     }
 
     /**
-     * Draws enemies life points on top of them: green bar with red chunks for each lost life point.
+     * Draws stamina bar of the player. Stamina lost is displayed with a gray chunk.
      *
      * @param graphics2D the rendering component.
      */

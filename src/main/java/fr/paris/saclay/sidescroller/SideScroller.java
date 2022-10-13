@@ -2,6 +2,9 @@ package fr.paris.saclay.sidescroller;
 
 import fr.paris.saclay.sidescroller.controllers.MainFrame;
 
+/**
+ * Side scroller main class.
+ */
 public class SideScroller {
     /**
      * The entry point of application.

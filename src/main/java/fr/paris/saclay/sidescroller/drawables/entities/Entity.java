@@ -359,10 +359,20 @@ public abstract class Entity extends Drawable {
         }
     }
 
+    /**
+     * Is invincible boolean.
+     *
+     * @return the boolean
+     */
     public boolean isInvincible() {
         return isInvincible;
     }
 
+    /**
+     * Draws enemies life points on top of them: green bar with red chunks for each lost life point.
+     *
+     * @param graphics2D the rendering component.
+     */
     protected void drawHpBar(Graphics2D graphics2D) {
         int maximumWidthBar = WIDTH_TILE_SIZE + WIDTH_TILE_SIZE / 4;
         int lostLifePoints = maximumLifePoints - lifePoints;

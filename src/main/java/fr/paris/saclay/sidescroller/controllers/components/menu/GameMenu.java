@@ -11,12 +11,28 @@ import java.awt.event.MouseEvent;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
+/**
+ * Game menu, it handles both the initial menu and the paused one.
+ */
 public class GameMenu extends JPanel implements ActionListener {
+    /**
+     * Game menu view.
+     */
     private final GameMenuUI ui;
+    /**
+     * Game menu model.
+     */
     private final GameMenuModel model;
-
+    /**
+     * Centered menu panel drawn as a book.
+     */
     private final JPanel menuPanel;
 
+    /**
+     * Creates a GameMenu instance.
+     *
+     * @param frame parent reference.
+     */
     public GameMenu(MainFrame frame) {
         ui = new GameMenuUI();
         model = new GameMenuModel();
@@ -36,6 +52,12 @@ public class GameMenu extends JPanel implements ActionListener {
         model.getTimer().start();
     }
 
+    /**
+     * Displays the first menu with a Play button, a Quit button and the credits alongside with the title of the game.<br>
+     * The first one changes the view to the character/level selection menu while the second one closes the application.
+     *
+     * @param frame parent reference.
+     */
     private void initializeMenu(MainFrame frame) {
         model.setTimer(new Timer(200, this));
         model.setPlayButton(new MenuButton("menu_button", "Play", this));
@@ -162,6 +184,14 @@ public class GameMenu extends JPanel implements ActionListener {
         });
     }
 
+    /**
+     * Changes avatar/background preview during selection. It handles both the two types of preview and also
+     * next/previous buttons.
+     *
+     * @param currentSelection current selection.
+     * @param isBackground     identifies if it is an avatar or background preview.
+     * @param isNext           identifies if it is a next action or previous one.
+     */
     private void changePreview(int currentSelection, boolean isBackground, boolean isNext) {
         int length = model.getBackgroundThemes().size();
         if (!isBackground) {
@@ -185,6 +215,11 @@ public class GameMenu extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Quits current game and returns to the main menu.
+     *
+     * @param frame parent reference.
+     */
     public void quitToMenu(MainFrame frame) {
         frame.getGamePanel().stop();
         setPauseMenu(false);
@@ -197,6 +232,9 @@ public class GameMenu extends JPanel implements ActionListener {
         repaint();
     }
 
+    /**
+     * Setups layout for main menu: 2 buttons and credits.
+     */
     public void setNormalGridConstraints() {
         menuPanel.removeAll();
         GridBagConstraints constraints = new GridBagConstraints();
@@ -221,6 +259,9 @@ public class GameMenu extends JPanel implements ActionListener {
         menuPanel.setOpaque(false);
     }
 
+    /**
+     * Setups layout for pause menu: 2 buttons.
+     */
     public void setPausedGridConstraints() {
         menuPanel.removeAll();
         GridBagConstraints constraints = new GridBagConstraints();
@@ -236,6 +277,10 @@ public class GameMenu extends JPanel implements ActionListener {
         menuPanel.setOpaque(false);
     }
 
+    /**
+     * Setups layout for selection menu: 2 previews with 2 buttons each to select them, 2 buttons (back, start game) and
+     * 2 descriptions.
+     */
     public void setSelectionGridConstraints() {
         menuPanel.removeAll();
         GridBagConstraints constraints = new GridBagConstraints();
@@ -292,6 +337,11 @@ public class GameMenu extends JPanel implements ActionListener {
         menuPanel.setOpaque(false);
     }
 
+    /**
+     * Draws menu calling the view method responsible for that.
+     *
+     * @param graphics the rendering component.
+     */
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
@@ -299,16 +349,31 @@ public class GameMenu extends JPanel implements ActionListener {
     }
 
 
+    /**
+     * Retrieves preferred size.
+     *
+     * @return preferred size.
+     */
     @Override
     public Dimension getPreferredSize() {
         return model.getPreferredSize();
     }
 
+    /**
+     * Retrieves size.
+     *
+     * @return size.
+     */
     @Override
     public Dimension getSize() {
         return model.getSize();
     }
 
+    /**
+     * Handles opening animation of the menu.
+     *
+     * @param e the event to be processed.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (ui.getCurrentAnimation() == 4) {
@@ -319,14 +384,27 @@ public class GameMenu extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Calls related method of the model.
+     *
+     * @return result.
+     */
     public boolean isPauseMenu() {
         return model.isPauseMenu();
     }
 
+    /**
+     * Calls related method of the model.
+     */
     public void setPauseMenu(boolean pauseMenu) {
         model.setPauseMenu(pauseMenu);
     }
 
+    /**
+     * Gets model.
+     *
+     * @return the model
+     */
     public GameMenuModel getModel() {
         return model;
     }
