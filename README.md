@@ -28,6 +28,7 @@ installation setup for both Windows and macOS versions.
 - Maven
 
 **Compiling**
+
 Clone the project, unzip it, and run `mvn clean package` inside the root folder.
 
 This will generate a `target` folder and inside it you will find a file called `sidescroller-1.0-SNAPSHOT-shaded.jar`.
