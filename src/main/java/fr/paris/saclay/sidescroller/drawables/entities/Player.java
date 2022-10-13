@@ -12,6 +12,9 @@ import java.util.List;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
+/**
+ * Player entity.
+ */
 public class Player extends Entity {
 
     private int staminaTimer = PLAYER_STAMINA_TIMER;
@@ -20,6 +23,13 @@ public class Player extends Entity {
 
     private int currentStamina;
 
+    /**
+     * Creates a Player instance, saves the GamePanel reference and sets the theme (avatar related to the selection
+     * of the initial menu).
+     *
+     * @param gamePanel GamePanel reference.
+     * @param theme     theme types: pink, blue, yellow, green (each one related to a different avatar).
+     */
     public Player(GamePanel gamePanel, String theme) {
         super(gamePanel);
         currentStamina = PLAYER_MAX_STAMINA;
@@ -61,6 +71,9 @@ public class Player extends Entity {
         direction = Direction.RIGHT;
     }
 
+    /**
+     * Defines actions for each frame and handles sprite changes.
+     */
     @Override
     public void update() {
         if ((gamePanel.rightPressed || gamePanel.upPressed || gamePanel.leftPressed) && !isAttacking && !isBlocking) {
@@ -178,6 +191,11 @@ public class Player extends Entity {
         }
     }
 
+    /**
+     * Draws the player sprite based on the current action.
+     *
+     * @param graphics2D the rendering environment.
+     */
     @Override
     public void draw(Graphics2D graphics2D) {
         AffineTransform transformX = AffineTransform.getScaleInstance(-1, 1);
@@ -205,20 +223,27 @@ public class Player extends Entity {
             }
             graphics2D.drawImage(image, xPosition - (WIDTH_TILE_SIZE / 2) * directionFactor, yPosition, WIDTH_TILE_SIZE + WIDTH_TILE_SIZE / 2, HEIGHT_TILE_SIZE, null);
         } else graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
-        if (isInvincible())
-            graphics2D.setColor(new Color(255, 0, 0, 127));
-        else
-            graphics2D.setColor(new Color(0, 0, 255, 127));
-        graphics2D.fill(hitBox);
-        graphics2D.setColor(new Color(0, 255, 0, 127));
-        if (isAttacking)
-            graphics2D.fill(attackHitBox);
-        graphics2D.setColor(new Color(255, 255, 255, 127));
-        if (isBlocking)
-            graphics2D.fill(blockHitBox);
+        if (gamePanel.isDebugHitbox()) {
+            if (isInvincible())
+                graphics2D.setColor(new Color(255, 0, 0, 127));
+            else
+                graphics2D.setColor(new Color(0, 0, 255, 127));
+            graphics2D.fill(hitBox);
+            graphics2D.setColor(new Color(0, 255, 0, 127));
+            if (isAttacking)
+                graphics2D.fill(attackHitBox);
+            graphics2D.setColor(new Color(255, 255, 255, 127));
+            if (isBlocking)
+                graphics2D.fill(blockHitBox);
+        }
         drawStaminaBar(graphics2D);
     }
 
+    /**
+     * Draws enemies life points on top of them: green bar with red chunks for each lost life point.
+     *
+     * @param graphics2D the rendering component.
+     */
     private void drawStaminaBar(Graphics2D graphics2D) {
         int maximumStaminaBarWidth = WIDTH_TILE_SIZE * 4;
         int maximumStamina = PLAYER_MAX_STAMINA;
@@ -239,6 +264,11 @@ public class Player extends Entity {
         }
     }
 
+    /**
+     * Handles attack action.<br>
+     * Player cannot attack during jumping, attacking, when recovering and recovered stamina is equal to 25 or when is
+     * not recovering and stamina is not 0.
+     */
     public void attack() {
         if ((!gamePanel.upPressed && !isAttacking()) && ((currentStamina >= 25 && isRecovering) || (!isRecovering && currentStamina != 0))) {
             setAttacking(true);
@@ -253,6 +283,10 @@ public class Player extends Entity {
         }
     }
 
+    /**
+     * Handles block action.<br>
+     * Player cannot block during jumping, attacking, if it's already blocking or when currentStamina reaches 0.
+     */
     public void block() {
         if (!gamePanel.upPressed && !isAttacking() && !isBlocking && (currentStamina >= 0 || !isRecovering)) {
             isBlocking = true;
@@ -265,15 +299,28 @@ public class Player extends Entity {
         }
     }
 
+    /**
+     * Handles the block release by setting isBlocking to false and changing to walking animation.
+     */
     public void blockRelease() {
         isBlocking = false;
         direction = direction == Direction.BLOCK_LEFT ? Direction.LEFT : Direction.RIGHT;
     }
 
+    /**
+     * Gets current stamina.
+     *
+     * @return the current stamina
+     */
     public int getCurrentStamina() {
         return currentStamina;
     }
 
+    /**
+     * Sets current stamina.
+     *
+     * @param currentStamina the current stamina
+     */
     public void setCurrentStamina(int currentStamina) {
         this.currentStamina = currentStamina;
     }

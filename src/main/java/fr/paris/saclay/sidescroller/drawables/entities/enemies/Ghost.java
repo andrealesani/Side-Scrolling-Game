@@ -65,6 +65,8 @@ public class Ghost extends Entity {
             spriteCounter = 0;
         }
         if (frameCounter >= 60 && frameCounter <= 120) {
+            if (frameCounter == 60)
+                setEntityInvincible(60);
             spriteNumber = 2;
         }
     }

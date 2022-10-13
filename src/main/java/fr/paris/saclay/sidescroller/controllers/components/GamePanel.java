@@ -1,7 +1,7 @@
 package fr.paris.saclay.sidescroller.controllers.components;
 
 import fr.paris.saclay.sidescroller.controllers.CollisionDetector;
-import fr.paris.saclay.sidescroller.controllers.RPGSideScroller;
+import fr.paris.saclay.sidescroller.controllers.MainFrame;
 import fr.paris.saclay.sidescroller.controllers.components.menu.GameMenu;
 import fr.paris.saclay.sidescroller.controllers.components.musicPlayer.MusicPlayer;
 import fr.paris.saclay.sidescroller.drawables.Background;
@@ -26,7 +26,7 @@ import static fr.paris.saclay.sidescroller.utils.Constants.*;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    private final RPGSideScroller parentContainer;
+    private final MainFrame parentContainer;
     private final CollisionDetector collisionDetector;
     private final MusicPlayer mediaPlayer;
     public boolean upPressed,
@@ -49,7 +49,11 @@ public class GamePanel extends JPanel implements Runnable {
     private int score = 0;
     private int scoreOffset = 0;
 
-    public GamePanel(RPGSideScroller parent) {
+    private boolean isDebugHitbox = false;
+
+    private boolean isDebugEnemyGeneration = false;
+
+    public GamePanel(MainFrame parent) {
         mediaPlayer = parent.getMusicPlayer();
         setDoubleBuffered(true);
         setFocusable(true);
@@ -86,6 +90,9 @@ public class GamePanel extends JPanel implements Runnable {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_COLON, 0, false), "block");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, true), "block_released");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_COLON, 0, false), "block_released");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SLASH, 0, false), "toggle_hitbox");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_1, 0, false), "toggle_entities");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_2, 0, false), "toggle_invulnerability");
         getActionMap().put("walk_right", walkRight());
         getActionMap().put("walk_right_released", walkRightReleased());
         getActionMap().put("walk_left", walkLeft());
@@ -95,6 +102,9 @@ public class GamePanel extends JPanel implements Runnable {
         getActionMap().put("attack", attack());
         getActionMap().put("block", block());
         getActionMap().put("block_released", blockRelease());
+        getActionMap().put("toggle_hitbox", toggleHitbox());
+        getActionMap().put("toggle_entities", toggleEntities());
+        getActionMap().put("toggle_invulnerability", toggleInvulnerability());
     }
 
     private Action walkRight() {
@@ -191,11 +201,44 @@ public class GamePanel extends JPanel implements Runnable {
         };
     }
 
+    private Action toggleHitbox() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                setDebugHitbox();
+            }
+        };
+    }
+
+    private Action toggleEntities() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                setDebugEnemyGeneration();
+            }
+        };
+    }
+
+    private Action toggleInvulnerability() {
+        return new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (!player.isInvincible())
+                    player.setEntityInvincible(-1);
+                else
+                    player.setEntityInvincible(0);
+            }
+        };
+    }
+
+    public void setDebugHitbox() {
+        isDebugHitbox = !isDebugHitbox;
+    }
+
+    public void setDebugEnemyGeneration() {
+        isDebugEnemyGeneration = !isDebugEnemyGeneration;
+    }
+
     public void startGame() {
         gameThread = new Thread(this);
         entities = new ArrayList<>();
-//        entities.add(new Ghost(this, 600));
-        entities.add(new Bat(this, 400));
         drawables = new ArrayList<>();
         background = new Background(this,
                 parentContainer.getGameMenu().getModel().getBackgroundThemes().get(parentContainer.getGameMenu().getModel().getCurrentThemeSelection()));
@@ -277,7 +320,8 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         score = Integer.max(score, -background.getXPosition() / 10 + scoreOffset);
-        spawnEnemies();
+        if (!isDebugEnemyGeneration)
+            spawnEnemies();
         cameraHasMoved = false;
     }
 
@@ -406,5 +450,13 @@ public class GamePanel extends JPanel implements Runnable {
 
     public Drawable getDrawableBackground() {
         return background;
+    }
+
+    public boolean isDebugHitbox() {
+        return isDebugHitbox;
+    }
+
+    public boolean isDebugEnemyGeneration() {
+        return isDebugEnemyGeneration;
     }
 }

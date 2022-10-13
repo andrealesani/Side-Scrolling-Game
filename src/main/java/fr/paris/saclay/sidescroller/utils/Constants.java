@@ -71,7 +71,8 @@ public class Constants {
     public static final int CAMERA_MIN_LEFT = 300;
 
     /**
-     * Retrieves opposite direction of the provided one (e.g. LEFT parameter -> RIGHT returned value).
+     * Retrieves opposite direction of the provided one (e.g. LEFT parameter -> RIGHT returned value).<br>
+     * Used when retrieving the sprites for each entity since right sprites are obtained by translating left sprites.
      *
      * @param direction provided Direction.
      * @return opposite direction.

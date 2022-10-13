@@ -135,7 +135,7 @@ public abstract class Entity extends Drawable {
     }
 
     /**
-     * Adds provided sprites to animation map.
+     * Adds provided walk sprites to animation map.
      *
      * @param paths sprites.
      */
@@ -143,6 +143,14 @@ public abstract class Entity extends Drawable {
         addSpritesToAnimationMap(paths, new ArrayList<>(), LEFT);
     }
 
+    /**
+     * Adds sprites to the animation map: each sprite contains its file path and the related Direction (LEFT, UP_LEFT,
+     * ATTACK_LEFT, BLOCK_LEFT)
+     *
+     * @param paths     new sprites to be added.
+     * @param sprites   animation map.
+     * @param direction direction of the sprites.
+     */
     private void addSpritesToAnimationMap(List<String> paths, List<BufferedImage> sprites, Direction direction) {
         try {
             for (String path : paths)
@@ -154,64 +162,147 @@ public abstract class Entity extends Drawable {
         }
     }
 
+    /**
+     * Adds provided jump sprites to animation map.
+     *
+     * @param paths sprites.
+     */
     protected void setJumpSprites(List<String> paths) {
         addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.UP_LEFT);
     }
 
+    /**
+     * Adds provided attack sprites to animation map.
+     *
+     * @param paths sprites.
+     */
     protected void setAttackSprites(List<String> paths) {
         addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.ATTACK_LEFT);
     }
 
+    /**
+     * Adds provided block sprites to animation map.
+     *
+     * @param paths sprites.
+     */
     protected void setBlockSprites(List<String> paths) {
         addSpritesToAnimationMap(paths, new ArrayList<>(), Direction.BLOCK_LEFT);
     }
 
-
+    /**
+     * Gets life points.
+     *
+     * @return the life points
+     */
     public int getLifePoints() {
         return lifePoints;
     }
 
+    /**
+     * Gets hit box.
+     *
+     * @return the hit box
+     */
     public Rectangle getHitBox() {
         return hitBox;
     }
 
+    /**
+     * Gets block hit box.
+     *
+     * @return the block hit box
+     */
     public Rectangle getBlockHitBox() {
         return blockHitBox;
     }
 
+    /**
+     * Sets entity invincible.
+     *
+     * @param invincibilityTimer the invincibility timer
+     */
     public void setEntityInvincible(int invincibilityTimer) {
         this.isInvincible = true;
         this.invincibilityTimer = invincibilityTimer;
     }
 
+    /**
+     * Gets maximum invincibility.
+     *
+     * @return the maximum invincibility
+     */
     public int getMaximumInvincibility() {
         return maximumInvincibility;
     }
 
+    /**
+     * Is attacking boolean.
+     *
+     * @return the boolean
+     */
     public boolean isAttacking() {
         return isAttacking;
     }
 
+    /**
+     * Sets attacking.
+     *
+     * @param isAttacking the is attacking
+     */
     public void setAttacking(boolean isAttacking) {
         this.isAttacking = isAttacking;
     }
 
+    /**
+     * Gets attack hit box.
+     *
+     * @return the attack hit box
+     */
     public Rectangle getAttackHitBox() {
         return attackHitBox;
     }
 
+    /**
+     * Gets maximum life points.
+     *
+     * @return the maximum life points
+     */
     public int getMaximumLifePoints() {
         return maximumLifePoints;
     }
 
+    /**
+     * Is dead boolean.
+     *
+     * @return the boolean
+     */
     public boolean isDead() {
         return isDead;
     }
 
+    /**
+     * Sets dead.
+     *
+     * @param dead the dead
+     */
     public void setDead(boolean dead) {
         isDead = dead;
     }
 
+    /**
+     * Defines actions for each frame:
+     * <ul>
+     * <li>
+     *     chasePlayer: tracks players movement and defines the shortest path to it.
+     * </li>
+     * <li>
+     *     uniqueMovement: implements unique movement if entity requires it.
+     * </li>
+     * <li>
+     *     updateHitboxPosition: tracks entity movement and updates hitbox.
+     * </li>
+     * </ul>
+     */
     @Override
     public void update() {
         if (!isDead) {
@@ -251,18 +342,19 @@ public abstract class Entity extends Drawable {
             }
 
             graphics2D.drawImage(image, xPosition, yPosition, WIDTH_TILE_SIZE, HEIGHT_TILE_SIZE, null);
-
-            graphics2D.setColor(new Color(0, 0, 255, 127));
-            if (isInvincible())
-                graphics2D.setColor(new Color(255, 0, 0, 127));
-            else
+            if (gamePanel.isDebugHitbox()) {
                 graphics2D.setColor(new Color(0, 0, 255, 127));
-            graphics2D.fill(hitBox);
-            graphics2D.setColor(new Color(0, 255, 0, 127));
-            if (isAttacking)
-                graphics2D.fill(attackHitBox);
-            if (isBlocking)
-                graphics2D.fill(blockHitBox);
+                if (isInvincible())
+                    graphics2D.setColor(new Color(255, 0, 0, 127));
+                else
+                    graphics2D.setColor(new Color(0, 0, 255, 127));
+                graphics2D.fill(hitBox);
+                graphics2D.setColor(new Color(0, 255, 0, 127));
+                if (isAttacking)
+                    graphics2D.fill(attackHitBox);
+                if (isBlocking)
+                    graphics2D.fill(blockHitBox);
+            }
             drawHpBar(graphics2D);
         }
     }
@@ -303,6 +395,9 @@ public abstract class Entity extends Drawable {
         }
     }
 
+    /**
+     * Defines unique movement for each entity, currently implemented in enemies.
+     */
     protected void uniqueMovement() {
     }
 
@@ -323,10 +418,20 @@ public abstract class Entity extends Drawable {
         }
     }
 
+    /**
+     * Is blocking boolean.
+     *
+     * @return the boolean
+     */
     public boolean isBlocking() {
         return isBlocking;
     }
 
+    /**
+     * Is jumping boolean.
+     *
+     * @return the boolean
+     */
     public boolean isJumping() {
         return isJumping;
     }

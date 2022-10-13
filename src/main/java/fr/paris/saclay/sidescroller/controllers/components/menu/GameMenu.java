@@ -1,6 +1,6 @@
 package fr.paris.saclay.sidescroller.controllers.components.menu;
 
-import fr.paris.saclay.sidescroller.controllers.RPGSideScroller;
+import fr.paris.saclay.sidescroller.controllers.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +17,7 @@ public class GameMenu extends JPanel implements ActionListener {
 
     private final JPanel menuPanel;
 
-    public GameMenu(RPGSideScroller frame) {
+    public GameMenu(MainFrame frame) {
         ui = new GameMenuUI();
         model = new GameMenuModel();
         SpringLayout springLayout = new SpringLayout();
@@ -36,7 +36,7 @@ public class GameMenu extends JPanel implements ActionListener {
         model.getTimer().start();
     }
 
-    private void initializeMenu(RPGSideScroller frame) {
+    private void initializeMenu(MainFrame frame) {
         model.setTimer(new Timer(200, this));
         model.setPlayButton(new MenuButton("menu_button", "Play", this));
         model.setQuitButton(new MenuButton("menu_button", "Quit", this));
@@ -44,7 +44,7 @@ public class GameMenu extends JPanel implements ActionListener {
         model.setQuitToMenuButton(new MenuButton("menu_button", "Menu", this));
         model.setStartGameButton(new MenuButton("menu_button", "Start", this));
         model.setBackButton(new MenuButton("menu_button", "Back", this));
-        model.setCredits(new JLabel("<html><body style=\"text-align: center\">Credits<br><br>Sonny<br>&<br>Andrea</body></html>"));
+        model.setCredits(new JLabel("<html><body style=\"text-align: center\">Credits<br><br>Andrea<br>&<br>Sonny</body></html>"));
         model.getCredits().setForeground(Color.decode(PRIMARY_COLOR));
         model.getCredits().setFont(new Font("Monocraft", Font.PLAIN, 28));
         model.setNextAvatarButton(new SelectionMenuButton("next"));
@@ -185,7 +185,7 @@ public class GameMenu extends JPanel implements ActionListener {
         }
     }
 
-    public void quitToMenu(RPGSideScroller frame) {
+    public void quitToMenu(MainFrame frame) {
         frame.getGamePanel().stop();
         setPauseMenu(false);
         model.getQuitToMenuButton().setIcon(new ImageIcon(GrayFilter.createDisabledImage(model.getQuitToMenuButton().getImage())));
@@ -206,7 +206,7 @@ public class GameMenu extends JPanel implements ActionListener {
         constraints.gridy = 0;
         menuPanel.add(model.getPlayButton(), constraints);
         constraints.gridx = 1;
-        menuPanel.add(Box.createHorizontalStrut(getPreferredSize().width / 6), constraints);
+        menuPanel.add(Box.createHorizontalStrut(getPreferredSize().width / 5), constraints);
         constraints.gridx = 2;
         constraints.gridy = 0;
         constraints.gridheight = 3;

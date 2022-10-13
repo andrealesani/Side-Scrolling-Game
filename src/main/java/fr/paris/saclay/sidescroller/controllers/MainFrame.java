@@ -4,14 +4,17 @@ import fr.paris.saclay.sidescroller.controllers.components.GamePanel;
 import fr.paris.saclay.sidescroller.controllers.components.menu.GameMenu;
 import fr.paris.saclay.sidescroller.controllers.components.musicPlayer.MusicPlayer;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_HEIGHT;
 import static fr.paris.saclay.sidescroller.utils.Constants.SCREEN_WIDTH;
 
-public class RPGSideScroller extends JFrame {
+public class MainFrame extends JFrame {
 
     private final GamePanel gamePanel;
 
@@ -19,8 +22,27 @@ public class RPGSideScroller extends JFrame {
 
     private final MusicPlayer musicPlayer;
 
-    public RPGSideScroller() {
-        super("RPG Sidescroller");
+    public MainFrame() {
+        super("RPG Side Scroller");
+        //set application icon
+        List<Image> icons = new ArrayList<>();
+        try {
+            icons.add(ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/icon16x16.png")));
+            icons.add(ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/icon32x32.png")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        setIconImages(icons);
+        //set macOS taskbar icon
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.startsWith("mac os x")) {
+            try {
+                Image icon = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/icon32x32.png"));
+                Taskbar.getTaskbar().setIconImage(icon);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         registerFont();
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -28,7 +28,7 @@
                             <transformers>
                                 <transformer implementation=
                                                      "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>fr.paris.saclay.sidescroller.Main</mainClass>
+                                    <mainClass>fr.paris.saclay.sidescroller.SideScroller</mainClass>
                                 </transformer>
                             </transformers>
                             <minimizeJar>true</minimizeJar>
