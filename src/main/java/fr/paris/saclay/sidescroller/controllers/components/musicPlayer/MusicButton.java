@@ -6,10 +6,20 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.IOException;
 
+/**
+ * Button used for the media player controls.
+ */
 public class MusicButton extends JButton {
-
+    /**
+     * Background image of the button.
+     */
     private Image image;
 
+    /**
+     * Creates a MusicButton instance.
+     *
+     * @param filename file path of the image.
+     */
     public MusicButton(String filename) {
         setPreferredSize(new Dimension(30, 30));
         try {

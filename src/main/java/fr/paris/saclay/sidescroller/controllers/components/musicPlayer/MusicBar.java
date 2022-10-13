@@ -9,13 +9,26 @@ import java.io.IOException;
 import static fr.paris.saclay.sidescroller.utils.Constants.PRIMARY_COLOR;
 import static fr.paris.saclay.sidescroller.utils.Constants.SECONDARY_COLOR;
 
+/**
+ * Song bar displaying the current progress of the song.
+ */
 public class MusicBar extends JPanel {
-
-
+    /**
+     * Music player reference.
+     */
     private final MusicPlayer player;
-
+    /**
+     * CLip responsible for audio mixing.
+     */
     private Clip mediaPlayer;
 
+    /**
+     * Creates a MusicBar instance, starting the audio playback.
+     *
+     * @param width  width of the component.
+     * @param height height of the component.
+     * @param player music player.
+     */
     public MusicBar(int width, int height, MusicPlayer player) {
         this.player = player;
         try {
@@ -26,6 +39,9 @@ public class MusicBar extends JPanel {
         setPreferredSize(new Dimension(width, height));
     }
 
+    /**
+     * Starts audio playback when level starts.
+     */
     public void play() {
         try {
             String song = player.getModel().getSoundtrack().get(player.getModel().getCurrentSong());
@@ -45,6 +61,11 @@ public class MusicBar extends JPanel {
         mediaPlayer.start();
     }
 
+    /**
+     * Draws the MusicBar, displaying current progress with a little vertical rectangle.
+     *
+     * @param graphics the rendering environment.
+     */
     @Override
     protected void paintComponent(Graphics graphics) {
         Graphics2D graphics2D = (Graphics2D) graphics;
@@ -55,6 +76,11 @@ public class MusicBar extends JPanel {
         graphics2D.fillRect(getDeltaSong() + 1, getY() - 4, 3, 8);
     }
 
+    /**
+     * Get current song timestamp.
+     *
+     * @return current song progress.
+     */
     public int getDeltaSong() {
         double songProgress = mediaPlayer.getMicrosecondPosition() / 1000000.0;
         if (songProgress >= player.getModel().getSongDuration()) {
@@ -65,6 +91,11 @@ public class MusicBar extends JPanel {
         } else return 0;
     }
 
+    /**
+     * Gets media player.
+     *
+     * @return the media player
+     */
     public Clip getMediaPlayer() {
         return mediaPlayer;
     }
