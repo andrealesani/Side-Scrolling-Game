@@ -45,7 +45,7 @@ public class Bat extends Entity {
     }
 
     /**
-     * Bats fy up and down while moving forward.
+     * Bats fly up and down while moving forward.
      */
     @Override
     protected void uniqueMovement() {
